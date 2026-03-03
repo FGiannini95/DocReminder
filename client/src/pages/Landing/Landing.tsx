@@ -17,11 +17,11 @@ const sectionStyles = {
 
 export const Landing = () => {
   const [email, setEmail] = useState("");
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const handleSubmit = () => {
     console.log("email", email);
-    // navigate(DocReminderRoutes.otp, { state: { email } });
+    navigate(DocReminderRoutes.otp, { state: { email } });
   };
 
   return (
