@@ -3,5 +3,9 @@ export const validateEmail = (email: string): boolean => {
   return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
 };
 
-// Validate pin
+// Validate otp: returns true if OTP is complete (6 numeric digits)
+export const validateOtp = (otp: string): boolean => {
+  return /^\d{6}$/.test(otp);
+};
+
 // Validate date

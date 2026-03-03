@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import { Home, Landing } from "@/pages";
+import { Home, Landing, Otp } from "@/pages";
 import { DocReminderRoutes } from "./routes/routes";
 
 function App() {
@@ -12,6 +12,7 @@ function App() {
         <Routes>
           <Route path={DocReminderRoutes.home} element={<Home />} />
           <Route path={DocReminderRoutes.landing} element={<Landing />} />
+          <Route path={DocReminderRoutes.otp} element={<Otp />} />
         </Routes>
       </BrowserRouter>
       {/* </PwaProvider>

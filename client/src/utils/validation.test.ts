@@ -1,8 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { validateEmail } from "./validation";
+import { validateEmail, validateOtp } from "./validation";
 
 describe("validateEmail", () => {
-  // Valid emails
   it("returns true for a valid email", () => {
     expect(validateEmail("fede@gmail.com")).toBe(true);
   });
@@ -11,7 +10,6 @@ describe("validateEmail", () => {
     expect(validateEmail("fede@mail.domain.com")).toBe(true);
   });
 
-  // Error cases
   it("returns false for email without @", () => {
     expect(validateEmail("fedegmail.com")).toBe(false);
   });
@@ -38,5 +36,20 @@ describe("validateEmail", () => {
 
   it("returns false for email missing local part", () => {
     expect(validateEmail("@gmail.com")).toBe(false);
+  });
+});
+
+describe("validateOtp", () => {
+  it("returns true for 6 digits", () => {
+    expect(validateOtp("123456")).toBe(true);
+  });
+  it("returns false for less than 6 digits", () => {
+    expect(validateOtp("123")).toBe(false);
+  });
+  it("returns false for non numeric characters", () => {
+    expect(validateOtp("12345a")).toBe(false);
+  });
+  it("returns false for empty string", () => {
+    expect(validateOtp("")).toBe(false);
   });
 });

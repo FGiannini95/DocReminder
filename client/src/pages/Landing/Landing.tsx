@@ -1,10 +1,13 @@
 import { useState } from "react";
-import { validateEmail } from "@/utils/validation";
+import { useNavigate } from "react-router-dom";
 
 import { Box, Typography, TextField, Divider, Button } from "@mui/material";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 
-// Shared styles for both sections
+import { validateEmail } from "@/utils/validation";
+import { DocReminderRoutes } from "@/routes/routes";
+
+// Shared styles for sections
 const sectionStyles = {
   display: "flex",
   flexDirection: "column",
@@ -14,9 +17,11 @@ const sectionStyles = {
 
 export const Landing = () => {
   const [email, setEmail] = useState("");
+  const navigate = useNavigate();
 
-  const handleSubmit = (email: string) => {
-    console.log(email);
+  const handleSubmit = () => {
+    console.log("email", email);
+    navigate(DocReminderRoutes.otp, { state: { email } });
   };
 
   return (
@@ -83,6 +88,7 @@ export const Landing = () => {
             variant="contained"
             size="large"
             disabled={!validateEmail(email)}
+            onClick={handleSubmit}
             sx={{ borderRadius: 8, py: 1.5, backgroundColor: "text.primary" }}
           >
             Enviar código de acceso
