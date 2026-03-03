@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { validateEmail } from "@/utils/validation";
+
 import { Box, Typography, TextField, Divider, Button } from "@mui/material";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 
@@ -12,6 +14,10 @@ const sectionStyles = {
 
 export const Landing = () => {
   const [email, setEmail] = useState("");
+
+  const handleSubmit = (email: string) => {
+    console.log(email);
+  };
 
   return (
     <Box sx={{ height: "100dvh", display: "flex", flexDirection: "column" }}>
@@ -76,6 +82,7 @@ export const Landing = () => {
           <Button
             variant="contained"
             size="large"
+            disabled={!validateEmail(email)}
             sx={{ borderRadius: 8, py: 1.5, backgroundColor: "text.primary" }}
           >
             Enviar código de acceso
