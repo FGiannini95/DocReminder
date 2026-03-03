@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
-import { Box, Button, TextField, Typography } from "@mui/material";
+import { Alert, Box, Button, TextField, Typography } from "@mui/material";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 
@@ -91,10 +91,18 @@ export const Otp = () => {
         >
           Verificar código
         </Button>
-      </Box>
 
-      {/* Link "Reenviar código" con countdown */}
-      {/* Warning che il codice scade in 15 minuti</> */}
+        {/* Link and countdown */}
+        <Box sx={{ display: "flex", flexDirection: "column" }}>
+          <Typography color="text.secondary">¿No recibiste el código?</Typography>
+          <Typography fontWeight="bold">Renviar código (0:47)</Typography>
+        </Box>
+
+        {/* Warning */}
+        <Alert severity="warning" sx={{ width: "100%", borderRadius: 2 }}>
+          Código válido durante 5 minutos
+        </Alert>
+      </Box>
     </Box>
   );
 };
