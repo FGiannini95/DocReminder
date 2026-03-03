@@ -30,35 +30,29 @@ export const Otp = () => {
 
   return (
     <Box sx={{ height: "100dvh", display: "flex", flexDirection: "column" }}>
-      {/* Top bar */}
+      {/* Hero with back button and icon */}
       <Box
         sx={{
-          px: 3,
-          py: 1.5,
+          ...sectionStyles,
+          flex: 1,
+          gap: 1,
+          justifyContent: "center",
           backgroundColor: "grey.900",
+          position: "relative",
         }}
       >
         <Button
           onClick={() => navigate(-1)}
           startIcon={<ArrowBackIosIcon fontSize="small" aria-hidden />}
-          sx={{ color: "white" }}
+          sx={{ color: "white", position: "absolute", top: 8, left: 24 }}
         >
           Volver
         </Button>
+
+        <EmailOutlinedIcon sx={{ fontSize: 72, color: "white" }} />
       </Box>
 
-      {/* Icon */}
-      <Box
-        sx={{
-          ...sectionStyles,
-          justifyContent: "center",
-          flex: 1,
-        }}
-      >
-        <EmailOutlinedIcon sx={{ fontSize: 72, color: "primary.text" }} />
-      </Box>
-
-      <Box sx={{ ...sectionStyles, flex: 2, px: 3, gap: 2 }}>
+      <Box sx={{ ...sectionStyles, flex: 2, px: 3, gap: 2, pt: 4 }}>
         {/* Title and subtitle */}
         <Box sx={{ display: "flex", flexDirection: "column" }}>
           <Typography variant="h6" fontWeight="bold">
