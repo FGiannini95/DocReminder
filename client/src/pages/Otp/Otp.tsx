@@ -88,7 +88,7 @@ export const Otp = () => {
 
         {/* Link and countdown */}
         <Box sx={{ display: "flex", flexDirection: "column" }}>
-          <Typography color="text.secondary">¿No recibiste el código?</Typography>
+          <Typography color="text.secondary">¿No has recibido el código?</Typography>
           <Typography fontWeight="bold">Renviar código (0:47)</Typography>
         </Box>
 
