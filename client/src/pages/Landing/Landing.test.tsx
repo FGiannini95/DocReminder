@@ -45,4 +45,14 @@ describe("Landing", () => {
 
     expect(screen.getByRole("button", { name: /enviar código de acceso/i })).toBeEnabled();
   });
+
+  it("shows spinner when loading", async () => {
+    const user = userEvent.setup();
+    renderLanding();
+
+    await user.type(screen.getByLabelText(/correo electrónico/i), "fede@gmail.com");
+    await user.click(screen.getByRole("button", { name: /enviar código de acceso/i }));
+
+    expect(screen.getByRole("progressbar")).toBeInTheDocument();
+  });
 });
