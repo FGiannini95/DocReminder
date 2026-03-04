@@ -1,6 +1,10 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
+import axios from "axios";
+import { vi } from "vitest";
+
+vi.mock("axios");
 
 import { Landing } from "./Landing";
 
@@ -47,6 +51,8 @@ describe("Landing", () => {
   });
 
   it("shows spinner when loading", async () => {
+    vi.mocked(axios.post).mockReturnValue(new Promise(() => {}));
+
     const user = userEvent.setup();
     renderLanding();
 

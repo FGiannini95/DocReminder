@@ -3,11 +3,11 @@ const sgMail = require("@sendgrid/mail");
 const db = require("../config/db");
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
 class authController {
   sendOtp = async (req, res) => {
     const { email } = req.body;
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
     // Email is invalid
     if (!email || !emailRegex.test(email)) {
@@ -16,7 +16,7 @@ class authController {
 
     try {
       // Select user
-      let selectUser = `SELECT user_id, email FROM user WHERE email = ? AND is_deleted = 0`;
+      const selectUser = `SELECT user_id, email FROM user WHERE email = ? AND is_deleted = 0`;
 
       const [rows] = await db.query(selectUser, [email]);
       const user = rows[0];
@@ -49,9 +49,67 @@ class authController {
     }
   };
 
-  verifyOtp = (req, res) => {
-    console.log("body:", req.body);
-    res.json({ message: "ok" });
+  verifyOtp = async (req, res) => {
+    const { email, otpCode } = req.body;
+    const otpRegex = /^\d{6}$/;
+
+    // Email or code are invalid
+    if (
+      !email ||
+      !emailRegex.test(email) ||
+      !otpCode ||
+      !otpRegex.test(otpCode)
+    ) {
+      return res.status(400).json({ message: "Invalid request" });
+    }
+
+    try {
+      // Find user in DB
+      const selectUser = `SELECT user_id, email, otp_code, otp_expires_at FROM user WHERE email = ? AND is_deleted = 0`;
+
+      const [rows] = await db.query(selectUser, [email]);
+      const user = rows[0];
+
+      if (!user) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+      // Verify OTP code matches and is not expired
+      if (
+        user.otp_code !== otpCode ||
+        new Date(user.otp_expires_at) < new Date()
+      ) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+      // Clear OTP from DB
+      const clearOtp = `UPDATE user SET otp_code = NULL, otp_expires_at = NULL WHERE email = ? AND is_deleted = 0`;
+      await db.query(clearOtp, [email]);
+      // Generate access token
+      const accessToken = jwt.sign(
+        { userId: user.user_id },
+        process.env.JWT_ACCESS_SECRET,
+        { expiresIn: "15m" },
+      );
+
+      const refreshToken = jwt.sign(
+        { userId: user.user_id },
+        process.env.JWT_REFRESH_SECRET,
+        { expiresIn: "30d" },
+      );
+      // Save refresh token to DB
+      const updateToken = `UPDATE user SET refresh_token = ? WHERE email = ? and is_deleted = 0`;
+      await db.query(updateToken, [refreshToken, email]);
+      // Send refresh token as httpOnly cookie
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+      });
+      // Respond with access token
+      return res.status(200).json({ accessToken, message: "Code verified" });
+    } catch (err) {
+      return res.status(500).json({ message: "Internal server error" });
+    }
   };
 }
 

@@ -1,6 +1,10 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
+import axios from "axios";
+import { vi } from "vitest";
+
+vi.mock("axios");
 
 import { Otp } from "./Otp";
 
@@ -49,5 +53,20 @@ describe("Otp", () => {
     }
 
     expect(screen.getByRole("button", { name: /verificar código/i })).toBeEnabled();
+  });
+
+  it("shows spinner when loading", async () => {
+    vi.mocked(axios.post).mockReturnValue(new Promise(() => {}));
+
+    const user = userEvent.setup();
+    renderOtp();
+
+    const inputs = screen.getAllByRole("textbox");
+    for (const input of inputs) {
+      await user.type(input, "1");
+    }
+    await user.click(screen.getByRole("button", { name: /verificar código/i }));
+
+    expect(screen.getByRole("progressbar")).toBeInTheDocument();
   });
 });

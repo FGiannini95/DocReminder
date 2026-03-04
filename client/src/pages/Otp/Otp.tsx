@@ -1,12 +1,16 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
 
-import { Alert, Box, Button, TextField, Typography } from "@mui/material";
+import { Alert, Box, Button, CircularProgress, TextField, Typography } from "@mui/material";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 
 import { validateOtp } from "@/utils/validation";
 import { PageTransition } from "@/components";
+import { DocReminderRoutes } from "@/routes/routes";
+import { AUTH_URL } from "@/api";
+import { vibrate } from "@/utils/haptics";
 
 // Shared styles for sections
 const sectionStyles = {
@@ -18,6 +22,7 @@ const sectionStyles = {
 
 export const Otp = () => {
   const [otp, setOtp] = useState<string[]>(Array(6).fill(""));
+  const [isLoading, setIsLoading] = useState(false);
 
   const { state } = useLocation();
   const navigate = useNavigate();
@@ -27,6 +32,19 @@ export const Otp = () => {
     const newOtp = [...otp];
     newOtp[index] = value;
     setOtp(newOtp);
+  };
+
+  const handleSubmit = () => {
+    setIsLoading(true);
+    axios
+      .post(`${AUTH_URL}/otp/verify`, { email, otpCode: otp.join("") })
+      .then(() => {
+        navigate(DocReminderRoutes.home);
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+      });
   };
 
   return (
@@ -83,9 +101,13 @@ export const Otp = () => {
             variant="contained"
             size="large"
             disabled={!validateOtp(otp.join(""))}
+            onClick={() => {
+              vibrate();
+              handleSubmit();
+            }}
             sx={{ borderRadius: 8, py: 1.5, backgroundColor: "text.primary" }}
           >
-            Verificar código
+            {isLoading ? <CircularProgress size={24} color="inherit" /> : "Verificar código"}{" "}
           </Button>
 
           {/* Link and countdown */}
