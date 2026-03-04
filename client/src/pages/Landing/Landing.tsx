@@ -9,6 +9,7 @@ import { validateEmail } from "@/utils/validation";
 import { vibrate } from "@/utils/haptics";
 import { DocReminderRoutes } from "@/routes/routes";
 import { PageTransition } from "@/components";
+import { AUTH_URL } from "@/api";
 
 // Shared styles for sections
 const sectionStyles = {
@@ -26,7 +27,7 @@ export const Landing = () => {
   const handleSubmit = () => {
     setIsLoading(true);
     axios
-      .post("http://localhost:3000/auth/otp", { email })
+      .post(`${AUTH_URL}/otp`, { email })
       .then(() => {
         navigate(DocReminderRoutes.otp, { state: { email } });
       })
