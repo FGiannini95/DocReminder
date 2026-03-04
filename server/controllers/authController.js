@@ -1,6 +1,8 @@
 const jwt = require("jsonwebtoken");
-require("dotenv").config();
+const sgMail = require("@sendgrid/mail");
 const db = require("../config/db");
+
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 class authController {
   sendOtp = async (req, res) => {
@@ -25,9 +27,23 @@ class authController {
         await db.query(insertUser, [email]);
       }
       // Generate OTP
+      const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+      const otpExpiry = new Date(Date.now() + 10 * 60 * 1000);
       // Save OTP to DB
+      const updateOtp = `UPDATE user SET otp_code = ?, otp_expires_at = ? WHERE email = ? AND is_deleted = 0`;
+      await db.query(updateOtp, [otpCode, otpExpiry, email]);
       // Send email
+      const msg = {
+        to: email,
+        from: process.env.SENDGRID_FROM,
+        subject: "Tu código de acceso a DocReminder",
+        text: `Tu código de acceso es: ${otpCode}. Válido durante 10 minutos.`,
+      };
+
+      await sgMail.send(msg);
+
       // Respond
+      return res.status(200).json({ message: "Access code sent" });
     } catch (err) {
       return res.status(500).json({ message: "Internal server error" });
     }
