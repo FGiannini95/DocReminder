@@ -1,16 +1,19 @@
 import React from "react";
 
-import { Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 
-import { PageTransition } from "@/components";
+import { BottomNav, DocumentCard, PageTransition } from "@/components";
+import { HomeHeader } from "./components/HomeHeader";
+import { StatusBlocks } from "./components/StatusBlocks";
 
 export const Home = () => {
   return (
     <PageTransition>
       <Box sx={{ height: "100dvh", display: "flex", flexDirection: "column" }}>
-        <Typography variant="h4" fontWeight="bold">
-          ¡Bienvenido en home!
-        </Typography>
+        <HomeHeader />
+        <StatusBlocks />
+        <DocumentCard />
+        <BottomNav />
       </Box>
     </PageTransition>
   );
