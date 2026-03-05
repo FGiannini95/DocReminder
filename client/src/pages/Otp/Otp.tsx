@@ -47,7 +47,7 @@ export const Otp = () => {
       .post(`${AUTH_URL}/otp/verify`, { email, otpCode: otp.join("") }, { withCredentials: true })
       .then((res) => {
         login(res.data.accessToken);
-        navigate(DocReminderRoutes.home);
+        navigate(DocReminderRoutes.security, { state: { email } });
       })
       .catch((err) => {
         console.log(err);

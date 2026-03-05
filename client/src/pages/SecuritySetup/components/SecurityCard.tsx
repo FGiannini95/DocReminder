@@ -15,7 +15,7 @@ export const SecurityCard = ({
   onActivate,
 }: SecurityCardProps) => {
   return (
-    <Card sx={{ width: "100%", border: "2px solid", borderRadius: "10px" }}>
+    <Card sx={{ width: "100%", border: "2px solid", borderRadius: 8 }}>
       <CardContent>
         <Typography gutterBottom variant="h5" component="div">
           {title}
@@ -27,7 +27,13 @@ export const SecurityCard = ({
       <CardActions>
         <Button
           size="small"
-          sx={{ backgroundColor: "grey.900", color: "white", width: "100%" }}
+          sx={{
+            backgroundColor: "grey.900",
+            color: "white",
+            width: "100%",
+            borderRadius: 8,
+            py: 1.5,
+          }}
           onClick={onActivate}
         >
           {buttonLabel}

@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import { Box, Typography } from "@mui/material";
 
@@ -18,6 +18,10 @@ const sectionStyles = {
 
 export const SecuritySetup = () => {
   const navigate = useNavigate();
+  const { state } = useLocation();
+  const email = state?.email;
+  const emailPrefix = email?.split("@")[0];
+
   return (
     <PageTransition>
       <Box sx={{ height: "100dvh", display: "flex", flexDirection: "column" }}>
@@ -32,7 +36,7 @@ export const SecuritySetup = () => {
           }}
         >
           <Typography variant="h4" fontWeight="bold" color="white">
-            ¡Bienvenido Federico!
+            ¡Bienvenido {emailPrefix}!
           </Typography>
           <Typography color="grey.400">Configura el acceso rápido.</Typography>
         </Box>
