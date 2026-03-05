@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -23,6 +23,8 @@ const sectionStyles = {
 export const Otp = () => {
   const [otp, setOtp] = useState<string[]>(Array(6).fill(""));
   const [isLoading, setIsLoading] = useState(false);
+  const [isResending, setIsResending] = useState(false);
+  const [countdown, setCountdown] = useState(60);
 
   const { state } = useLocation();
   const navigate = useNavigate();
@@ -44,6 +46,33 @@ export const Otp = () => {
       .catch((err) => {
         console.log(err);
         setIsLoading(false);
+      });
+  };
+
+  // Decrement countdown every second, stop at 0
+  useEffect(() => {
+    if (countdown === 0) return;
+
+    const timer = setInterval(() => {
+      setCountdown((prev) => prev - 1);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [countdown]);
+
+  const formattedCountdown = `0:${countdown < 10 ? `0${countdown}` : countdown}`;
+
+  const handleResend = () => {
+    console.log(email);
+    axios
+      .post(`${AUTH_URL}/otp`, { email })
+      .then(() => {
+        setCountdown(60);
+        setIsResending(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsResending(false);
       });
   };
 
@@ -90,7 +119,16 @@ export const Otp = () => {
                 value={digit}
                 onChange={(e) => handleChange(e.target.value, i)}
                 inputProps={{ maxLength: 1, style: { textAlign: "center" } }}
-                sx={{ width: 44 }}
+                sx={{
+                  // Border color when input is focused
+                  "& .MuiOutlinedInput-root.Mui-focused fieldset": {
+                    borderColor: "text.primary",
+                  },
+                  // Label color when focused
+                  "& .MuiInputLabel-root.Mui-focused": {
+                    color: "text.primary",
+                  },
+                }}
               />
             ))}
           </Box>
@@ -110,15 +148,23 @@ export const Otp = () => {
             {isLoading ? <CircularProgress size={24} color="inherit" /> : "Verificar código"}{" "}
           </Button>
 
-          {/* Link and countdown */}
+          {/* Countdown */}
           <Box sx={{ display: "flex", flexDirection: "column" }}>
             <Typography color="text.secondary">¿No has recibido el código?</Typography>
-            <Typography fontWeight="bold">Renviar código (0:47)</Typography>
+            <Typography
+              fontWeight="bold"
+              onClick={countdown === 0 && !isResending ? handleResend : undefined}
+              sx={{
+                opacity: countdown === 0 ? 1 : 0.5,
+              }}
+            >
+              {countdown === 0 ? "Reenviar código" : `Reenviar código (${formattedCountdown})`}
+            </Typography>{" "}
           </Box>
 
           {/* Warning */}
           <Alert severity="warning" sx={{ width: "100%", borderRadius: 2 }}>
-            Código válido durante 5 minutos
+            Código válido durante 10 minutos
           </Alert>
         </Box>
       </Box>
