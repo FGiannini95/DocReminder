@@ -40,7 +40,7 @@ export const Landing = () => {
   return (
     <PageTransition>
       <Box sx={{ height: "100dvh", display: "flex", flexDirection: "column" }}>
-        {/* Hero */}
+        {/* Header */}
         <Box
           sx={{
             ...sectionStyles,

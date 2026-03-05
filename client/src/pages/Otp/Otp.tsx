@@ -87,7 +87,7 @@ export const Otp = () => {
   return (
     <PageTransition>
       <Box sx={{ height: "100dvh", display: "flex", flexDirection: "column" }}>
-        {/* Hero with back button and icon */}
+        {/* Header*/}
         <Box
           sx={{
             ...sectionStyles,
@@ -174,7 +174,7 @@ export const Otp = () => {
               }}
             >
               {countdown === 0 ? "Reenviar código" : `Reenviar código (${formattedCountdown})`}
-            </Typography>{" "}
+            </Typography>
           </Box>
 
           {/* Warning */}
