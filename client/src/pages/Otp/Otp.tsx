@@ -27,6 +27,7 @@ export const Otp = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isResending, setIsResending] = useState(false);
   const [countdown, setCountdown] = useState(60);
+  const [error, setError] = useState<string | null>(null);
 
   const { login } = useAuth();
   const { state } = useLocation();
@@ -34,6 +35,7 @@ export const Otp = () => {
   const email = state?.email;
 
   const handleChange = (value: string, index: number) => {
+    setError(null);
     const newOtp = [...otp];
     newOtp[index] = value;
     setOtp(newOtp);
@@ -42,13 +44,14 @@ export const Otp = () => {
   const handleSubmit = () => {
     setIsLoading(true);
     axios
-      .post(`${AUTH_URL}/otp/verify`, { email, otpCode: otp.join("") })
+      .post(`${AUTH_URL}/otp/verify`, { email, otpCode: otp.join("") }, { withCredentials: true })
       .then((res) => {
         login(res.data.accessToken);
         navigate(DocReminderRoutes.home);
       })
       .catch((err) => {
         console.log(err);
+        setError("Código incorecto o expirado");
         setIsLoading(false);
       });
   };
@@ -70,7 +73,7 @@ export const Otp = () => {
     vibrate();
     setIsResending(true);
     axios
-      .post(`${AUTH_URL}/otp`, { email })
+      .post(`${AUTH_URL}/otp`, { email }, { withCredentials: true })
       .then(() => {
         setCountdown(60);
         setIsResending(false);
@@ -152,6 +155,13 @@ export const Otp = () => {
           >
             {isLoading ? <CircularProgress size={24} color="inherit" /> : "Verificar código"}{" "}
           </Button>
+
+          {/* Error */}
+          {error && (
+            <Alert severity="error" sx={{ width: "100%" }}>
+              {error}
+            </Alert>
+          )}
 
           {/* Countdown */}
           <Box sx={{ display: "flex", flexDirection: "column" }}>
