@@ -3,19 +3,23 @@ import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
 import axios from "axios";
 import { vi } from "vitest";
+import { AuthProvider } from "@/context";
 
 vi.mock("axios");
+vi.mocked(axios.post).mockResolvedValue({ data: { newAccessToken: null } });
 
 import { Otp } from "./Otp";
 
 // Wrap with MemoryRouter to provide router context
 const renderOtp = () =>
   render(
-    <MemoryRouter initialEntries={[{ pathname: "/otp", state: { email: "fede@gmail.com" } }]}>
-      <Routes>
-        <Route path="/otp" element={<Otp />} />
-      </Routes>
-    </MemoryRouter>
+    <AuthProvider>
+      <MemoryRouter initialEntries={[{ pathname: "/otp", state: { email: "fede@gmail.com" } }]}>
+        <Routes>
+          <Route path="/otp" element={<Otp />} />
+        </Routes>
+      </MemoryRouter>
+    </AuthProvider>
   );
 
 describe("Otp", () => {
