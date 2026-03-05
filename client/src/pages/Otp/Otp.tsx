@@ -63,7 +63,8 @@ export const Otp = () => {
   const formattedCountdown = `0:${countdown < 10 ? `0${countdown}` : countdown}`;
 
   const handleResend = () => {
-    console.log(email);
+    vibrate();
+    setIsResending(true);
     axios
       .post(`${AUTH_URL}/otp`, { email })
       .then(() => {
