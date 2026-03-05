@@ -87,7 +87,7 @@ class authController {
       const accessToken = jwt.sign(
         { userId: user.user_id },
         process.env.JWT_ACCESS_SECRET,
-        { expiresIn: "15m" },
+        { expiresIn: "10m" },
       );
 
       const refreshToken = jwt.sign(

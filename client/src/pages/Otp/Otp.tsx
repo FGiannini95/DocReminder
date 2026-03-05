@@ -12,6 +12,8 @@ import { DocReminderRoutes } from "@/routes/routes";
 import { AUTH_URL } from "@/api";
 import { vibrate } from "@/utils/haptics";
 
+import { useAuth } from "@/context";
+
 // Shared styles for sections
 const sectionStyles = {
   display: "flex",
@@ -26,6 +28,7 @@ export const Otp = () => {
   const [isResending, setIsResending] = useState(false);
   const [countdown, setCountdown] = useState(60);
 
+  const { login } = useAuth();
   const { state } = useLocation();
   const navigate = useNavigate();
   const email = state?.email;
@@ -40,7 +43,8 @@ export const Otp = () => {
     setIsLoading(true);
     axios
       .post(`${AUTH_URL}/otp/verify`, { email, otpCode: otp.join("") })
-      .then(() => {
+      .then((res) => {
+        login(res.data.accessToken);
         navigate(DocReminderRoutes.home);
       })
       .catch((err) => {
