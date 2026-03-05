@@ -5,5 +5,6 @@ const authController = require("../controllers/authController");
 // base path http://localhost:3000/auth
 router.post("/otp", authController.sendOtp);
 router.post("/otp/verify", authController.verifyOtp);
+router.post("/refresh", authController.refresh);
 
 module.exports = router;

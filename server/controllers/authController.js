@@ -4,6 +4,7 @@ const db = require("../config/db");
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+const isDev = process.env.NODE_ENV === "development";
 
 class authController {
   sendOtp = async (req, res) => {
@@ -109,6 +110,54 @@ class authController {
       return res.status(200).json({ accessToken, message: "Code verified" });
     } catch (err) {
       return res.status(500).json({ message: "Internal server error" });
+    }
+  };
+
+  refresh = async (req, res) => {
+    // Read refreshToken from httpOnly cookie
+    const token = req.cookies.refreshToken;
+    if (!token) {
+      return res.status(401).json({
+        message: isDev ? "Token not found in cookie" : "Unauthorized",
+      });
+    }
+
+    try {
+      // Verify refreshToken
+      const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
+      // Find user in DB
+      const selectUser = `SELECT user_id, refresh_token FROM user WHERE user_id = ? AND is_deleted = 0`;
+      const [rows] = await db.query(selectUser, [decoded.userId]);
+      const user = rows[0];
+
+      if (!user) {
+        return res
+          .status(401)
+          .json({ message: isDev ? "User not found" : "Unauthorized" });
+      }
+
+      // Check refreshToken in DB matches the one in cookies
+      if (user.refresh_token !== token) {
+        return res
+          .status(401)
+          .json({ message: isDev ? "The tokens don't match" : "Unauthorized" });
+      }
+
+      // Generate new accessToken
+      const newAccessToken = jwt.sign(
+        { userId: user.user_id },
+        process.env.JWT_ACCESS_SECRET,
+        { expiresIn: "10m" },
+      );
+
+      // Respond with new accessToken
+      return res
+        .status(200)
+        .json({ newAccessToken, message: "Token refreshed" });
+    } catch (err) {
+      return res.status(401).json({
+        message: isDev ? err.message : "Unauthorized",
+      });
     }
   };
 }
