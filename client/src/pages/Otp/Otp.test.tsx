@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, act } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
 import axios from "axios";
@@ -68,5 +68,26 @@ describe("Otp", () => {
     await user.click(screen.getByRole("button", { name: /verificar código/i }));
 
     expect(screen.getByRole("progressbar")).toBeInTheDocument();
+  });
+
+  it("disables resend button when countdown is active", () => {
+    renderOtp();
+    const resendLink = screen.getByText(/reenviar código/i);
+    expect(resendLink).toHaveStyle({ opacity: "0.5" });
+  });
+
+  it("enables resend button when countdown reaches 0", () => {
+    vi.useFakeTimers();
+    renderOtp();
+
+    // Advance time by 60 seconds and trigger React re-render
+    act(() => {
+      vi.advanceTimersByTime(60000);
+    });
+
+    const resendLink = screen.getByText(/reenviar código/i);
+    expect(resendLink).toHaveStyle({ opacity: "1" });
+
+    vi.useRealTimers();
   });
 });
