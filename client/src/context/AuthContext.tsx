@@ -1,5 +1,8 @@
-import React, { createContext, useCallback, useContext, useMemo, useState } from "react";
+import React, { createContext, useCallback, useContext, useMemo, useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
+import axios from "axios";
+
+import { AUTH_URL } from "@/api";
 
 interface AuthContextType {
   user: number | null;
@@ -25,6 +28,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setUser(decoded.userId);
     setIsLogged(true);
   }, []);
+
+  useEffect(() => {
+    setIsLoading(true);
+    // general structure axios.post(url, body, config)
+    axios
+      .post(`${AUTH_URL}/refresh`, {}, { withCredentials: true })
+      .then((res) => {
+        login(res.data.newAccessToken);
+        setIsLoading(false);
+      })
+      .catch(() => {
+        setIsLoading(false);
+        setIsLogged(false);
+      });
+  }, [login]);
 
   const value = useMemo(
     () => ({
