@@ -5,7 +5,7 @@ import { EmptyState } from "../EmptyState/EmptyState";
 
 export const DocumentCard = () => {
   return (
-    <Box sx={{ px: 3 }}>
+    <Box sx={{ px: 3, pb: 3 }}>
       <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
         {/* TODO: replace "federico" with emailPrefix prop */}
         <Typography variant="h6" fontWeight="bold">

@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 import { Box, Fab } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
@@ -6,8 +7,11 @@ import AddIcon from "@mui/icons-material/Add";
 import { BottomNav, DocumentCard, GroupCard, PageTransition } from "@/components";
 import { HomeHeader } from "./components/HomeHeader";
 import { StatusBlocks } from "./components/StatusBlocks";
+import { DocReminderRoutes } from "@/routes/routes";
 
 export const Home = () => {
+  const navigate = useNavigate();
+
   return (
     <PageTransition>
       <Box sx={{ height: "100dvh", display: "flex", flexDirection: "column" }}>
@@ -29,7 +33,10 @@ export const Home = () => {
           <GroupCard />
         </Box>
 
-        <Fab sx={{ position: "fixed", bottom: 72, right: 16 }}>
+        <Fab
+          sx={{ position: "fixed", bottom: 72, right: 16 }}
+          onClick={() => navigate(DocReminderRoutes.addDocument)}
+        >
           <AddIcon />
         </Fab>
 
