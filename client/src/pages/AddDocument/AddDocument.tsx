@@ -47,13 +47,12 @@ interface AddDocumentForm {
   type: DocumentType | "";
   name: string;
   documentNumber: string;
-  expiryDate: Date | null;
+  expiryDate: Dayjs | null;
   reminderDays: number[];
   personalNote: string;
 }
 
 export const AddDocument = () => {
-  const navigate = useNavigate();
   const [form, setForm] = useState<AddDocumentForm>({
     type: "",
     name: "",
@@ -63,6 +62,7 @@ export const AddDocument = () => {
     personalNote: "",
   });
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = <K extends keyof AddDocumentForm>(field: K, value: AddDocumentForm[K]) => {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -114,8 +114,8 @@ export const AddDocument = () => {
           <TextField
             type="text"
             label="Nombre"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            value={form.name}
+            onChange={(e) => handleChange("name", e.target.value)}
             variant="outlined"
             sx={textFieldSx}
           />
@@ -124,19 +124,33 @@ export const AddDocument = () => {
           <TextField
             type="text"
             label="Nº de documento (opcional)"
+            value={form.documentNumber}
+            onChange={(e) => handleChange("documentNumber", e.target.value)}
             variant="outlined"
             sx={textFieldSx}
           />
           {/* Expiry date picker */}
           <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
-            <MobileDatePicker label="Fecha de vencimiento" sx={textFieldSx} />
+            <MobileDatePicker
+              label="Fecha de vencimiento"
+              value={form.expiryDate}
+              onChange={(value) => handleChange("expiryDate", value)}
+              sx={textFieldSx}
+            />
           </LocalizationProvider>
 
           {/* Reminder days */}
           <TextField type="text" label="Recordatorio" variant="outlined" sx={textFieldSx} />
 
           {/* Personal notes */}
-          <TextField type="text" label="Notas" variant="outlined" sx={textFieldSx} />
+          <TextField
+            type="text"
+            label="Notas"
+            value={form.personalNote}
+            onChange={(e) => handleChange("personalNote", e.target.value)}
+            variant="outlined"
+            sx={textFieldSx}
+          />
 
           {/* Save button */}
           <Button
