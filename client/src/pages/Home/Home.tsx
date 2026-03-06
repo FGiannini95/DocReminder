@@ -1,8 +1,9 @@
 import React from "react";
 
-import { Box } from "@mui/material";
+import { Box, Fab } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
 
-import { BottomNav, DocumentCard, PageTransition } from "@/components";
+import { BottomNav, DocumentCard, GroupCard, PageTransition } from "@/components";
 import { HomeHeader } from "./components/HomeHeader";
 import { StatusBlocks } from "./components/StatusBlocks";
 
@@ -25,7 +26,13 @@ export const Home = () => {
         >
           <StatusBlocks urgent={2} upcoming={6} ok={1} />
           <DocumentCard />
+          <GroupCard />
         </Box>
+
+        <Fab sx={{ position: "fixed", bottom: 72, right: 16 }}>
+          <AddIcon />
+        </Fab>
+
         <BottomNav />
       </Box>
     </PageTransition>
