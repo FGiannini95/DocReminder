@@ -2,7 +2,7 @@ import React from "react";
 import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 
-import { Home, Landing, Otp, SecuritySetup } from "@/pages";
+import { Home, Landing, Otp, Profile, SecuritySetup } from "@/pages";
 import { DocReminderRoutes } from "./routes/routes";
 
 const AppRoutes = () => {
@@ -17,6 +17,7 @@ const AppRoutes = () => {
           <Route path={DocReminderRoutes.landing} element={<Landing />} />
           <Route path={DocReminderRoutes.otp} element={<Otp />} />
           <Route path={DocReminderRoutes.security} element={<SecuritySetup />} />
+          <Route path={DocReminderRoutes.profile} element={<Profile />} />
         </Routes>
       </AnimatePresence>
       {/* </PwaProvider>

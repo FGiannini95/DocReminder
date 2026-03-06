@@ -3,4 +3,5 @@ export const DocReminderRoutes = {
   landing: "/landing",
   otp: "/otp",
   security: "/security",
+  profile: "/profile",
 };
