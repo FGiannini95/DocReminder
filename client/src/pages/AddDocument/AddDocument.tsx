@@ -18,6 +18,7 @@ import {
   MenuItem,
   FormHelperText,
   IconButton,
+  Chip,
 } from "@mui/material";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 
@@ -66,6 +67,14 @@ export const AddDocument = () => {
 
   const handleChange = <K extends keyof AddDocumentForm>(field: K, value: AddDocumentForm[K]) => {
     setForm((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const REMINDER_OPTIONS = [7, 14, 30, 60, 90, 180];
+
+  const toggleReminderDay = (day: number) => {
+    const current = form.reminderDays;
+    const updated = current.includes(day) ? current.filter((d) => d !== day) : [...current, day];
+    handleChange("reminderDays", updated);
   };
 
   return (
@@ -140,7 +149,38 @@ export const AddDocument = () => {
           </LocalizationProvider>
 
           {/* Reminder days */}
-          <TextField type="text" label="Recordatorio" variant="outlined" sx={textFieldSx} />
+          <Box>
+            <Typography variant="body2" color="text.secondary" mb={1}>
+              Recordatorio
+            </Typography>
+            <Box
+              sx={{
+                display: "grid",
+                gridTemplateColumns: "repeat(3, 1fr)",
+                gap: 1,
+              }}
+            >
+              {REMINDER_OPTIONS.map((day) => {
+                const selected = form.reminderDays.includes(day);
+                return (
+                  <Chip
+                    key={day}
+                    label={`${day} días`}
+                    onClick={() => toggleReminderDay(day)}
+                    variant={selected ? "filled" : "outlined"}
+                    sx={{
+                      backgroundColor: selected ? "text.primary" : "transparent",
+                      color: selected ? "background.default" : "text.primary",
+                      borderColor: "text.primary",
+                      "&:hover": {
+                        backgroundColor: selected ? "text.primary" : "action.hover",
+                      },
+                    }}
+                  />
+                );
+              })}
+            </Box>
+          </Box>
 
           {/* Personal notes */}
           <TextField
