@@ -66,8 +66,11 @@ class authController {
 
     try {
       // Find user in DB
-      const selectUser = `SELECT user_id, email, otp_code, otp_expires_at FROM user WHERE email = ? AND is_deleted = 0`;
-
+      const selectUser = `
+         SELECT user_id, email, otp_code, otp_expires_at 
+         FROM user 
+         WHERE email = ? AND is_deleted = 0
+        `;
       const [rows] = await db.query(selectUser, [email]);
       const user = rows[0];
 
