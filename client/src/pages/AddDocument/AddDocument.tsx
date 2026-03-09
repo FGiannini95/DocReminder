@@ -19,6 +19,7 @@ import {
   FormHelperText,
   IconButton,
   Chip,
+  Divider,
 } from "@mui/material";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 
@@ -133,6 +134,7 @@ export const AddDocument = () => {
               Añadir documento
             </Typography>
           </Box>
+          <Divider sx={{ borderColor: "grey.700" }} />
         </Box>
 
         {/* Scrollable content */}
