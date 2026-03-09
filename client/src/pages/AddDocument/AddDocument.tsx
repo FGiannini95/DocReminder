@@ -60,11 +60,14 @@ export const AddDocument = () => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Partial<Record<keyof AddDocumentForm, string>>>({});
+  const [dateOpen, setDateOpen] = useState<boolean>(false);
+
   const navigate = useNavigate();
 
   const validate = () => {
     const newErrors: Partial<Record<keyof AddDocumentForm, string>> = {};
     if (!form.type) newErrors.type = "Campo obligatorio";
+    if (form.name && form.name.trim().length < 2) newErrors.name = "Mínimo 2 caracteres";
     if (!form.expiryDate) newErrors.expiryDate = "Campo obligatorio";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -173,6 +176,8 @@ export const AddDocument = () => {
             onChange={(e) => handleChange("name", e.target.value)}
             variant="outlined"
             sx={textFieldSx}
+            error={!!errors.name}
+            helperText={errors.name}
           />
 
           {/* Document number input (optional) */}
@@ -188,12 +193,20 @@ export const AddDocument = () => {
           {/* Expiry date picker */}
           <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
             <MobileDatePicker
+              open={dateOpen}
+              onOpen={() => setDateOpen(true)}
+              onClose={() => setDateOpen(false)}
               label="Fecha de vencimiento"
               value={form.expiryDate}
               onChange={(value) => handleChange("expiryDate", value)}
               minDate={dayjs()} // Disable previous days
               slotProps={{
                 textField: {
+                  onMouseDown: (e) => {
+                    e.preventDefault();
+                    setDateOpen(true);
+                  },
+                  inputProps: { tabIndex: -1 }, // Remove focus from input
                   sx: textFieldSx,
                   required: true,
                   error: !!errors.expiryDate,
@@ -245,6 +258,12 @@ export const AddDocument = () => {
                       backgroundColor: selected ? "text.primary" : "transparent",
                       color: selected ? "background.default" : "text.primary",
                       borderColor: "text.primary",
+                      "&:hover": {
+                        backgroundColor: selected ? "text.primary" : "transparent",
+                      },
+                      "&&.MuiChip-root:active": {
+                        backgroundColor: selected ? "text.primary" : "transparent",
+                      },
                     }}
                   />
                 );
