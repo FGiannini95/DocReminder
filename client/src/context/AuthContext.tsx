@@ -2,7 +2,7 @@ import React, { createContext, useCallback, useContext, useMemo, useState, useEf
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 
-import { AUTH_URL } from "@/api";
+import { AUTH_URL } from "@/api/apiConfig";
 
 interface AuthContextType {
   user: number | null;

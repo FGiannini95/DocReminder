@@ -9,7 +9,7 @@ import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import { validateOtp } from "@/utils/validation";
 import { PageTransition } from "@/components";
 import { DocReminderRoutes } from "@/routes/routes";
-import { AUTH_URL } from "@/api";
+import { AUTH_URL } from "@/api/apiConfig";
 import { vibrate } from "@/utils/haptics";
 
 import { useAuth } from "@/context";
