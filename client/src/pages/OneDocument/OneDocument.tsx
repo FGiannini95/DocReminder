@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Box, Button, Divider, IconButton, Typography } from "@mui/material";
+import { Alert, Box, Button, Divider, IconButton, Typography } from "@mui/material";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 
 import { BottomNav, PageTransition } from "@/components";
@@ -33,7 +33,7 @@ export const OneDocument = () => {
   const daysUntil = (dateStr: string) =>
     Math.ceil((new Date(dateStr).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
 
-  const days = daysUntil("2026-04-04");
+  const days = daysUntil("2026-03-13");
 
   const navigate = useNavigate();
   return (
@@ -79,9 +79,14 @@ export const OneDocument = () => {
             "&::-webkit-scrollbar": { display: "none" },
           }}
         >
+          {days <= 30 && <Alert severity="error"> Date prisa. Caduca en {days} días</Alert>}
+          {days <= 60 && days > 30 && (
+            <Alert severity="warning">Caduca pronto, en {days} días</Alert>
+          )}
+          <InfoRow label="Nombre" value="Carnet Fede" />
           <InfoRow label="Tipo de documento" value="Carnet de conducir" />
           <InfoRow label="Número" value="AAB123456" />
-          <InfoRow label="Fecha de caducidad" value="15/03/2026" />
+          <InfoRow label="Fecha de caducidad" value="15/05/2026" />
           <InfoRow label="Recordatorio" value="60d, 14d" />
           <Box>
             <Typography variant="body2" color="text.secondary" mb={1}>
@@ -93,7 +98,6 @@ export const OneDocument = () => {
               </Typography>
             </Box>
           </Box>
-
           {/* Actions buttons */}
           <Box sx={{ display: "flex", gap: 2 }}>
             <Button
