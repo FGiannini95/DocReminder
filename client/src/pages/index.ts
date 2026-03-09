@@ -4,3 +4,4 @@ export { Otp } from "./Otp/Otp";
 export { SecuritySetup } from "./SecuritySetup/SecuritySetup";
 export { Profile } from "./Profile/Profile";
 export { AddDocument } from "./AddDocument/AddDocument";
+export { OneDocument } from "./OneDocument/OneDocument";

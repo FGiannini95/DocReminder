@@ -20,7 +20,7 @@ AuthContext.displayName = "AuthContext";
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<number | null>(null);
   const [accessToken, setAccessToken] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isLogged, setIsLogged] = useState<boolean>(false);
 
   const login = useCallback((token: string) => {
