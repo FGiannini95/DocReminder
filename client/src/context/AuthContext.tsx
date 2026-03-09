@@ -3,6 +3,7 @@ import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 
 import { AUTH_URL } from "@/api/apiConfig";
+import { setAuthToken } from "@/api/axiosInstance";
 
 interface AuthContextType {
   user: number | null;
@@ -24,6 +25,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const login = useCallback((token: string) => {
     setAccessToken(token);
+    setAuthToken(token);
     const decoded = jwtDecode<{ userId: number }>(token);
     setUser(decoded.userId);
     setIsLogged(true);

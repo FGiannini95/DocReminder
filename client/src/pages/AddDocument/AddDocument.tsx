@@ -23,6 +23,8 @@ import {
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 
 import { PageTransition } from "@/components";
+import axiosInstance from "@/api/axiosInstance";
+import { DOC_URL } from "@/api/apiConfig";
 
 const textFieldSx = {
   "& .MuiOutlinedInput-root.Mui-focused fieldset": {
@@ -83,7 +85,24 @@ export const AddDocument = () => {
 
   const handleSubmit = () => {
     if (!validate()) return;
+    setIsLoading(true);
     // chiamata API
+    axiosInstance
+      .post(`${DOC_URL}/adddocument`, {
+        type: form.type,
+        name: form.name,
+        document_number: form.documentNumber,
+        expiry_date: form.expiryDate?.format("YYYY-MM-DD"),
+        reminder_days: form.reminderDays,
+        personal_note: form.personalNote,
+      })
+      .then(() => {
+        navigate(-1);
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+      });
     console.log(form);
   };
 

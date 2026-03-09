@@ -14,3 +14,4 @@ const getApiBase = (): string => {
 
 export const API_BASE = getApiBase();
 export const AUTH_URL = `${API_BASE}/auth`;
+export const DOC_URL = `${API_BASE}/documents`;

@@ -6,6 +6,7 @@ var logger = require("morgan");
 const cors = require("cors");
 
 var authRouter = require("./routes/auth");
+var docRouther = require("./routes/document");
 
 var app = express();
 
@@ -35,6 +36,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // API routes
 app.use("/auth", authRouter);
+app.use("/documents", docRouther);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
