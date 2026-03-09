@@ -17,7 +17,7 @@ class docController {
       `;
 
       await db.query(insertDocument, [
-        req.user.user_id,
+        req.user.userId,
         data.type,
         data.name,
         data.document_number || null,
