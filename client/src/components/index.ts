@@ -5,3 +5,4 @@ export { DocumentCard } from "./DocumentCard/DocumentCard.tsx";
 export { BottomNav } from "./BottomNav/BottomNav.tsx";
 export { EmptyState } from "./EmptyState/EmptyState.tsx";
 export { GroupCard } from "./GroupCard/GroupCard.tsx";
+export { DocumentHeader } from "./DocumentHeader/DocumentHeader.tsx";

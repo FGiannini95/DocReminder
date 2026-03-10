@@ -14,7 +14,7 @@ export const setAuthToken = (token: string | null) => {
   authToken = token;
 };
 
-const axiosInstance = axios.create({
+export const axiosInstance = axios.create({
   withCredentials: true, // sends httpOnly cookie automatically
 });
 
@@ -50,5 +50,3 @@ axiosInstance.interceptors.response.use(
     return Promise.reject(error);
   }
 );
-
-export default axiosInstance;

@@ -1,21 +1,12 @@
 import React from "react";
 
-import {
-  Alert,
-  Box,
-  Button,
-  CircularProgress,
-  Divider,
-  IconButton,
-  Typography,
-} from "@mui/material";
-import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+import { Alert, Box, Button, CircularProgress, Typography } from "@mui/material";
 
-import { BottomNav, PageTransition } from "@/components";
+import { BottomNav, DocumentHeader, PageTransition } from "@/components";
 import { useNavigate, useParams } from "react-router-dom";
 import { DocReminderRoutes } from "@/routes/routes";
 import { vibrate } from "@/utils/haptics";
-import axiosInstance from "@/api/axiosInstance";
+import { axiosInstance } from "@/api/axiosInstance";
 import { DOC_URL } from "@/api/apiConfig";
 import { useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
@@ -97,29 +88,7 @@ export const OneDocument = () => {
     <PageTransition>
       <Box sx={{ minHeight: "100dvh", display: "flex", flexDirection: "column" }}>
         {/* Header */}
-        <Box
-          sx={{
-            p: 2,
-            backgroundColor: "grey.900",
-            position: "fixed",
-            top: 0,
-            left: 0,
-            right: 0,
-            zIndex: 1000,
-          }}
-        >
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <IconButton onClick={() => navigate(DocReminderRoutes.home)} sx={{ color: "white" }}>
-              <ArrowBackIosIcon />
-            </IconButton>
-
-            <Typography variant="h6" fontWeight="bold" color="white">
-              Detalle documento
-            </Typography>
-          </Box>
-
-          <Divider sx={{ borderColor: "grey.700" }} />
-        </Box>
+        <DocumentHeader title="Detalle documento" onBack={() => navigate(DocReminderRoutes.home)} />
 
         {/* Scrollable content */}
         <Box

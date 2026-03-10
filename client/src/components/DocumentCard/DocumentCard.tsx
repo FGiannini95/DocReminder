@@ -1,32 +1,14 @@
 import React from "react";
-
-import { Box, Card, CardContent, CircularProgress, Typography } from "@mui/material";
-import { EmptyState } from "../EmptyState/EmptyState";
-import axiosInstance from "@/api/axiosInstance";
-import { DOC_URL } from "@/api/apiConfig";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 
-interface Document {
-  documentId: number;
-  type: DocumentType;
-  name: string | null;
-  documentNumber: string | null;
-  expiryDate: string;
-  reminderDays: number[];
-  personalNote: string | null;
-}
-type DocumentType = "passport" | "id" | "driver_license" | "health" | "credit_card" | "custom";
+import { Box, Card, CardContent, CircularProgress, Typography } from "@mui/material";
 
-const typeLabels: Record<DocumentType, string> = {
-  passport: "Pasaporte",
-  id: "DNI",
-  driver_license: "Carnet de conducir",
-  health: "Tarjeta sanitaria",
-  credit_card: "Tarjeta bancaria",
-  custom: "Otro",
-};
+import { EmptyState } from "../EmptyState/EmptyState";
+import { axiosInstance } from "@/api/axiosInstance";
+import { DOC_URL } from "@/api/apiConfig";
+import { Document, typeLabels } from "@/types/document";
 
 const daysUntil = (dateStr: string) =>
   Math.ceil((new Date(dateStr).getTime() - Date.now()) / (1000 * 60 * 60 * 24));

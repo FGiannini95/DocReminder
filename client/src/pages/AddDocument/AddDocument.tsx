@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import "dayjs/locale/es";
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 
 import {
   Box,
@@ -17,38 +18,16 @@ import {
   Select,
   MenuItem,
   FormHelperText,
-  IconButton,
   Chip,
-  Divider,
 } from "@mui/material";
-import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 
-import { PageTransition } from "@/components";
-import axiosInstance from "@/api/axiosInstance";
+import { DocumentHeader, PageTransition } from "@/components";
+import { axiosInstance } from "@/api/axiosInstance";
 import { DOC_URL } from "@/api/apiConfig";
+import { AddDocumentForm, DocumentType } from "@/types/document";
+import { textFieldSx } from "@/styles/commonStyle";
 
-const textFieldSx = {
-  "& .MuiOutlinedInput-root.Mui-focused fieldset": {
-    borderColor: "text.primary",
-  },
-  "& .MuiInputLabel-root.Mui-focused": {
-    color: "text.primary",
-  },
-  "& input:-webkit-autofill, & input:-webkit-autofill:hover, & input:-webkit-autofill:focus": {
-    transition: "background-color 99999s ease-in-out 0s",
-  },
-};
-
-type DocumentType = "passport" | "id" | "driver_license" | "health" | "credit_card" | "custom";
-
-interface AddDocumentForm {
-  type: DocumentType | "";
-  name: string | null;
-  documentNumber: string | null;
-  expiryDate: Dayjs | null;
-  reminderDays: number[];
-  personalNote: string | null;
-}
+const REMINDER_OPTIONS = [7, 14, 30, 60, 90, 180];
 
 export const AddDocument = () => {
   const [form, setForm] = useState<AddDocumentForm>({
@@ -79,8 +58,6 @@ export const AddDocument = () => {
     setErrors((prev) => ({ ...prev, [field]: undefined }));
   };
 
-  const REMINDER_OPTIONS = [7, 14, 30, 60, 90, 180];
-
   const toggleReminderDay = (day: number) => {
     const current = form.reminderDays;
     const updated = current.includes(day) ? current.filter((d) => d !== day) : [...current, day];
@@ -90,7 +67,6 @@ export const AddDocument = () => {
   const handleSubmit = () => {
     if (!validate()) return;
     setIsLoading(true);
-    // chiamata API
     axiosInstance
       .post(`${DOC_URL}/adddocument`, {
         type: form.type,
@@ -101,42 +77,19 @@ export const AddDocument = () => {
         personal_note: form.personalNote,
       })
       .then((res) => {
-        console.log(res.data);
         navigate(`/document/${res.data.documentId}`);
       })
       .catch((err) => {
         console.log(err);
         setIsLoading(false);
       });
-    console.log(form);
   };
 
   return (
     <PageTransition>
       <Box sx={{ minHeight: "100dvh", display: "flex", flexDirection: "column" }}>
         {/* Header */}
-        <Box
-          sx={{
-            p: 2,
-            backgroundColor: "grey.900",
-            position: "fixed",
-            top: 0,
-            left: 0,
-            right: 0,
-            zIndex: 1000,
-          }}
-        >
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <IconButton onClick={() => navigate(-1)} sx={{ color: "white" }}>
-              <ArrowBackIosIcon />
-            </IconButton>
-
-            <Typography variant="h6" fontWeight="bold" color="white">
-              Añadir documento
-            </Typography>
-          </Box>
-          <Divider sx={{ borderColor: "grey.700" }} />
-        </Box>
+        <DocumentHeader title="Añadir documento" />
 
         {/* Scrollable content */}
         <Box
