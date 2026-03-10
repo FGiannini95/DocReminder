@@ -21,3 +21,9 @@ export const scrollableContentSx = {
   scrollbarWidth: "none",
   "&::-webkit-scrollbar": { display: "none" },
 };
+
+export const containedButtonSx = {
+  borderRadius: 8,
+  py: 1.5,
+  boxShadow: "none",
+};

@@ -25,7 +25,7 @@ import { DocumentHeader, PageTransition } from "@/components";
 import { axiosInstance } from "@/api/axiosInstance";
 import { DOC_URL } from "@/api/apiConfig";
 import { AddDocumentForm, DocumentType } from "@/types/document";
-import { scrollableContentSx, textFieldSx } from "@/styles/commonStyle";
+import { scrollableContentSx, textFieldSx, containedButtonSx } from "@/styles/commonStyle";
 
 const REMINDER_OPTIONS = [7, 14, 30, 60, 90, 180];
 
@@ -229,7 +229,7 @@ export const AddDocument = () => {
             variant="contained"
             size="large"
             onClick={handleSubmit}
-            sx={{ borderRadius: 8, py: 1.5, backgroundColor: "text.primary" }}
+            sx={{ ...containedButtonSx, backgroundColor: "text.primary" }}
           >
             {isLoading ? <CircularProgress size={24} color="inherit" /> : "Guardar documento"}
           </Button>

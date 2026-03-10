@@ -10,7 +10,7 @@ import { axiosInstance } from "@/api/axiosInstance";
 import { DOC_URL } from "@/api/apiConfig";
 import { useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
-import { scrollableContentSx } from "@/styles/commonStyle";
+import { scrollableContentSx, containedButtonSx } from "@/styles/commonStyle";
 
 const InfoRow = ({ label, value }: { label: string; value: string }) => {
   const isLong = value.length > 15;
@@ -123,7 +123,7 @@ export const OneDocument = () => {
               fullWidth
               variant="contained"
               size="large"
-              sx={{ borderRadius: 8, py: 1.5, backgroundColor: "text.primary", boxShadow: "none" }}
+              sx={{ ...containedButtonSx, backgroundColor: "text.primary" }}
             >
               Editar
             </Button>
@@ -133,11 +133,9 @@ export const OneDocument = () => {
               size="large"
               onClick={handleDelete}
               sx={{
-                borderRadius: 8,
-                py: 1.5,
+                ...containedButtonSx,
                 backgroundColor: "rgba(239, 83, 80, 0.4)",
                 color: "error.dark",
-                boxShadow: "none",
                 border: "1px solid",
               }}
             >
