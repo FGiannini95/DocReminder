@@ -5,6 +5,8 @@ import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 
 import { BottomNav, PageTransition } from "@/components";
 import { useNavigate } from "react-router-dom";
+import { DocReminderRoutes } from "@/routes/routes";
+import { vibrate } from "@/utils/haptics";
 
 const InfoRow = ({ label, value }: { label: string; value: string }) => {
   const isLong = value.length > 15;
@@ -36,6 +38,17 @@ export const OneDocument = () => {
   const days = daysUntil("2026-03-13");
 
   const navigate = useNavigate();
+
+  const handleEdit = () => {
+    console.log("editing");
+    vibrate();
+  };
+
+  const handleDelete = () => {
+    console.log("deleting");
+    vibrate();
+    navigate(DocReminderRoutes.home);
+  };
   return (
     <PageTransition>
       <Box sx={{ minHeight: "100dvh", display: "flex", flexDirection: "column" }}>
@@ -70,6 +83,7 @@ export const OneDocument = () => {
             flex: 1,
             overflowY: "auto",
             mt: "60px",
+            mb: "56px",
             p: 3,
             pt: 4,
             display: "flex",
@@ -112,6 +126,7 @@ export const OneDocument = () => {
               fullWidth
               variant="contained"
               size="large"
+              onClick={handleDelete}
               sx={{
                 borderRadius: 8,
                 py: 1.5,
