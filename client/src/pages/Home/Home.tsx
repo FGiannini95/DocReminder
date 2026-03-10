@@ -8,6 +8,7 @@ import { BottomNav, DocumentCard, GroupCard, PageTransition } from "@/components
 import { HomeHeader } from "./components/HomeHeader";
 import { StatusBlocks } from "./components/StatusBlocks";
 import { DocReminderRoutes } from "@/routes/routes";
+import { scrollableContentSx } from "@/styles/commonStyle";
 
 export const Home = () => {
   const navigate = useNavigate();
@@ -17,17 +18,7 @@ export const Home = () => {
       <Box sx={{ height: "100dvh", display: "flex", flexDirection: "column" }}>
         <HomeHeader />
         {/* Scrollable content */}
-        <Box
-          sx={{
-            flex: 1,
-            overflowY: "auto",
-            mt: "56px",
-            mb: "56px",
-            py: 4,
-            scrollbarWidth: "none",
-            "&::-webkit-scrollbar": { display: "none" },
-          }}
-        >
+        <Box sx={{ ...scrollableContentSx, mb: "56px", display: "block" }}>
           <StatusBlocks urgent={2} upcoming={6} ok={1} />
           <DocumentCard />
           {/* <GroupCard /> */}

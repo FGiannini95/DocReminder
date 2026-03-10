@@ -25,7 +25,7 @@ import { DocumentHeader, PageTransition } from "@/components";
 import { axiosInstance } from "@/api/axiosInstance";
 import { DOC_URL } from "@/api/apiConfig";
 import { AddDocumentForm, DocumentType } from "@/types/document";
-import { textFieldSx } from "@/styles/commonStyle";
+import { scrollableContentSx, textFieldSx } from "@/styles/commonStyle";
 
 const REMINDER_OPTIONS = [7, 14, 30, 60, 90, 180];
 
@@ -92,20 +92,7 @@ export const AddDocument = () => {
         <DocumentHeader title="Añadir documento" />
 
         {/* Scrollable content */}
-        <Box
-          sx={{
-            flex: 1,
-            overflowY: "auto",
-            mt: "60px",
-            p: 3,
-            pt: 4,
-            display: "flex",
-            flexDirection: "column",
-            gap: 3,
-            scrollbarWidth: "none",
-            "&::-webkit-scrollbar": { display: "none" },
-          }}
-        >
+        <Box sx={{ ...scrollableContentSx, p: 3, gap: 3 }}>
           {/* Document type selector */}
           <FormControl sx={textFieldSx} required error={!!errors.type}>
             <InputLabel>Tipo de documento</InputLabel>

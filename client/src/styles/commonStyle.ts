@@ -9,3 +9,15 @@ export const textFieldSx = {
     transition: "background-color 99999s ease-in-out 0s",
   },
 };
+
+export const scrollableContentSx = {
+  flex: 1,
+  overflowY: "auto",
+  mt: "60px",
+  display: "flex",
+  flexDirection: "column",
+  gap: 2,
+  pt: 4,
+  scrollbarWidth: "none",
+  "&::-webkit-scrollbar": { display: "none" },
+};

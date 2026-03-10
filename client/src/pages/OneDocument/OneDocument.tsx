@@ -10,6 +10,7 @@ import { axiosInstance } from "@/api/axiosInstance";
 import { DOC_URL } from "@/api/apiConfig";
 import { useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
+import { scrollableContentSx } from "@/styles/commonStyle";
 
 const InfoRow = ({ label, value }: { label: string; value: string }) => {
   const isLong = value.length > 15;
@@ -91,21 +92,7 @@ export const OneDocument = () => {
         <DocumentHeader title="Detalle documento" onBack={() => navigate(DocReminderRoutes.home)} />
 
         {/* Scrollable content */}
-        <Box
-          sx={{
-            flex: 1,
-            overflowY: "auto",
-            mt: "60px",
-            mb: "56px",
-            p: 3,
-            pt: 4,
-            display: "flex",
-            flexDirection: "column",
-            gap: 2,
-            scrollbarWidth: "none",
-            "&::-webkit-scrollbar": { display: "none" },
-          }}
-        >
+        <Box sx={{ ...scrollableContentSx, p: 3, mb: "56px" }}>
           {days <= 30 && <Alert severity="error"> Date prisa. Caduca en {days} días</Alert>}
           {days <= 60 && days > 30 && (
             <Alert severity="warning">Caduca pronto, en {days} días</Alert>
