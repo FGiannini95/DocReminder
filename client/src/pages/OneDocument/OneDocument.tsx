@@ -1,12 +1,24 @@
 import React from "react";
 
-import { Alert, Box, Button, Divider, IconButton, Typography } from "@mui/material";
+import {
+  Alert,
+  Box,
+  Button,
+  CircularProgress,
+  Divider,
+  IconButton,
+  Typography,
+} from "@mui/material";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 
 import { BottomNav, PageTransition } from "@/components";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { DocReminderRoutes } from "@/routes/routes";
 import { vibrate } from "@/utils/haptics";
+import axiosInstance from "@/api/axiosInstance";
+import { DOC_URL } from "@/api/apiConfig";
+import { useQuery } from "@tanstack/react-query";
+import dayjs from "dayjs";
 
 const InfoRow = ({ label, value }: { label: string; value: string }) => {
   const isLong = value.length > 15;
@@ -31,13 +43,43 @@ const InfoRow = ({ label, value }: { label: string; value: string }) => {
   );
 };
 
+type DocumentType = "passport" | "id" | "driver_license" | "health" | "credit_card" | "custom";
+
+interface Document {
+  documentId: number;
+  type: DocumentType;
+  name: string | null;
+  documentNumber: string | null;
+  expiryDate: string;
+  reminderDays: number[];
+  personalNote: string | null;
+}
+
 export const OneDocument = () => {
   const daysUntil = (dateStr: string) =>
     Math.ceil((new Date(dateStr).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
 
-  const days = daysUntil("2026-03-13");
+  const { id } = useParams<{ id: string }>();
 
   const navigate = useNavigate();
+
+  const fetchOneDocument = async () => {
+    const res = await axiosInstance.get(`${DOC_URL}/${id}`);
+    return res.data;
+  };
+
+  const {
+    data: doc,
+    isPending,
+    isError,
+  } = useQuery<Document>({
+    queryKey: ["document", id],
+    queryFn: fetchOneDocument,
+  });
+
+  if (isPending) return <CircularProgress />;
+  console.log("this is doc", doc);
+  if (isError) return <Typography>Error al cargar el documento</Typography>;
 
   const handleEdit = () => {
     console.log("editing");
@@ -49,6 +91,9 @@ export const OneDocument = () => {
     vibrate();
     navigate(DocReminderRoutes.home);
   };
+
+  const days = daysUntil(doc.expiryDate);
+
   return (
     <PageTransition>
       <Box sx={{ minHeight: "100dvh", display: "flex", flexDirection: "column" }}>
@@ -65,7 +110,7 @@ export const OneDocument = () => {
           }}
         >
           <Box sx={{ display: "flex", alignItems: "center" }}>
-            <IconButton onClick={() => navigate(-1)} sx={{ color: "white" }}>
+            <IconButton onClick={() => navigate(DocReminderRoutes.home)} sx={{ color: "white" }}>
               <ArrowBackIosIcon />
             </IconButton>
 
@@ -97,21 +142,26 @@ export const OneDocument = () => {
           {days <= 60 && days > 30 && (
             <Alert severity="warning">Caduca pronto, en {days} días</Alert>
           )}
-          <InfoRow label="Nombre" value="Carnet Fede" />
+
+          {doc.name && <InfoRow label="Nombre" value={doc.name ?? ""} />}
           <InfoRow label="Tipo de documento" value="Carnet de conducir" />
-          <InfoRow label="Número" value="AAB123456" />
-          <InfoRow label="Fecha de caducidad" value="15/05/2026" />
-          <InfoRow label="Recordatorio" value="60d, 14d" />
-          <Box>
-            <Typography variant="body2" color="text.secondary" mb={1}>
-              Notas
-            </Typography>
-            <Box sx={{ border: "1px solid", borderRadius: 2, p: 2 }}>
-              <Typography variant="body2">
-                Renovar antes de verano. Llevar el libro de familia al consulado.
+          {doc.documentNumber && <InfoRow label="Número" value={doc.documentNumber ?? ""} />}
+          <InfoRow label="Fecha de caducidad" value={dayjs(doc.expiryDate).format("DD/MM/YYYY")} />
+          <InfoRow label="Recordatorio" value={doc.reminderDays.map((d) => `${d}d`).join(", ")} />
+          {doc.personalNote && (
+            <Box>
+              <Typography variant="body2" color="text.secondary" mb={1}>
+                Notas
               </Typography>
+              <Box sx={{ border: "1px solid", borderRadius: 2, p: 2, borderColor: "divider" }}>
+                <Typography variant="body2">{doc.personalNote ?? ""}</Typography>
+              </Box>
             </Box>
-          </Box>
+          )}
+
+          {/* Spacer — pushes buttons to bottom */}
+          <Box sx={{ flex: 1 }} />
+
           {/* Actions buttons */}
           <Box sx={{ display: "flex", gap: 2 }}>
             <Button

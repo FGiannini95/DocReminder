@@ -5,6 +5,6 @@ export const DocReminderRoutes = {
   security: "/security",
   profile: "/profile",
   addDocument: "/addDocument",
-  oneDocument: "/oneDocument",
+  oneDocument: "/document/:id",
   editDocument: "/editDocument",
 };

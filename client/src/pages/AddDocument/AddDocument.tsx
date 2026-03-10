@@ -43,11 +43,11 @@ type DocumentType = "passport" | "id" | "driver_license" | "health" | "credit_ca
 
 interface AddDocumentForm {
   type: DocumentType | "";
-  name: string;
-  documentNumber: string;
+  name: string | null;
+  documentNumber: string | null;
   expiryDate: Dayjs | null;
   reminderDays: number[];
-  personalNote: string;
+  personalNote: string | null;
 }
 
 export const AddDocument = () => {
@@ -100,8 +100,9 @@ export const AddDocument = () => {
         reminder_days: form.reminderDays,
         personal_note: form.personalNote,
       })
-      .then(() => {
-        navigate(-1);
+      .then((res) => {
+        console.log(res.data);
+        navigate(`/document/${res.data.documentId}`);
       })
       .catch((err) => {
         console.log(err);

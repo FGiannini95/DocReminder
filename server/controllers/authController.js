@@ -17,7 +17,9 @@ class authController {
 
     try {
       // Select user
-      const selectUser = `SELECT user_id, email FROM user WHERE email = ? AND is_deleted = 0`;
+      const selectUser = `
+        SELECT user_id, email FROM user WHERE email = ? AND is_deleted = 0
+      `;
 
       const [rows] = await db.query(selectUser, [email]);
       const user = rows[0];
@@ -31,7 +33,10 @@ class authController {
       const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
       const otpExpiry = new Date(Date.now() + 10 * 60 * 1000);
       // Save OTP to DB
-      const updateOtp = `UPDATE user SET otp_code = ?, otp_expires_at = ? WHERE email = ? AND is_deleted = 0`;
+      const updateOtp = `
+        UPDATE user SET otp_code = ?, otp_expires_at = ? 
+        WHERE email = ? AND is_deleted = 0
+      `;
       await db.query(updateOtp, [otpCode, otpExpiry, email]);
       // Send email
       const msg = {
@@ -70,7 +75,7 @@ class authController {
          SELECT user_id, email, otp_code, otp_expires_at 
          FROM user 
          WHERE email = ? AND is_deleted = 0
-        `;
+         `;
       const [rows] = await db.query(selectUser, [email]);
       const user = rows[0];
 
