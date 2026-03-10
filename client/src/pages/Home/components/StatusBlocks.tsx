@@ -1,26 +1,5 @@
+import { statusConfig } from "@/styles/commonStyle";
 import { Box, Typography } from "@mui/material";
-
-// Color config per status type
-const statusConfig = {
-  urgent: {
-    label: "Urgente",
-    borderColor: "error.light",
-    textColor: "error.dark",
-    shadow: "0px 0px 8px rgba(239, 83, 80, 0.4)",
-  },
-  upcoming: {
-    label: "Próximo",
-    borderColor: "warning.light",
-    textColor: "warning.main",
-    shadow: "0px 0px 8px rgba(255, 152, 0, 0.4)",
-  },
-  ok: {
-    label: "Al día",
-    borderColor: "success.light",
-    textColor: "success.dark",
-    shadow: "0px 0px 8px rgba(102, 187, 106, 0.4)",
-  },
-};
 
 type StatusType = keyof typeof statusConfig;
 

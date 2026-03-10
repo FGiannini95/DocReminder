@@ -9,30 +9,10 @@ import { EmptyState } from "../EmptyState/EmptyState";
 import { axiosInstance } from "@/api/axiosInstance";
 import { DOC_URL } from "@/api/apiConfig";
 import { Document, typeLabels } from "@/types/document";
+import { statusConfig } from "@/styles/commonStyle";
 
 const daysUntil = (dateStr: string) =>
   Math.ceil((new Date(dateStr).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
-
-const statusConfig = {
-  urgent: {
-    borderColor: "error.light",
-    textColor: "error.dark",
-    barColor: "error.main",
-    shadow: "0px 0px 8px rgba(239, 83, 80, 0.4)",
-  },
-  upcoming: {
-    borderColor: "warning.light",
-    textColor: "warning.main",
-    barColor: "warning.light",
-    shadow: "0px 0px 8px rgba(255, 152, 0, 0.4)",
-  },
-  ok: {
-    borderColor: "success.light",
-    textColor: "success.dark",
-    barColor: "success.main",
-    shadow: "0px 0px 8px rgba(102, 187, 106, 0.4)",
-  },
-};
 
 export const DocumentCard = () => {
   const navigate = useNavigate();
