@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "dayjs/locale/es";
 
-import { Box, Button, CircularProgress, TextField, Typography, Chip } from "@mui/material";
+import { Box, Button, CircularProgress, TextField } from "@mui/material";
 
 import { axiosInstance } from "@/api/axiosInstance";
 import { DOC_URL } from "@/api/apiConfig";
@@ -11,8 +11,7 @@ import { scrollableContentSx, textFieldSx, containedButtonSx } from "@/styles/co
 import { DocumentHeader, PageTransition } from "@/components";
 import { DocumentTypeSelect } from "./components/DocumentTypeSelect";
 import { ExpiryDatePicker } from "./components/ExpiryDatePicker";
-
-const REMINDER_OPTIONS = [7, 14, 30, 60, 90, 180];
+import { ReminderDaysSelector } from "./components/ReminderDaysSelector";
 
 export const AddDocument = () => {
   const [form, setForm] = useState<AddDocumentForm>({
@@ -41,12 +40,6 @@ export const AddDocument = () => {
   const handleChange = <K extends keyof AddDocumentForm>(field: K, value: AddDocumentForm[K]) => {
     setForm((prev) => ({ ...prev, [field]: value }));
     setErrors((prev) => ({ ...prev, [field]: undefined }));
-  };
-
-  const toggleReminderDay = (day: number) => {
-    const current = form.reminderDays;
-    const updated = current.includes(day) ? current.filter((d) => d !== day) : [...current, day];
-    handleChange("reminderDays", updated);
   };
 
   const handleSubmit = () => {
@@ -118,41 +111,10 @@ export const AddDocument = () => {
           />
 
           {/* Reminder days */}
-          <Box>
-            <Typography variant="body2" color="text.secondary" mb={1}>
-              Recordatorio
-            </Typography>
-            <Box
-              sx={{
-                display: "grid",
-                gridTemplateColumns: "repeat(3, 1fr)",
-                gap: 1,
-              }}
-            >
-              {REMINDER_OPTIONS.map((day) => {
-                const selected = form.reminderDays.includes(day);
-                return (
-                  <Chip
-                    key={day}
-                    label={`${day} días`}
-                    onClick={() => toggleReminderDay(day)}
-                    variant={selected ? "filled" : "outlined"}
-                    sx={{
-                      backgroundColor: selected ? "text.primary" : "transparent",
-                      color: selected ? "background.default" : "text.primary",
-                      borderColor: "text.primary",
-                      "&:hover": {
-                        backgroundColor: selected ? "text.primary" : "transparent",
-                      },
-                      "&&.MuiChip-root:active": {
-                        backgroundColor: selected ? "text.primary" : "transparent",
-                      },
-                    }}
-                  />
-                );
-              })}
-            </Box>
-          </Box>
+          <ReminderDaysSelector
+            selected={form.reminderDays}
+            onChange={(days) => handleChange("reminderDays", days)}
+          />
 
           {/* Personal notes */}
           <TextField
