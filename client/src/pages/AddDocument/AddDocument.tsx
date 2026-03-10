@@ -1,32 +1,16 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import "dayjs/locale/es";
-import dayjs from "dayjs";
 
-import {
-  Box,
-  Button,
-  CircularProgress,
-  TextField,
-  Typography,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  FormHelperText,
-  Chip,
-} from "@mui/material";
+import { Box, Button, CircularProgress, TextField, Typography, Chip } from "@mui/material";
 
-import { DocumentHeader, PageTransition } from "@/components";
 import { axiosInstance } from "@/api/axiosInstance";
 import { DOC_URL } from "@/api/apiConfig";
-import { AddDocumentForm, DocumentType } from "@/types/document";
+import { AddDocumentForm } from "@/types/document";
 import { scrollableContentSx, textFieldSx, containedButtonSx } from "@/styles/commonStyle";
+import { DocumentHeader, PageTransition } from "@/components";
 import { DocumentTypeSelect } from "./components/DocumentTypeSelect";
+import { ExpiryDatePicker } from "./components/ExpiryDatePicker";
 
 const REMINDER_OPTIONS = [7, 14, 30, 60, 90, 180];
 
@@ -124,48 +108,14 @@ export const AddDocument = () => {
           />
 
           {/* Expiry date picker */}
-          <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
-            <MobileDatePicker
-              open={dateOpen}
-              onOpen={() => setDateOpen(true)}
-              onClose={() => setDateOpen(false)}
-              label="Fecha de vencimiento"
-              value={form.expiryDate}
-              onChange={(value) => handleChange("expiryDate", value)}
-              minDate={dayjs()} // Disable previous days
-              slotProps={{
-                textField: {
-                  onMouseDown: (e) => {
-                    e.preventDefault();
-                    setDateOpen(true);
-                  },
-                  inputProps: { tabIndex: -1 }, // Remove focus from input
-                  sx: textFieldSx,
-                  required: true,
-                  error: !!errors.expiryDate,
-                  helperText: errors.expiryDate,
-                },
-                // Action bar Ui
-                actionBar: {
-                  sx: {
-                    "& .MuiButton-root": {
-                      color: "text.primary",
-                    },
-                  },
-                },
-                // Selected day Ui
-                day: {
-                  sx: {
-                    "&&.Mui-selected": {
-                      backgroundColor: "text.primary",
-                      "&:hover": { backgroundColor: "text.primary" },
-                      "&:focus": { backgroundColor: "text.primary" },
-                    },
-                  },
-                },
-              }}
-            />
-          </LocalizationProvider>
+          <ExpiryDatePicker
+            value={form.expiryDate}
+            onChange={(value) => handleChange("expiryDate", value)}
+            open={dateOpen}
+            onOpen={() => setDateOpen(true)}
+            onClose={() => setDateOpen(false)}
+            error={errors.expiryDate}
+          />
 
           {/* Reminder days */}
           <Box>
