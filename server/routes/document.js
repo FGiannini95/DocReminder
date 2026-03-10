@@ -5,8 +5,13 @@ const { authenticateToken } = require("../middleware/authMiddleware");
 
 // base path http://localhost:3000/document
 router.post("/adddocument", authenticateToken, docController.addDocument);
-router.put("/editdocument/:id", docController.editDocument);
-router.delete("/deletedocument/:id", docController.deleteDocument);
-router.get("/:id", docController.getOneDocument);
+router.put("/editdocument/:id", authenticateToken, docController.editDocument);
+router.delete(
+  "/deletedocument/:id",
+  authenticateToken,
+  docController.deleteDocument,
+);
+router.get("/:id", authenticateToken, docController.getOneDocument);
+router.get("/", authenticateToken, docController.getAllDocument);
 
 module.exports = router;

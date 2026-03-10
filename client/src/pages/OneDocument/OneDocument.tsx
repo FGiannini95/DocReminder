@@ -78,7 +78,6 @@ export const OneDocument = () => {
   });
 
   if (isPending) return <CircularProgress />;
-  console.log("this is doc", doc);
   if (isError) return <Typography>Error al cargar el documento</Typography>;
 
   const handleEdit = () => {

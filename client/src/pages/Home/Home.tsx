@@ -30,7 +30,7 @@ export const Home = () => {
         >
           <StatusBlocks urgent={2} upcoming={6} ok={1} />
           <DocumentCard />
-          <GroupCard />
+          {/* <GroupCard /> */}
         </Box>
 
         <Fab

@@ -42,7 +42,6 @@ class docController {
   };
 
   getOneDocument = async (req, res) => {
-    console.log("hi from get one doc");
     const { id: document_id } = req.params;
 
     try {
@@ -68,7 +67,32 @@ class docController {
 
       return res.status(200).json(document);
     } catch (err) {
-      res.status(500).json({ message: "No document found" });
+      res.status(500).json({ message: "Document not found" });
+    }
+  };
+
+  getAllDocument = async (req, res) => {
+    const userId = req.user.userId;
+
+    try {
+      const selectAllDocuments = `
+        SELECT 
+          document_id AS documentId,
+          type,
+          name,
+          document_number AS documentNumber,
+          expiry_date AS expiryDate,
+          reminder_days AS reminderDays,
+          personal_note AS personalNote
+        FROM document
+        WHERE user_id = ? AND is_deleted = 0      
+      `;
+
+      const [rows] = await db.query(selectAllDocuments, [userId]);
+
+      return res.status(200).json(rows);
+    } catch (err) {
+      res.status(500).json({ message: "Documents not found" });
     }
   };
 }
