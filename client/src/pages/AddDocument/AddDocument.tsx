@@ -26,6 +26,7 @@ import { axiosInstance } from "@/api/axiosInstance";
 import { DOC_URL } from "@/api/apiConfig";
 import { AddDocumentForm, DocumentType } from "@/types/document";
 import { scrollableContentSx, textFieldSx, containedButtonSx } from "@/styles/commonStyle";
+import { DocumentTypeSelect } from "./components/DocumentTypeSelect";
 
 const REMINDER_OPTIONS = [7, 14, 30, 60, 90, 180];
 
@@ -94,22 +95,11 @@ export const AddDocument = () => {
         {/* Scrollable content */}
         <Box sx={{ ...scrollableContentSx, p: 3, gap: 3 }}>
           {/* Document type selector */}
-          <FormControl sx={textFieldSx} required error={!!errors.type}>
-            <InputLabel>Tipo de documento</InputLabel>
-            <Select
-              value={form.type}
-              label="Tipo de documento"
-              onChange={(e) => handleChange("type", e.target.value as DocumentType)}
-            >
-              <MenuItem value="passport">Pasaporte</MenuItem>
-              <MenuItem value="id">DNI </MenuItem>
-              <MenuItem value="driver_license">Carnet de conducir</MenuItem>
-              <MenuItem value="health">Tarjeta sanitaria</MenuItem>
-              <MenuItem value="credit_card">Tarjeta bancaria</MenuItem>
-              <MenuItem value="custom">Otro</MenuItem>
-            </Select>
-            <FormHelperText>{errors.type}</FormHelperText>
-          </FormControl>
+          <DocumentTypeSelect
+            value={form.type}
+            onChange={(value) => handleChange("type", value)}
+            error={errors.type}
+          />
 
           {/* Name input */}
           <TextField
