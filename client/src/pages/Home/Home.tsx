@@ -21,7 +21,7 @@ export const Home = () => {
         <Box sx={{ ...scrollableContentSx, mb: "56px", display: "block" }}>
           <StatusBlocks urgent={2} upcoming={6} ok={1} />
           <DocumentCard />
-          {/* <GroupCard /> */}
+          <GroupCard />
         </Box>
         <Fab
           sx={{ position: "fixed", bottom: 72, right: 16 }}
