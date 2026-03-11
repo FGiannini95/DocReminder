@@ -135,7 +135,7 @@ class authController {
       // Verify refreshToken
       const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
       // Find user in DB
-      const selectUser = `SELECT user_id, refresh_token FROM user WHERE user_id = ? AND is_deleted = 0`;
+      const selectUser = `SELECT user_id, email, refresh_token FROM user WHERE user_id = ? AND is_deleted = 0`;
       const [rows] = await db.query(selectUser, [decoded.userId]);
       const user = rows[0];
 
@@ -154,7 +154,7 @@ class authController {
 
       // Generate new accessToken
       const newAccessToken = jwt.sign(
-        { userId: user.user_id },
+        { userId: user.user_id, email: user.email },
         process.env.JWT_ACCESS_SECRET,
         { expiresIn: "10m" },
       );
