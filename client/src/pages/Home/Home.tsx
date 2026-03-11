@@ -24,6 +24,7 @@ export const Home = () => {
           <GroupCard />
         </Box>
         <Fab
+          aria-label="add"
           sx={{ position: "fixed", bottom: 72, right: 16 }}
           onClick={() => navigate(DocReminderRoutes.addDocument)}
         >

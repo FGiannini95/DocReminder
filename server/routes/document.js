@@ -4,10 +4,10 @@ const docController = require("../controllers/docController");
 const { authenticateToken } = require("../middleware/authMiddleware");
 
 // base path http://localhost:3000/document
-router.post("/adddocument", authenticateToken, docController.addDocument);
-router.put("/editdocument/:id", authenticateToken, docController.editDocument);
+router.post("/add-document", authenticateToken, docController.addDocument);
+router.put("/edit-document/:id", authenticateToken, docController.editDocument);
 router.delete(
-  "/deletedocument/:id",
+  "/delete-document/:id",
   authenticateToken,
   docController.deleteDocument,
 );

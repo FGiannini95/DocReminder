@@ -46,7 +46,7 @@ export const AddDocument = () => {
     if (!validate()) return;
     setIsLoading(true);
     axiosInstance
-      .post(`${DOC_URL}/adddocument`, {
+      .post(`${DOC_URL}/add-document`, {
         type: form.type,
         name: form.name,
         document_number: form.documentNumber,

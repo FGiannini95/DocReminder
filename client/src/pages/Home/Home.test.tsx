@@ -2,7 +2,7 @@
  * Click sul Fab naviga a addDocument */
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { MemoryRouter } from "react-router-dom";
+import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 
 import { Home } from "./Home";
@@ -13,7 +13,10 @@ const renderHome = () => {
   render(
     <QueryClientProvider client={queryClient}>
       <MemoryRouter>
-        <Home />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/add-document" element={<div>AddDocument</div>} />
+        </Routes>
       </MemoryRouter>
     </QueryClientProvider>
   );
@@ -22,5 +25,12 @@ const renderHome = () => {
 describe("Home", () => {
   it("renders without crashing", () => {
     renderHome();
+  });
+
+  it("navigates to addDocument on Fab click", async () => {
+    const user = userEvent.setup();
+    renderHome();
+    await user.click(screen.getByRole("button", { name: /add/i }));
+    expect(screen.getByText("AddDocument")).toBeInTheDocument();
   });
 });

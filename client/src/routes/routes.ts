@@ -4,7 +4,7 @@ export const DocReminderRoutes = {
   otp: "/otp",
   security: "/security",
   profile: "/profile",
-  addDocument: "/addDocument",
+  addDocument: "/add-document",
   oneDocument: "/document/:id",
-  editDocument: "/editDocument",
+  editDocument: "/edit-document",
 };
