@@ -9,7 +9,7 @@ import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import { validateOtp } from "@/utils/validation";
 import { PageTransition } from "@/components";
 import { DocReminderRoutes } from "@/routes/routes";
-import { AUTH_URL } from "@/api";
+import { AUTH_URL } from "@/api/apiConfig";
 import { vibrate } from "@/utils/haptics";
 
 import { useAuth } from "@/context";
@@ -47,7 +47,7 @@ export const Otp = () => {
       .post(`${AUTH_URL}/otp/verify`, { email, otpCode: otp.join("") }, { withCredentials: true })
       .then((res) => {
         login(res.data.accessToken);
-        navigate(DocReminderRoutes.home);
+        navigate(DocReminderRoutes.security, { state: { email } });
       })
       .catch((err) => {
         console.log(err);
@@ -87,7 +87,7 @@ export const Otp = () => {
   return (
     <PageTransition>
       <Box sx={{ height: "100dvh", display: "flex", flexDirection: "column" }}>
-        {/* Hero with back button and icon */}
+        {/* Header*/}
         <Box
           sx={{
             ...sectionStyles,
@@ -174,7 +174,7 @@ export const Otp = () => {
               }}
             >
               {countdown === 0 ? "Reenviar código" : `Reenviar código (${formattedCountdown})`}
-            </Typography>{" "}
+            </Typography>
           </Box>
 
           {/* Warning */}

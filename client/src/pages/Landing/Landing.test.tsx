@@ -4,8 +4,6 @@ import { MemoryRouter } from "react-router-dom";
 import axios from "axios";
 import { vi } from "vitest";
 
-vi.mock("axios");
-
 import { Landing } from "./Landing";
 
 // Wrap with MemoryRouter to provide router context
@@ -15,6 +13,8 @@ const renderLanding = () =>
       <Landing />
     </MemoryRouter>
   );
+
+vi.mock("axios");
 
 describe("Landing", () => {
   it("renders without crashing", () => {
@@ -46,7 +46,6 @@ describe("Landing", () => {
     renderLanding();
 
     await user.type(screen.getByLabelText(/correo electrónico/i), "fede@gmail.com");
-
     expect(screen.getByRole("button", { name: /enviar código de acceso/i })).toBeEnabled();
   });
 

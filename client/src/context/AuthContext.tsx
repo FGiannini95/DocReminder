@@ -2,10 +2,12 @@ import React, { createContext, useCallback, useContext, useMemo, useState, useEf
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 
-import { AUTH_URL } from "@/api";
+import { AUTH_URL } from "@/api/apiConfig";
+import { setAuthToken } from "@/api/axiosInstance";
 
 interface AuthContextType {
   user: number | null;
+  email: string | null;
   accessToken: string | null;
   isLoading: boolean;
   isLogged: boolean;
@@ -18,14 +20,17 @@ AuthContext.displayName = "AuthContext";
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<number | null>(null);
+  const [email, setEmail] = useState<string | null>(null);
   const [accessToken, setAccessToken] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isLogged, setIsLogged] = useState<boolean>(false);
 
   const login = useCallback((token: string) => {
     setAccessToken(token);
-    const decoded = jwtDecode<{ userId: number }>(token);
+    setAuthToken(token);
+    const decoded = jwtDecode<{ userId: number; email: string }>(token);
     setUser(decoded.userId);
+    setEmail(decoded.email);
     setIsLogged(true);
   }, []);
 
@@ -47,12 +52,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const value = useMemo(
     () => ({
       user,
+      email,
       accessToken,
       isLoading,
       isLogged,
       login,
     }),
-    [user, accessToken, isLoading, isLogged, login]
+    [user, email, accessToken, isLoading, isLogged, login]
   );
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

@@ -17,7 +17,9 @@ class authController {
 
     try {
       // Select user
-      const selectUser = `SELECT user_id, email FROM user WHERE email = ? AND is_deleted = 0`;
+      const selectUser = `
+        SELECT user_id, email FROM user WHERE email = ? AND is_deleted = 0
+      `;
 
       const [rows] = await db.query(selectUser, [email]);
       const user = rows[0];
@@ -31,7 +33,10 @@ class authController {
       const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
       const otpExpiry = new Date(Date.now() + 10 * 60 * 1000);
       // Save OTP to DB
-      const updateOtp = `UPDATE user SET otp_code = ?, otp_expires_at = ? WHERE email = ? AND is_deleted = 0`;
+      const updateOtp = `
+        UPDATE user SET otp_code = ?, otp_expires_at = ? 
+        WHERE email = ? AND is_deleted = 0
+      `;
       await db.query(updateOtp, [otpCode, otpExpiry, email]);
       // Send email
       const msg = {
@@ -66,8 +71,11 @@ class authController {
 
     try {
       // Find user in DB
-      const selectUser = `SELECT user_id, email, otp_code, otp_expires_at FROM user WHERE email = ? AND is_deleted = 0`;
-
+      const selectUser = `
+         SELECT user_id, email, otp_code, otp_expires_at 
+         FROM user 
+         WHERE email = ? AND is_deleted = 0
+         `;
       const [rows] = await db.query(selectUser, [email]);
       const user = rows[0];
 
@@ -86,13 +94,13 @@ class authController {
       await db.query(clearOtp, [email]);
       // Generate access token
       const accessToken = jwt.sign(
-        { userId: user.user_id },
+        { userId: user.user_id, email: user.email },
         process.env.JWT_ACCESS_SECRET,
         { expiresIn: "10m" },
       );
 
       const refreshToken = jwt.sign(
-        { userId: user.user_id },
+        { userId: user.user_id, email: user.email },
         process.env.JWT_REFRESH_SECRET,
         { expiresIn: "30d" },
       );
@@ -127,7 +135,7 @@ class authController {
       // Verify refreshToken
       const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
       // Find user in DB
-      const selectUser = `SELECT user_id, refresh_token FROM user WHERE user_id = ? AND is_deleted = 0`;
+      const selectUser = `SELECT user_id, email, refresh_token FROM user WHERE user_id = ? AND is_deleted = 0`;
       const [rows] = await db.query(selectUser, [decoded.userId]);
       const user = rows[0];
 
@@ -146,7 +154,7 @@ class authController {
 
       // Generate new accessToken
       const newAccessToken = jwt.sign(
-        { userId: user.user_id },
+        { userId: user.user_id, email: user.email },
         process.env.JWT_ACCESS_SECRET,
         { expiresIn: "10m" },
       );

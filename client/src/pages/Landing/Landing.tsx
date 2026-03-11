@@ -9,7 +9,7 @@ import { validateEmail } from "@/utils/validation";
 import { vibrate } from "@/utils/haptics";
 import { DocReminderRoutes } from "@/routes/routes";
 import { PageTransition } from "@/components";
-import { AUTH_URL } from "@/api";
+import { AUTH_URL } from "@/api/apiConfig";
 
 // Shared styles for sections
 const sectionStyles = {
@@ -40,7 +40,7 @@ export const Landing = () => {
   return (
     <PageTransition>
       <Box sx={{ height: "100dvh", display: "flex", flexDirection: "column" }}>
-        {/* Hero */}
+        {/* Header */}
         <Box
           sx={{
             ...sectionStyles,
