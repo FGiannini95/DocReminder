@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { MemoryRouter } from "react-router-dom";
+import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { axiosInstance } from "@/api/axiosInstance";
 import dayjs from "dayjs";
 
@@ -11,8 +12,11 @@ const queryClient = new QueryClient();
 const renderOneDocument = () => {
   render(
     <QueryClientProvider client={queryClient}>
-      <MemoryRouter>
-        <OneDocument />
+      <MemoryRouter initialEntries={["/1"]}>
+        <Routes>
+          <Route path="/:id" element={<OneDocument />} />
+          <Route path="/" element={<div>Home</div>} />
+        </Routes>
       </MemoryRouter>
     </QueryClientProvider>
   );
@@ -73,5 +77,24 @@ describe("OneDocument", () => {
     renderOneDocument();
 
     expect(await screen.findByText(/caduca pronto/i)).toBeInTheDocument();
+  });
+
+  it("cals api on successful deletion", async () => {
+    vi.mocked(axiosInstance.delete).mockResolvedValue({});
+    const user = userEvent.setup();
+    renderOneDocument();
+
+    await user.click(await screen.findByRole("button", { name: /eliminar/i }));
+
+    expect(axiosInstance.delete).toHaveBeenCalled();
+  });
+
+  it("navigates to Home after successful deletion", async () => {
+    vi.mocked(axiosInstance.delete).mockResolvedValue({});
+    const user = userEvent.setup();
+    renderOneDocument();
+
+    await user.click(await screen.findByRole("button", { name: /eliminar/i }));
+    expect(screen.getByText("Home")).toBeInTheDocument();
   });
 });
