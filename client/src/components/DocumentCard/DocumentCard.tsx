@@ -1,41 +1,27 @@
 import React from "react";
-import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 
 import { Box, Card, CardContent, CircularProgress, Typography } from "@mui/material";
 
 import { EmptyState } from "../EmptyState/EmptyState";
-import { axiosInstance } from "@/api/axiosInstance";
-import { DOC_URL } from "@/api/apiConfig";
-import { Document, typeLabels } from "@/types/document";
 import { statusConfig } from "@/styles/commonStyle";
+import { Document, typeLabels } from "@/types/document";
+
+interface DocumentCardProps {
+  documents: Document[];
+  isError: boolean;
+  isPending: boolean;
+}
 
 const daysUntil = (dateStr: string) =>
   Math.ceil((new Date(dateStr).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
 
-export const DocumentCard = () => {
+export const DocumentCard = ({ documents, isError, isPending }: DocumentCardProps) => {
   const navigate = useNavigate();
-  const fetchAllDocumnets = async () => {
-    const res = await axiosInstance.get(`${DOC_URL}`);
-    return res.data;
-  };
-
-  const {
-    data: documents,
-    isPending,
-    isError,
-  } = useQuery<Document[]>({
-    queryKey: ["documents"],
-    queryFn: fetchAllDocumnets,
-  });
 
   if (isPending) return <CircularProgress />;
   if (isError) return <Typography>Error al cargar el documento</Typography>;
-
-  const sorted = [...(documents ?? [])].sort(
-    (a, b) => new Date(a.expiryDate).getTime() - new Date(b.expiryDate).getTime()
-  );
 
   return (
     <Box sx={{ px: 3, pb: 3 }}>
@@ -43,10 +29,10 @@ export const DocumentCard = () => {
         <Typography variant="h6" fontWeight="bold">
           Mis documentos:
         </Typography>
-        {sorted.length === 0 ? (
+        {documents.length === 0 ? (
           <EmptyState />
         ) : (
-          sorted.map((doc) => {
+          documents.map((doc) => {
             const days = daysUntil(doc.expiryDate);
             const status = days <= 30 ? "urgent" : days <= 60 ? "upcoming" : "ok";
             const config = statusConfig[status];

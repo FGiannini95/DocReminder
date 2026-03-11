@@ -1,9 +1,8 @@
-/*** Renderizza HomeHeader, StatusBlocks, DocumentCard, BottomNav, Fab
- * Click sul Fab naviga a addDocument */
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
+import { AuthProvider } from "@/context";
 
 import { Home } from "./Home";
 
@@ -12,12 +11,14 @@ const queryClient = new QueryClient();
 const renderHome = () => {
   render(
     <QueryClientProvider client={queryClient}>
-      <MemoryRouter>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/add-document" element={<div>AddDocument</div>} />
-        </Routes>
-      </MemoryRouter>
+      <AuthProvider>
+        <MemoryRouter>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/add-document" element={<div>AddDocument</div>} />
+          </Routes>
+        </MemoryRouter>
+      </AuthProvider>
     </QueryClientProvider>
   );
 };

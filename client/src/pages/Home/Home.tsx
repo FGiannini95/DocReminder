@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 
 import { Box, Fab } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
@@ -9,9 +10,38 @@ import { HomeHeader } from "./components/HomeHeader";
 import { StatusBlocks } from "./components/StatusBlocks";
 import { DocReminderRoutes } from "@/routes/routes";
 import { scrollableContentSx } from "@/styles/commonStyle";
+import { DOC_URL } from "@/api/apiConfig";
+import { axiosInstance } from "@/api/axiosInstance";
+import { Document } from "@/types/document";
+
+const daysUntil = (dateStr: string) =>
+  Math.ceil((new Date(dateStr).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
 
 export const Home = () => {
   const navigate = useNavigate();
+  const fetchAllDocumnets = async () => {
+    const res = await axiosInstance.get(`${DOC_URL}`);
+    return res.data;
+  };
+
+  const {
+    data: documents,
+    isPending,
+    isError,
+  } = useQuery<Document[]>({
+    queryKey: ["documents"],
+    queryFn: fetchAllDocumnets,
+  });
+
+  const sortedDocuments = [...(documents ?? [])].sort(
+    (a, b) => new Date(a.expiryDate).getTime() - new Date(b.expiryDate).getTime()
+  );
+
+  const urgent = documents?.filter((d) => daysUntil(d.expiryDate) <= 30).length;
+  const upcoming = documents?.filter(
+    (d) => daysUntil(d.expiryDate) > 30 && daysUntil(d.expiryDate) <= 60
+  ).length;
+  const ok = documents?.filter((d) => daysUntil(d.expiryDate) > 60).length;
 
   return (
     <PageTransition>
@@ -19,8 +49,8 @@ export const Home = () => {
         <HomeHeader />
         {/* Scrollable content */}
         <Box sx={{ ...scrollableContentSx, mb: "56px", display: "block" }}>
-          <StatusBlocks urgent={2} upcoming={6} ok={1} />
-          <DocumentCard />
+          <StatusBlocks urgent={urgent ?? 0} upcoming={upcoming ?? 0} ok={ok ?? 0} />{" "}
+          <DocumentCard documents={sortedDocuments} isError={isError} isPending={isPending} />
           <GroupCard />
         </Box>
         <Fab
