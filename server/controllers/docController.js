@@ -34,11 +34,29 @@ class docController {
   };
 
   editDocument = async (req, res) => {
-    console.log("Hi froma addDoc");
+    console.log("Hi froma editaxiosInDoc");
   };
 
   deleteDocument = async (req, res) => {
-    console.log("Hi froma addDoc");
+    const { id: documentId } = req.params;
+    const userId = req.user.userId;
+
+    if (!documentId) {
+      return res.status(404).json({ message: "Document not found" });
+    }
+
+    try {
+      const deleteDocument = `
+        UPDATE document
+        SET is_deleted = 1
+        WHERE user_id = ? AND document_id = ?
+      `;
+      await db.query(deleteDocument, [userId, documentId]);
+
+      return res.status(200).json({ message: "Document deleted succesfully" });
+    } catch (err) {
+      res.status(500).json({ message: "Internal server error" });
+    }
   };
 
   getOneDocument = async (req, res) => {

@@ -6,5 +6,5 @@ export const DocReminderRoutes = {
   profile: "/profile",
   addDocument: "/add-document",
   oneDocument: "/document/:id",
-  editDocument: "/edit-document",
+  editDocument: "/edit-document/:id",
 };

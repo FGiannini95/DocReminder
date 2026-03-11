@@ -66,10 +66,18 @@ export const OneDocument = () => {
     vibrate();
   };
 
+  console.log(`${DOC_URL}/deleteDocument/${id}`);
+
   const handleDelete = () => {
-    console.log("deleting");
-    vibrate();
-    navigate(DocReminderRoutes.home);
+    axiosInstance
+      .delete(`${DOC_URL}/delete-document/${id}`)
+      .then(() => {
+        vibrate();
+        navigate(DocReminderRoutes.home);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   const days = daysUntil(doc.expiryDate);
