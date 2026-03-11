@@ -1,8 +1,12 @@
 import React from "react";
 
 import { Box, Typography } from "@mui/material";
+import { useAuth } from "@/context";
 
 export const HomeHeader = () => {
+  const { email } = useAuth();
+  const emailPrefix = email?.split("@")[0];
+
   return (
     <Box
       sx={{
@@ -18,7 +22,7 @@ export const HomeHeader = () => {
       <Box sx={{ display: "flex", flexDirection: "column" }}>
         {/* TODO: replace "federico" with emailPrefix prop */}
         <Typography variant="h6" fontWeight="bold" color="white">
-          Hola federico
+          Hola {emailPrefix}
         </Typography>
         {/* TODO: show "Todo bajo control" in green if urgentCount === 0, red alert if > 0 */}
         <Typography sx={{ color: "error.light" }}>Tienes 2 documentos urgentes.</Typography>
