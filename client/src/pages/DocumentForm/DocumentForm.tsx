@@ -6,15 +6,15 @@ import { Box, Button, CircularProgress, TextField } from "@mui/material";
 
 import { axiosInstance } from "@/api/axiosInstance";
 import { DOC_URL } from "@/api/apiConfig";
-import { AddDocumentForm } from "@/types/document";
 import { scrollableContentSx, textFieldSx, containedButtonSx } from "@/styles/commonStyle";
 import { DocumentHeader, PageTransition } from "@/components";
 import { DocumentTypeSelect } from "./components/DocumentTypeSelect";
 import { ExpiryDatePicker } from "./components/ExpiryDatePicker";
 import { ReminderDaysSelector } from "./components/ReminderDaysSelector";
+import { DocumentFormValues } from "@/types/document";
 
 export const DocumentForm = () => {
-  const [form, setForm] = useState<AddDocumentForm>({
+  const [form, setForm] = useState<DocumentFormValues>({
     type: "",
     name: "",
     documentNumber: "",
@@ -23,13 +23,13 @@ export const DocumentForm = () => {
     personalNote: "",
   });
   const [isLoading, setIsLoading] = useState(false);
-  const [errors, setErrors] = useState<Partial<Record<keyof AddDocumentForm, string>>>({});
+  const [errors, setErrors] = useState<Partial<Record<keyof DocumentFormValues, string>>>({});
   const [dateOpen, setDateOpen] = useState<boolean>(false);
 
   const navigate = useNavigate();
 
   const validate = () => {
-    const newErrors: Partial<Record<keyof AddDocumentForm, string>> = {};
+    const newErrors: Partial<Record<keyof DocumentFormValues, string>> = {};
     if (!form.type) newErrors.type = "Campo obligatorio";
     if (form.name && form.name.trim().length < 2) newErrors.name = "Mínimo 2 caracteres";
     if (!form.expiryDate) newErrors.expiryDate = "Campo obligatorio";
@@ -37,7 +37,10 @@ export const DocumentForm = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleChange = <K extends keyof AddDocumentForm>(field: K, value: AddDocumentForm[K]) => {
+  const handleChange = <K extends keyof DocumentFormValues>(
+    field: K,
+    value: DocumentFormValues[K]
+  ) => {
     setForm((prev) => ({ ...prev, [field]: value }));
     setErrors((prev) => ({ ...prev, [field]: undefined }));
   };

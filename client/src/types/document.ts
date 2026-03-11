@@ -27,7 +27,7 @@ export const typeLabels: Record<DocumentType, string> = {
   custom: "Otro",
 };
 
-export interface AddDocumentForm {
+export interface DocumentFormValues {
   type: DocumentType | "";
   name: string | null;
   documentNumber: string | null;
