@@ -6,7 +6,7 @@ import { axiosInstance } from "@/api/axiosInstance";
 import { vi } from "vitest";
 import dayjs from "dayjs";
 
-import { AddDocument } from "./DocumentForm";
+import { DocumentForm } from "./DocumentForm";
 
 const queryClient = new QueryClient();
 
@@ -15,7 +15,7 @@ const renderAddDocument = () => {
     <QueryClientProvider client={queryClient}>
       <MemoryRouter initialEntries={["/add-document"]}>
         <Routes>
-          <Route path="/add-document" element={<AddDocument />} />
+          <Route path="/add-document" element={<DocumentForm />} />
           <Route path="/document/:id" element={<div>oneDocument</div>} />
         </Routes>
       </MemoryRouter>
