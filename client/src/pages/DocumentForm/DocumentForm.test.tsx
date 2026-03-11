@@ -6,7 +6,7 @@ import { axiosInstance } from "@/api/axiosInstance";
 import { vi } from "vitest";
 import dayjs from "dayjs";
 
-import { AddDocument } from "./AddDocument";
+import { AddDocument } from "./DocumentForm";
 
 const queryClient = new QueryClient();
 

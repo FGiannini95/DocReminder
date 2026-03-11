@@ -13,7 +13,7 @@ import { DocumentTypeSelect } from "./components/DocumentTypeSelect";
 import { ExpiryDatePicker } from "./components/ExpiryDatePicker";
 import { ReminderDaysSelector } from "./components/ReminderDaysSelector";
 
-export const AddDocument = () => {
+export const DocumentForm = () => {
   const [form, setForm] = useState<AddDocumentForm>({
     type: "",
     name: "",
