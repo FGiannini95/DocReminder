@@ -1,16 +1,17 @@
 import React from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import dayjs from "dayjs";
 
 import { Alert, Box, Button, CircularProgress, Typography } from "@mui/material";
 
 import { BottomNav, DocumentHeader, PageTransition } from "@/components";
-import { useNavigate, useParams } from "react-router-dom";
 import { DocReminderRoutes } from "@/routes/routes";
 import { vibrate } from "@/utils/haptics";
 import { axiosInstance } from "@/api/axiosInstance";
 import { DOC_URL } from "@/api/apiConfig";
-import { useQuery } from "@tanstack/react-query";
-import dayjs from "dayjs";
 import { scrollableContentSx, containedButtonSx } from "@/styles/commonStyle";
+import { Document, typeLabels } from "@/types/document";
 
 const InfoRow = ({ label, value }: { label: string; value: string }) => {
   const isLong = value.length > 15;
@@ -34,18 +35,6 @@ const InfoRow = ({ label, value }: { label: string; value: string }) => {
     </Box>
   );
 };
-
-type DocumentType = "passport" | "id" | "driver_license" | "health" | "credit_card" | "custom";
-
-interface Document {
-  documentId: number;
-  type: DocumentType;
-  name: string | null;
-  documentNumber: string | null;
-  expiryDate: string;
-  reminderDays: number[];
-  personalNote: string | null;
-}
 
 export const OneDocument = () => {
   const daysUntil = (dateStr: string) =>
@@ -99,7 +88,7 @@ export const OneDocument = () => {
           )}
 
           {doc.name && <InfoRow label="Nombre" value={doc.name ?? ""} />}
-          <InfoRow label="Tipo de documento" value="Carnet de conducir" />
+          <InfoRow label="Tipo de documento" value={typeLabels[doc.type]} />
           {doc.documentNumber && <InfoRow label="Número" value={doc.documentNumber ?? ""} />}
           <InfoRow label="Fecha de caducidad" value={dayjs(doc.expiryDate).format("DD/MM/YYYY")} />
           <InfoRow label="Recordatorio" value={doc.reminderDays.map((d) => `${d}d`).join(", ")} />
