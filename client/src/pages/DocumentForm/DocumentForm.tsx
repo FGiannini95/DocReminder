@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import "dayjs/locale/es";
 
 import { Box, Button, CircularProgress, TextField } from "@mui/material";
@@ -25,6 +25,9 @@ export const DocumentForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Partial<Record<keyof DocumentFormValues, string>>>({});
   const [dateOpen, setDateOpen] = useState<boolean>(false);
+  const { id } = useParams();
+
+  const isEdit = !!id;
 
   const navigate = useNavigate();
 
@@ -70,7 +73,7 @@ export const DocumentForm = () => {
     <PageTransition>
       <Box sx={{ minHeight: "100dvh", display: "flex", flexDirection: "column" }}>
         {/* Header */}
-        <DocumentHeader title="Añadir documento" />
+        <DocumentHeader title={isEdit ? "Modificar documento" : "Añadir documento"} />
 
         {/* Scrollable content */}
         <Box sx={{ ...scrollableContentSx, p: 3, gap: 3 }}>
@@ -129,15 +132,36 @@ export const DocumentForm = () => {
             sx={textFieldSx}
           />
 
-          {/* Save button */}
-          <Button
-            variant="contained"
-            size="large"
-            onClick={handleSubmit}
-            sx={{ ...containedButtonSx, backgroundColor: "text.primary" }}
-          >
-            {isLoading ? <CircularProgress size={24} color="inherit" /> : "Guardar documento"}
-          </Button>
+          {/* Actions buttons */}
+          {isEdit ? (
+            <Box sx={{ display: "flex", gap: 2 }}>
+              <Button
+                fullWidth
+                variant="outlined"
+                sx={{ ...containedButtonSx, color: "text.primary", borderColor: "text.primary" }}
+                onClick={() => navigate(-1)}
+              >
+                Cancelar
+              </Button>
+              <Button
+                fullWidth
+                variant="contained"
+                sx={{ ...containedButtonSx, backgroundColor: "text.primary" }}
+                onClick={handleSubmit}
+              >
+                Guardar
+              </Button>
+            </Box>
+          ) : (
+            <Button
+              fullWidth
+              variant="contained"
+              sx={{ ...containedButtonSx, backgroundColor: "text.primary" }}
+              onClick={handleSubmit}
+            >
+              Guardar documento
+            </Button>
+          )}
         </Box>
       </Box>
     </PageTransition>

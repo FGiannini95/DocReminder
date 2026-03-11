@@ -62,11 +62,9 @@ export const OneDocument = () => {
   if (isError) return <Typography>Error al cargar el documento</Typography>;
 
   const handleEdit = () => {
-    console.log("editing");
     vibrate();
+    navigate(DocReminderRoutes.editDocument);
   };
-
-  console.log(`${DOC_URL}/deleteDocument/${id}`);
 
   const handleDelete = () => {
     axiosInstance
@@ -120,6 +118,7 @@ export const OneDocument = () => {
               fullWidth
               variant="contained"
               size="large"
+              onClick={handleEdit}
               sx={{ ...containedButtonSx, backgroundColor: "text.primary" }}
             >
               Editar
