@@ -35,6 +35,40 @@ class docController {
 
   editDocument = async (req, res) => {
     console.log("Hi froma editaxiosInDoc");
+    const { id: documentId } = req.params;
+    const userId = req.user.userId;
+    const { type, document_number, expiry_date, reminder_days, personal_note } =
+      req.body;
+
+    if (!type || !expiry_date) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
+
+    if (!documentId) {
+      return res.status(404).json({ message: "Document not found" });
+    }
+
+    try {
+      const editDocument = `
+        UPDATE document SET
+          type = ?, document_number = ?, expiry_date = ?, reminder_days = ?, personal_note = ?
+        WHERE user_id = ? AND document_id = ?
+      `;
+
+      await db.query(editDocument, [
+        type,
+        document_number,
+        expiry_date,
+        reminder_days,
+        personal_note,
+        userId,
+        documentId,
+      ]);
+
+      return res.status(200).json({ message: "Document updated succesfully" });
+    } catch (err) {
+      res.status(500).json({ message: "Internal server error" });
+    }
   };
 
   deleteDocument = async (req, res) => {
