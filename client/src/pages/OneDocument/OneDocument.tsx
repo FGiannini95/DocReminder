@@ -63,7 +63,7 @@ export const OneDocument = () => {
 
   const handleEdit = () => {
     vibrate();
-    navigate(DocReminderRoutes.editDocument);
+    navigate(`/edit-document/${doc.documentId}`);
   };
 
   const handleDelete = () => {
@@ -79,6 +79,7 @@ export const OneDocument = () => {
   };
 
   const days = daysUntil(doc.expiryDate);
+  const isExpired = days <= 0;
 
   return (
     <PageTransition>
@@ -88,8 +89,11 @@ export const OneDocument = () => {
 
         {/* Scrollable content */}
         <Box sx={{ ...scrollableContentSx, p: 3, mb: "56px" }}>
-          {days <= 30 && <Alert severity="error"> Date prisa. Caduca en {days} días</Alert>}
-          {days <= 60 && days > 30 && (
+          {isExpired && <Alert severity="error">Caducado hace {Math.abs(days)} días</Alert>}
+          {!isExpired && days <= 30 && (
+            <Alert severity="error">Date prisa. Caduca en {days} días</Alert>
+          )}
+          {!isExpired && days <= 60 && days > 30 && (
             <Alert severity="warning">Caduca pronto, en {days} días</Alert>
           )}
 

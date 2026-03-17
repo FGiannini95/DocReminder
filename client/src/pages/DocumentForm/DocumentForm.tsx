@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "dayjs/locale/es";
 
-import { Box, Button, CircularProgress, TextField } from "@mui/material";
+import { Box, Button, CircularProgress, TextField, Typography } from "@mui/material";
 
 import { axiosInstance } from "@/api/axiosInstance";
 import { DOC_URL } from "@/api/apiConfig";
@@ -11,7 +11,9 @@ import { DocumentHeader, PageTransition } from "@/components";
 import { DocumentTypeSelect } from "./components/DocumentTypeSelect";
 import { ExpiryDatePicker } from "./components/ExpiryDatePicker";
 import { ReminderDaysSelector } from "./components/ReminderDaysSelector";
-import { DocumentFormValues } from "@/types/document";
+import { Document, DocumentFormValues } from "@/types/document";
+import { useQuery } from "@tanstack/react-query";
+import dayjs from "dayjs";
 
 export const DocumentForm = () => {
   const [form, setForm] = useState<DocumentFormValues>({
@@ -25,11 +27,43 @@ export const DocumentForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Partial<Record<keyof DocumentFormValues, string>>>({});
   const [dateOpen, setDateOpen] = useState<boolean>(false);
-  const { id } = useParams();
+  const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
+
+  const fetchOneDocument = async () => {
+    const res = await axiosInstance.get(`${DOC_URL}/${id}`);
+    return res.data;
+  };
 
   const isEdit = !!id;
 
-  const navigate = useNavigate();
+  // Fetch document only in edit mode
+  const {
+    data: doc,
+    isPending,
+    isError,
+  } = useQuery<Document>({
+    queryKey: ["document", id],
+    queryFn: fetchOneDocument,
+    enabled: isEdit,
+  });
+
+  // Precompile form when doc loads in edit mode
+  useEffect(() => {
+    if (doc) {
+      setForm({
+        type: doc.type || "",
+        name: doc.name || "",
+        documentNumber: doc.documentNumber || "",
+        expiryDate: dayjs(doc.expiryDate),
+        reminderDays: doc.reminderDays,
+        personalNote: doc.personalNote || "",
+      });
+    }
+  }, [doc]);
+
+  if (isEdit && isPending) return <CircularProgress />;
+  if (isEdit && isError) return <Typography>Error al cargar el documento</Typography>;
 
   const validate = () => {
     const newErrors: Partial<Record<keyof DocumentFormValues, string>> = {};
@@ -51,17 +85,23 @@ export const DocumentForm = () => {
   const handleSubmit = () => {
     if (!validate()) return;
     setIsLoading(true);
-    axiosInstance
-      .post(`${DOC_URL}/add-document`, {
-        type: form.type,
-        name: form.name,
-        document_number: form.documentNumber,
-        expiry_date: form.expiryDate?.format("YYYY-MM-DD"),
-        reminder_days: form.reminderDays,
-        personal_note: form.personalNote,
-      })
+
+    const body = {
+      type: form.type,
+      name: form.name,
+      document_number: form.documentNumber,
+      expiry_date: form.expiryDate?.format("YYYY-MM-DD"),
+      reminder_days: form.reminderDays,
+      personal_note: form.personalNote,
+    };
+
+    const request = isEdit
+      ? axiosInstance.put(`${DOC_URL}/edit-document/${id}`, body)
+      : axiosInstance.post(`${DOC_URL}/add-document`, body);
+
+    request
       .then((res) => {
-        navigate(`/document/${res.data.documentId}`);
+        navigate(`/document/${isEdit ? id : res.data.documentId}`);
       })
       .catch((err) => {
         console.log(err);
