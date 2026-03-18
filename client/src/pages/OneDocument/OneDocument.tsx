@@ -5,7 +5,7 @@ import dayjs from "dayjs";
 
 import { Alert, Box, Button, Typography } from "@mui/material";
 
-import { BottomNav, DocumentHeader, ErrorMessage, Loading, PageTransition } from "@/components";
+import { DocumentHeader, ErrorMessage, Loading, PageTransition } from "@/components";
 import { DocReminderRoutes } from "@/routes/routes";
 import { vibrate } from "@/utils/haptics";
 import { axiosInstance } from "@/api/axiosInstance";

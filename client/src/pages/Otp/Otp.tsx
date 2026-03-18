@@ -7,12 +7,11 @@ import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 
 import { validateOtp } from "@/utils/validation";
-import { PageTransition } from "@/components";
+import { vibrate } from "@/utils/haptics";
 import { DocReminderRoutes } from "@/routes/routes";
 import { AUTH_URL } from "@/api/apiConfig";
-import { vibrate } from "@/utils/haptics";
-
 import { useAuth } from "@/context";
+import { PageTransition } from "@/components";
 
 // Shared styles for sections
 const sectionStyles = {
@@ -46,6 +45,7 @@ export const Otp = () => {
     axios
       .post(`${AUTH_URL}/otp/verify`, { email, otpCode: otp.join("") }, { withCredentials: true })
       .then((res) => {
+        vibrate();
         login(res.data.accessToken);
         navigate(DocReminderRoutes.security, { state: { email } });
       })
