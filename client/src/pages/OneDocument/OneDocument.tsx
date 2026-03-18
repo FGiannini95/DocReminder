@@ -87,7 +87,7 @@ export const OneDocument = () => {
         <DocumentHeader title="Detalle documento" onBack={() => navigate(DocReminderRoutes.home)} />
 
         {/* Scrollable content */}
-        <Box sx={{ ...scrollableContentSx, p: 3, mb: "56px" }}>
+        <Box sx={{ ...scrollableContentSx, p: 3 }}>
           {isExpired && <Alert severity="error">Caducado hace {Math.abs(days)} días</Alert>}
           {!isExpired && days <= 30 && (
             <Alert severity="error">Date prisa. Caduca en {days} días</Alert>
