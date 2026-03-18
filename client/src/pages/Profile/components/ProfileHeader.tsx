@@ -1,0 +1,29 @@
+import React from "react";
+
+import { Box, Typography } from "@mui/material";
+
+import { useAuth } from "@/context";
+
+export const ProfileHeader = () => {
+  const { email } = useAuth();
+
+  return (
+    <Box
+      sx={{
+        p: 3,
+        backgroundColor: "grey.900",
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 1000,
+      }}
+    >
+      <Box sx={{ display: "flex", flexDirection: "column", textAlign: "center" }}>
+        <Typography variant="h6" fontWeight="bold" color="white">
+          {email}
+        </Typography>
+      </Box>
+    </Box>
+  );
+};

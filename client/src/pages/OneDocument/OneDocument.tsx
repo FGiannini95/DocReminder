@@ -3,15 +3,16 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
 
-import { Alert, Box, Button, CircularProgress, Typography } from "@mui/material";
+import { Alert, Box, Button, Typography } from "@mui/material";
 
-import { BottomNav, DocumentHeader, PageTransition } from "@/components";
+import { DocumentHeader, ErrorMessage, Loading, PageTransition } from "@/components";
 import { DocReminderRoutes } from "@/routes/routes";
 import { vibrate } from "@/utils/haptics";
 import { axiosInstance } from "@/api/axiosInstance";
 import { DOC_URL } from "@/api/apiConfig";
 import { scrollableContentSx, containedButtonSx } from "@/styles/commonStyle";
 import { Document, typeLabels } from "@/types/document";
+import { fetchOneDocument } from "@/api/documentApi";
 
 const InfoRow = ({ label, value }: { label: string; value: string }) => {
   const isLong = value.length > 15;
@@ -37,17 +38,11 @@ const InfoRow = ({ label, value }: { label: string; value: string }) => {
 };
 
 export const OneDocument = () => {
-  const daysUntil = (dateStr: string) =>
-    Math.ceil((new Date(dateStr).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
-
   const { id } = useParams<{ id: string }>();
-
   const navigate = useNavigate();
 
-  const fetchOneDocument = async () => {
-    const res = await axiosInstance.get(`${DOC_URL}/${id}`);
-    return res.data;
-  };
+  const daysUntil = (dateStr: string) =>
+    Math.ceil((new Date(dateStr).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
 
   const {
     data: doc,
@@ -55,18 +50,16 @@ export const OneDocument = () => {
     isError,
   } = useQuery<Document>({
     queryKey: ["document", id],
-    queryFn: fetchOneDocument,
+    queryFn: () => fetchOneDocument(id!),
   });
 
-  if (isPending) return <CircularProgress />;
-  if (isError) return <Typography>Error al cargar el documento</Typography>;
+  if (isPending) return <Loading />;
+  if (isError) return <ErrorMessage message="Error al cargar el documento" />;
 
   const handleEdit = () => {
-    console.log("editing");
     vibrate();
+    navigate(`/edit-document/${doc.documentId}`);
   };
-
-  console.log(`${DOC_URL}/deleteDocument/${id}`);
 
   const handleDelete = () => {
     axiosInstance
@@ -81,6 +74,7 @@ export const OneDocument = () => {
   };
 
   const days = daysUntil(doc.expiryDate);
+  const isExpired = days <= 0;
 
   return (
     <PageTransition>
@@ -89,9 +83,12 @@ export const OneDocument = () => {
         <DocumentHeader title="Detalle documento" onBack={() => navigate(DocReminderRoutes.home)} />
 
         {/* Scrollable content */}
-        <Box sx={{ ...scrollableContentSx, p: 3, mb: "56px" }}>
-          {days <= 30 && <Alert severity="error"> Date prisa. Caduca en {days} días</Alert>}
-          {days <= 60 && days > 30 && (
+        <Box sx={{ ...scrollableContentSx, p: 3 }}>
+          {isExpired && <Alert severity="error">Caducado hace {Math.abs(days)} días</Alert>}
+          {!isExpired && days <= 30 && (
+            <Alert severity="error">Date prisa. Caduca en {days} días</Alert>
+          )}
+          {!isExpired && days <= 60 && days > 30 && (
             <Alert severity="warning">Caduca pronto, en {days} días</Alert>
           )}
 
@@ -120,6 +117,7 @@ export const OneDocument = () => {
               fullWidth
               variant="contained"
               size="large"
+              onClick={handleEdit}
               sx={{ ...containedButtonSx, backgroundColor: "text.primary" }}
             >
               Editar
@@ -140,7 +138,6 @@ export const OneDocument = () => {
             </Button>
           </Box>
         </Box>
-        <BottomNav />
       </Box>
     </PageTransition>
   );

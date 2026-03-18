@@ -5,24 +5,19 @@ import { useQuery } from "@tanstack/react-query";
 import { Box, Fab } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 
+import { DocReminderRoutes } from "@/routes/routes";
+import { scrollableContentSx } from "@/styles/commonStyle";
+import { Document } from "@/types/document";
+import { fetchAllDocuments } from "@/api/documentApi";
 import { BottomNav, DocumentCard, GroupCard, PageTransition } from "@/components";
 import { HomeHeader } from "./components/HomeHeader";
 import { StatusBlocks } from "./components/StatusBlocks";
-import { DocReminderRoutes } from "@/routes/routes";
-import { scrollableContentSx } from "@/styles/commonStyle";
-import { DOC_URL } from "@/api/apiConfig";
-import { axiosInstance } from "@/api/axiosInstance";
-import { Document } from "@/types/document";
 
 const daysUntil = (dateStr: string) =>
   Math.ceil((new Date(dateStr).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
 
 export const Home = () => {
   const navigate = useNavigate();
-  const fetchAllDocumnets = async () => {
-    const res = await axiosInstance.get(`${DOC_URL}`);
-    return res.data;
-  };
 
   const {
     data: documents,
@@ -30,7 +25,7 @@ export const Home = () => {
     isError,
   } = useQuery<Document[]>({
     queryKey: ["documents"],
-    queryFn: fetchAllDocumnets,
+    queryFn: fetchAllDocuments,
   });
 
   const sortedDocuments = [...(documents ?? [])].sort(
@@ -46,7 +41,7 @@ export const Home = () => {
   return (
     <PageTransition>
       <Box sx={{ height: "100dvh", display: "flex", flexDirection: "column" }}>
-        <HomeHeader />
+        <HomeHeader urgent={urgent ?? 0} />
         {/* Scrollable content */}
         <Box sx={{ ...scrollableContentSx, mb: "56px", display: "block" }}>
           <StatusBlocks urgent={urgent ?? 0} upcoming={upcoming ?? 0} ok={ok ?? 0} />{" "}

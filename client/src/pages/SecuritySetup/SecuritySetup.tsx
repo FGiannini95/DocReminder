@@ -3,10 +3,9 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 import { Box, Typography } from "@mui/material";
 
-import { PageTransition } from "@/components";
+import { PageTransition, SecurityCard } from "@/components";
 import { DocReminderRoutes } from "@/routes/routes";
 import { vibrate } from "@/utils/haptics";
-import { SecurityCard } from "./components/SecurityCard";
 
 // Shared styles for sections
 const sectionStyles = {

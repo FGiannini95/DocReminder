@@ -36,7 +36,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // API routes
 app.use("/auth", authRouter);
-app.use("/document", docRouther);
+app.use("/docs", docRouther);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

@@ -1,20 +1,23 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import dayjs from "dayjs";
 import "dayjs/locale/es";
 
 import { Box, Button, CircularProgress, TextField } from "@mui/material";
 
 import { axiosInstance } from "@/api/axiosInstance";
 import { DOC_URL } from "@/api/apiConfig";
-import { AddDocumentForm } from "@/types/document";
+import { fetchOneDocument } from "@/api/documentApi";
 import { scrollableContentSx, textFieldSx, containedButtonSx } from "@/styles/commonStyle";
-import { DocumentHeader, PageTransition } from "@/components";
+import { Document, DocumentFormValues } from "@/types/document";
+import { DocumentHeader, ErrorMessage, Loading, PageTransition } from "@/components";
 import { DocumentTypeSelect } from "./components/DocumentTypeSelect";
 import { ExpiryDatePicker } from "./components/ExpiryDatePicker";
 import { ReminderDaysSelector } from "./components/ReminderDaysSelector";
 
-export const AddDocument = () => {
-  const [form, setForm] = useState<AddDocumentForm>({
+export const DocumentForm = () => {
+  const [form, setForm] = useState<DocumentFormValues>({
     type: "",
     name: "",
     documentNumber: "",
@@ -23,13 +26,43 @@ export const AddDocument = () => {
     personalNote: "",
   });
   const [isLoading, setIsLoading] = useState(false);
-  const [errors, setErrors] = useState<Partial<Record<keyof AddDocumentForm, string>>>({});
+  const [errors, setErrors] = useState<Partial<Record<keyof DocumentFormValues, string>>>({});
   const [dateOpen, setDateOpen] = useState<boolean>(false);
-
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
+  const isEdit = !!id;
+
+  // Fetch document only in edit mode
+  const {
+    data: doc,
+    isPending,
+    isError,
+  } = useQuery<Document>({
+    queryKey: ["document", id],
+    queryFn: () => fetchOneDocument(id!),
+    enabled: isEdit,
+  });
+
+  // Precompile form when doc loads in edit mode
+  useEffect(() => {
+    if (doc) {
+      setForm({
+        type: doc.type || "",
+        name: doc.name || "",
+        documentNumber: doc.documentNumber || "",
+        expiryDate: dayjs(doc.expiryDate),
+        reminderDays: doc.reminderDays,
+        personalNote: doc.personalNote || "",
+      });
+    }
+  }, [doc]);
+
+  if (isEdit && isPending) return <Loading />;
+  if (isEdit && isError) return <ErrorMessage message="Error al cargar el formulario" />;
+
   const validate = () => {
-    const newErrors: Partial<Record<keyof AddDocumentForm, string>> = {};
+    const newErrors: Partial<Record<keyof DocumentFormValues, string>> = {};
     if (!form.type) newErrors.type = "Campo obligatorio";
     if (form.name && form.name.trim().length < 2) newErrors.name = "Mínimo 2 caracteres";
     if (!form.expiryDate) newErrors.expiryDate = "Campo obligatorio";
@@ -37,7 +70,10 @@ export const AddDocument = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleChange = <K extends keyof AddDocumentForm>(field: K, value: AddDocumentForm[K]) => {
+  const handleChange = <K extends keyof DocumentFormValues>(
+    field: K,
+    value: DocumentFormValues[K]
+  ) => {
     setForm((prev) => ({ ...prev, [field]: value }));
     setErrors((prev) => ({ ...prev, [field]: undefined }));
   };
@@ -45,17 +81,23 @@ export const AddDocument = () => {
   const handleSubmit = () => {
     if (!validate()) return;
     setIsLoading(true);
-    axiosInstance
-      .post(`${DOC_URL}/add-document`, {
-        type: form.type,
-        name: form.name,
-        document_number: form.documentNumber,
-        expiry_date: form.expiryDate?.format("YYYY-MM-DD"),
-        reminder_days: form.reminderDays,
-        personal_note: form.personalNote,
-      })
+
+    const body = {
+      type: form.type,
+      name: form.name,
+      document_number: form.documentNumber,
+      expiry_date: form.expiryDate?.format("YYYY-MM-DD"),
+      reminder_days: form.reminderDays,
+      personal_note: form.personalNote,
+    };
+
+    const request = isEdit
+      ? axiosInstance.put(`${DOC_URL}/edit-document/${id}`, body)
+      : axiosInstance.post(`${DOC_URL}/add-document`, body);
+
+    request
       .then((res) => {
-        navigate(`/document/${res.data.documentId}`);
+        navigate(`/document/${isEdit ? id : res.data.documentId}`);
       })
       .catch((err) => {
         console.log(err);
@@ -67,7 +109,7 @@ export const AddDocument = () => {
     <PageTransition>
       <Box sx={{ minHeight: "100dvh", display: "flex", flexDirection: "column" }}>
         {/* Header */}
-        <DocumentHeader title="Añadir documento" />
+        <DocumentHeader title={isEdit ? "Modificar documento" : "Añadir documento"} />
 
         {/* Scrollable content */}
         <Box sx={{ ...scrollableContentSx, p: 3, gap: 3 }}>
@@ -126,15 +168,39 @@ export const AddDocument = () => {
             sx={textFieldSx}
           />
 
-          {/* Save button */}
-          <Button
-            variant="contained"
-            size="large"
-            onClick={handleSubmit}
-            sx={{ ...containedButtonSx, backgroundColor: "text.primary" }}
-          >
-            {isLoading ? <CircularProgress size={24} color="inherit" /> : "Guardar documento"}
-          </Button>
+          {/* Actions buttons */}
+          {isEdit ? (
+            <Box sx={{ display: "flex", gap: 2 }}>
+              <Button
+                fullWidth
+                variant="outlined"
+                sx={{ ...containedButtonSx, color: "text.primary", borderColor: "text.primary" }}
+                onClick={() => navigate(-1)}
+                disabled={isLoading}
+              >
+                Cancelar
+              </Button>
+              <Button
+                fullWidth
+                variant="contained"
+                sx={{ ...containedButtonSx, backgroundColor: "text.primary" }}
+                onClick={handleSubmit}
+                disabled={isLoading}
+              >
+                {isLoading ? <CircularProgress size={20} /> : "Guardar"}
+              </Button>
+            </Box>
+          ) : (
+            <Button
+              fullWidth
+              variant="contained"
+              sx={{ ...containedButtonSx, backgroundColor: "text.primary" }}
+              onClick={handleSubmit}
+              disabled={isLoading}
+            >
+              {isLoading ? <CircularProgress size={20} /> : "Guardar documento"}
+            </Button>
+          )}
         </Box>
       </Box>
     </PageTransition>

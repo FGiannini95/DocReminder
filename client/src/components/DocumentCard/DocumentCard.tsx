@@ -2,11 +2,13 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 
-import { Box, Card, CardContent, CircularProgress, Typography } from "@mui/material";
+import { Box, Card, CardContent, Typography } from "@mui/material";
 
-import { EmptyState } from "../EmptyState/EmptyState";
 import { statusConfig } from "@/styles/commonStyle";
 import { Document, typeLabels } from "@/types/document";
+import { EmptyState } from "../EmptyState/EmptyState";
+import { Loading } from "../Loading/Loading";
+import { ErrorMessage } from "../ErrorMessage/ErrorMessage";
 
 interface DocumentCardProps {
   documents: Document[];
@@ -20,8 +22,8 @@ const daysUntil = (dateStr: string) =>
 export const DocumentCard = ({ documents, isError, isPending }: DocumentCardProps) => {
   const navigate = useNavigate();
 
-  if (isPending) return <CircularProgress />;
-  if (isError) return <Typography>Error al cargar el documento</Typography>;
+  if (isPending) return <Loading />;
+  if (isError) return <ErrorMessage message="Error al cargar el documento" />;
 
   return (
     <Box sx={{ px: 3, pb: 3 }}>

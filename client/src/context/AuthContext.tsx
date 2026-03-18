@@ -12,6 +12,7 @@ interface AuthContextType {
   isLoading: boolean;
   isLogged: boolean;
   login: (token: string) => void;
+  logout: () => void;
 }
 
 export const AuthContext = createContext<AuthContextType | null>(null);
@@ -32,6 +33,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setUser(decoded.userId);
     setEmail(decoded.email);
     setIsLogged(true);
+  }, []);
+
+  const logout = useCallback(() => {
+    setAccessToken(null);
+    setAuthToken(null);
+    setUser(null);
+    setEmail(null);
+    setIsLogged(false);
   }, []);
 
   useEffect(() => {
@@ -57,8 +66,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       isLoading,
       isLogged,
       login,
+      logout,
     }),
-    [user, email, accessToken, isLoading, isLogged, login]
+    [user, email, accessToken, isLoading, isLogged, login, logout]
   );
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

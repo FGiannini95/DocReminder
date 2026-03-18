@@ -2,7 +2,7 @@ import React from "react";
 import { BrowserRouter, Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 
-import { AddDocument, Home, Landing, OneDocument, Otp, Profile, SecuritySetup } from "@/pages";
+import { DocumentForm, Home, Landing, OneDocument, Otp, Profile, SecuritySetup } from "@/pages";
 import { DocReminderRoutes } from "./routes/routes";
 import { useAuth } from "./context";
 
@@ -21,7 +21,8 @@ const AppRoutes = () => {
           <Routes location={location} key={location.pathname}>
             <Route path={DocReminderRoutes.home} element={<Home />} />
             <Route path={DocReminderRoutes.profile} element={<Profile />} />
-            <Route path={DocReminderRoutes.addDocument} element={<AddDocument />} />
+            <Route path={DocReminderRoutes.addDocument} element={<DocumentForm />} />
+            <Route path={DocReminderRoutes.editDocument} element={<DocumentForm />} />
             <Route path={DocReminderRoutes.oneDocument} element={<OneDocument />} />
             <Route path="*" element={<Navigate to={DocReminderRoutes.home} replace />} />
           </Routes>

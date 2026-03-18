@@ -169,6 +169,11 @@ class authController {
       });
     }
   };
+
+  logOut = async (req, res) => {
+    res.clearCookie("refreshToken");
+    return res.status(200).json({ message: "Logged out succesfully" });
+  };
 }
 
 module.exports = new authController();
