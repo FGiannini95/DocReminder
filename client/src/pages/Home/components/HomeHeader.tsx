@@ -1,9 +1,14 @@
 import React from "react";
 
 import { Box, Typography } from "@mui/material";
+
 import { useAuth } from "@/context";
 
-export const HomeHeader = () => {
+interface HomeHeaderProps {
+  urgent: number;
+}
+
+export const HomeHeader = ({ urgent }: HomeHeaderProps) => {
   const { email } = useAuth();
   const emailPrefix = email?.split("@")[0];
 
@@ -20,12 +25,16 @@ export const HomeHeader = () => {
       }}
     >
       <Box sx={{ display: "flex", flexDirection: "column" }}>
-        {/* TODO: replace "federico" with emailPrefix prop */}
         <Typography variant="h6" fontWeight="bold" color="white">
           Hola {emailPrefix}
         </Typography>
-        {/* TODO: show "Todo bajo control" in green if urgentCount === 0, red alert if > 0 */}
-        <Typography sx={{ color: "error.light" }}>Tienes 2 documentos urgentes.</Typography>
+        {urgent > 0 ? (
+          <Typography sx={{ color: "error.light" }}>
+            Tienes {urgent} documentos urgentes.
+          </Typography>
+        ) : (
+          <Typography sx={{ color: "success.light" }}>Todo bajo control.</Typography>
+        )}{" "}
       </Box>
     </Box>
   );
