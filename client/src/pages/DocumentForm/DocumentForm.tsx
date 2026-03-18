@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import dayjs from "dayjs";
 import "dayjs/locale/es";
 
-import { Box, Button, CircularProgress, TextField, Typography } from "@mui/material";
+import { Box, Button, CircularProgress, TextField } from "@mui/material";
 
 import { axiosInstance } from "@/api/axiosInstance";
 import { DOC_URL } from "@/api/apiConfig";
 import { scrollableContentSx, textFieldSx, containedButtonSx } from "@/styles/commonStyle";
-import { DocumentHeader, PageTransition } from "@/components";
+import { DocumentHeader, ErrorMessage, Loading, PageTransition } from "@/components";
 import { DocumentTypeSelect } from "./components/DocumentTypeSelect";
 import { ExpiryDatePicker } from "./components/ExpiryDatePicker";
 import { ReminderDaysSelector } from "./components/ReminderDaysSelector";
 import { Document, DocumentFormValues } from "@/types/document";
-import { useQuery } from "@tanstack/react-query";
-import dayjs from "dayjs";
 
 export const DocumentForm = () => {
   const [form, setForm] = useState<DocumentFormValues>({
@@ -27,8 +27,8 @@ export const DocumentForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Partial<Record<keyof DocumentFormValues, string>>>({});
   const [dateOpen, setDateOpen] = useState<boolean>(false);
-  const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
 
   const fetchOneDocument = async () => {
     const res = await axiosInstance.get(`${DOC_URL}/${id}`);
@@ -62,8 +62,8 @@ export const DocumentForm = () => {
     }
   }, [doc]);
 
-  if (isEdit && isPending) return <CircularProgress />;
-  if (isEdit && isError) return <Typography>Error al cargar el documento</Typography>;
+  if (isEdit && isPending) return <Loading />;
+  if (isEdit && isError) return <ErrorMessage message="Error al cargar el formulario" />;
 
   const validate = () => {
     const newErrors: Partial<Record<keyof DocumentFormValues, string>> = {};
@@ -180,6 +180,7 @@ export const DocumentForm = () => {
                 variant="outlined"
                 sx={{ ...containedButtonSx, color: "text.primary", borderColor: "text.primary" }}
                 onClick={() => navigate(-1)}
+                disabled={isLoading}
               >
                 Cancelar
               </Button>
@@ -188,8 +189,9 @@ export const DocumentForm = () => {
                 variant="contained"
                 sx={{ ...containedButtonSx, backgroundColor: "text.primary" }}
                 onClick={handleSubmit}
+                disabled={isLoading}
               >
-                Guardar
+                {isLoading ? <CircularProgress size={20} /> : "Guardar"}
               </Button>
             </Box>
           ) : (
@@ -198,8 +200,9 @@ export const DocumentForm = () => {
               variant="contained"
               sx={{ ...containedButtonSx, backgroundColor: "text.primary" }}
               onClick={handleSubmit}
+              disabled={isLoading}
             >
-              Guardar documento
+              {isLoading ? <CircularProgress size={20} /> : "Guardar documento"}
             </Button>
           )}
         </Box>

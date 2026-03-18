@@ -3,9 +3,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
 
-import { Alert, Box, Button, CircularProgress, Typography } from "@mui/material";
+import { Alert, Box, Button, Typography } from "@mui/material";
 
-import { BottomNav, DocumentHeader, PageTransition } from "@/components";
+import { BottomNav, DocumentHeader, ErrorMessage, Loading, PageTransition } from "@/components";
 import { DocReminderRoutes } from "@/routes/routes";
 import { vibrate } from "@/utils/haptics";
 import { axiosInstance } from "@/api/axiosInstance";
@@ -37,12 +37,11 @@ const InfoRow = ({ label, value }: { label: string; value: string }) => {
 };
 
 export const OneDocument = () => {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+
   const daysUntil = (dateStr: string) =>
     Math.ceil((new Date(dateStr).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
-
-  const { id } = useParams<{ id: string }>();
-
-  const navigate = useNavigate();
 
   const fetchOneDocument = async () => {
     const res = await axiosInstance.get(`${DOC_URL}/${id}`);
@@ -58,8 +57,8 @@ export const OneDocument = () => {
     queryFn: fetchOneDocument,
   });
 
-  if (isPending) return <CircularProgress />;
-  if (isError) return <Typography>Error al cargar el documento</Typography>;
+  if (isPending) return <Loading />;
+  if (isError) return <ErrorMessage message="Error al cargar el documento" />;
 
   const handleEdit = () => {
     vibrate();

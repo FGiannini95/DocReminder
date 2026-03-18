@@ -6,3 +6,5 @@ export { BottomNav } from "./BottomNav/BottomNav.tsx";
 export { EmptyState } from "./EmptyState/EmptyState.tsx";
 export { GroupCard } from "./GroupCard/GroupCard.tsx";
 export { DocumentHeader } from "./DocumentHeader/DocumentHeader.tsx";
+export { Loading } from "./Loading/Loading.tsx";
+export { ErrorMessage } from "./ErrorMessage/ErrorMessage.tsx";
