@@ -12,6 +12,7 @@ import { axiosInstance } from "@/api/axiosInstance";
 import { DOC_URL } from "@/api/apiConfig";
 import { scrollableContentSx, containedButtonSx } from "@/styles/commonStyle";
 import { Document, typeLabels } from "@/types/document";
+import { fetchOneDocument } from "@/api/documentApi";
 
 const InfoRow = ({ label, value }: { label: string; value: string }) => {
   const isLong = value.length > 15;
@@ -43,18 +44,13 @@ export const OneDocument = () => {
   const daysUntil = (dateStr: string) =>
     Math.ceil((new Date(dateStr).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
 
-  const fetchOneDocument = async () => {
-    const res = await axiosInstance.get(`${DOC_URL}/${id}`);
-    return res.data;
-  };
-
   const {
     data: doc,
     isPending,
     isError,
   } = useQuery<Document>({
     queryKey: ["document", id],
-    queryFn: fetchOneDocument,
+    queryFn: () => fetchOneDocument(id!),
   });
 
   if (isPending) return <Loading />;

@@ -8,12 +8,13 @@ import { Box, Button, CircularProgress, TextField } from "@mui/material";
 
 import { axiosInstance } from "@/api/axiosInstance";
 import { DOC_URL } from "@/api/apiConfig";
+import { fetchOneDocument } from "@/api/documentApi";
 import { scrollableContentSx, textFieldSx, containedButtonSx } from "@/styles/commonStyle";
+import { Document, DocumentFormValues } from "@/types/document";
 import { DocumentHeader, ErrorMessage, Loading, PageTransition } from "@/components";
 import { DocumentTypeSelect } from "./components/DocumentTypeSelect";
 import { ExpiryDatePicker } from "./components/ExpiryDatePicker";
 import { ReminderDaysSelector } from "./components/ReminderDaysSelector";
-import { Document, DocumentFormValues } from "@/types/document";
 
 export const DocumentForm = () => {
   const [form, setForm] = useState<DocumentFormValues>({
@@ -30,11 +31,6 @@ export const DocumentForm = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  const fetchOneDocument = async () => {
-    const res = await axiosInstance.get(`${DOC_URL}/${id}`);
-    return res.data;
-  };
-
   const isEdit = !!id;
 
   // Fetch document only in edit mode
@@ -44,7 +40,7 @@ export const DocumentForm = () => {
     isError,
   } = useQuery<Document>({
     queryKey: ["document", id],
-    queryFn: fetchOneDocument,
+    queryFn: () => fetchOneDocument(id!),
     enabled: isEdit,
   });
 

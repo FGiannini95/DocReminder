@@ -1,33 +1,29 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 
 import { Box, Button, CircularProgress } from "@mui/material";
 
 import { containedButtonSx, scrollableContentSx } from "@/styles/commonStyle";
+import { Document } from "@/types/document";
 import { vibrate } from "@/utils/haptics";
 import { DocReminderRoutes } from "@/routes/routes";
 import { axiosInstance } from "@/api/axiosInstance";
-import { AUTH_URL, DOC_URL } from "@/api/apiConfig";
+import { AUTH_URL } from "@/api/apiConfig";
+import { fetchAllDocuments } from "@/api/documentApi";
 import { useAuth } from "@/context";
 import { BottomNav, PageTransition, SecurityCard } from "@/components";
 import { ProfileHeader } from "./components/ProfileHeader";
 import { StatsProfile } from "./components/StatsProfile";
-import { useQuery } from "@tanstack/react-query";
-import { Document } from "@/types/document";
 
 export const Profile = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { logout } = useAuth();
 
-  const fetchAllDocumnets = async () => {
-    const res = await axiosInstance.get(`${DOC_URL}`);
-    return res.data;
-  };
-
   const { data: documents } = useQuery<Document[]>({
     queryKey: ["documents"],
-    queryFn: fetchAllDocumnets,
+    queryFn: fetchAllDocuments,
   });
 
   const totalDocuments = documents?.length;
