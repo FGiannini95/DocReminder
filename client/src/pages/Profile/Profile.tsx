@@ -7,18 +7,33 @@ import { containedButtonSx, scrollableContentSx } from "@/styles/commonStyle";
 import { vibrate } from "@/utils/haptics";
 import { DocReminderRoutes } from "@/routes/routes";
 import { axiosInstance } from "@/api/axiosInstance";
-import { AUTH_URL } from "@/api/apiConfig";
+import { AUTH_URL, DOC_URL } from "@/api/apiConfig";
 import { useAuth } from "@/context";
 import { BottomNav, PageTransition, SecurityCard } from "@/components";
 import { ProfileHeader } from "./components/ProfileHeader";
 import { StatsProfile } from "./components/StatsProfile";
+import { useQuery } from "@tanstack/react-query";
+import { Document } from "@/types/document";
 
 export const Profile = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { logout } = useAuth();
 
+  const fetchAllDocumnets = async () => {
+    const res = await axiosInstance.get(`${DOC_URL}`);
+    return res.data;
+  };
+
+  const { data: documents } = useQuery<Document[]>({
+    queryKey: ["documents"],
+    queryFn: fetchAllDocumnets,
+  });
+
+  const totalDocuments = documents?.length;
+
   const handleLogout = () => {
+    setIsLoading(true);
     axiosInstance
       .post(`${AUTH_URL}/logout`)
       .then(() => {
@@ -28,6 +43,7 @@ export const Profile = () => {
       })
       .catch((err) => {
         console.log(err);
+        setIsLoading(false);
       });
   };
 
@@ -37,7 +53,7 @@ export const Profile = () => {
         <ProfileHeader />
         {/* Scrollable content */}
         <Box sx={{ ...scrollableContentSx, mb: "66px", gap: 1, px: 3 }}>
-          <StatsProfile />
+          <StatsProfile totalDocuments={totalDocuments ?? 0} totalGroups={0} />
           <SecurityCard title="Huella o Face ID" compact onActivate={() => {}} />
           <SecurityCard title="Código PIN" compact onActivate={() => {}} />
 
