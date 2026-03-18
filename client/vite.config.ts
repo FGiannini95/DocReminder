@@ -16,7 +16,7 @@ export default defineConfig({
         changeOrigin: true,
         cookieDomainRewrite: "localhost",
       },
-      "/document": {
+      "/docs": {
         target: "http://localhost:3000",
         changeOrigin: true,
         cookieDomainRewrite: "localhost",
