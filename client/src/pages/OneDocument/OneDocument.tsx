@@ -142,7 +142,6 @@ export const OneDocument = () => {
             </Button>
           </Box>
         </Box>
-        <BottomNav />
       </Box>
     </PageTransition>
   );
