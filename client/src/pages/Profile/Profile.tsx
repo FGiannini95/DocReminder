@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 
-import { Box, Button, CircularProgress, Typography } from "@mui/material";
+import { Box, Button, CircularProgress } from "@mui/material";
 
 import { containedButtonSx, scrollableContentSx } from "@/styles/commonStyle";
-import { BottomNav, PageTransition } from "@/components";
+import { BottomNav, PageTransition, SecurityCard } from "@/components";
 import { ProfileHeader } from "./components/ProfileHeader";
-import { SecurityCard } from "../SecuritySetup/components/SecurityCard";
 import { vibrate } from "@/utils/haptics";
 import { StatsProfile } from "./components/StatsProfile";
 
@@ -17,21 +16,13 @@ export const Profile = () => {
       <Box sx={{ height: "100dvh", display: "flex", flexDirection: "column" }}>
         <ProfileHeader />
         {/* Scrollable content */}
-        <Box sx={{ ...scrollableContentSx, mb: "56px", display: "block" }}>
+        <Box sx={{ ...scrollableContentSx, mb: "66px", gap: 1, px: 3 }}>
           <StatsProfile />
-          <SecurityCard
-            title="Huella o Face ID"
-            description="Accede en segundos con tu huella o reconocimiento facial."
-            buttonLabel="Activar"
-            onActivate={() => {}}
-          />
+          <SecurityCard title="Huella o Face ID" compact onActivate={() => {}} />
+          <SecurityCard title="Código PIN" compact onActivate={() => {}} />
 
-          <SecurityCard
-            title="Código PIN"
-            description="Crea un PIN de 4 dígitos para acceder rápidamente."
-            buttonLabel="Crear"
-            onActivate={() => {}}
-          />
+          {/* Spacer — pushes buttons to bottom */}
+          <Box sx={{ flex: 1 }} />
 
           <Button
             fullWidth
