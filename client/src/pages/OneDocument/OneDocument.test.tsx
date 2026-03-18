@@ -7,15 +7,17 @@ import dayjs from "dayjs";
 
 import { OneDocument } from "./OneDocument";
 
-const queryClient = new QueryClient();
-
 const renderOneDocument = () => {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  });
   render(
     <QueryClientProvider client={queryClient}>
       <MemoryRouter initialEntries={["/1"]}>
         <Routes>
           <Route path="/:id" element={<OneDocument />} />
           <Route path="/" element={<div>Home</div>} />
+          <Route path="/edit-document/:id" element={<div>Modificar documento</div>} />
         </Routes>
       </MemoryRouter>
     </QueryClientProvider>
@@ -96,5 +98,27 @@ describe("OneDocument", () => {
 
     await user.click(await screen.findByRole("button", { name: /eliminar/i }));
     expect(screen.getByText("Home")).toBeInTheDocument();
+  });
+
+  it("navigate to EditDocument when edit button is clicked", async () => {
+    const user = userEvent.setup();
+    renderOneDocument();
+
+    await user.click(await screen.findByRole("button", { name: /editar/i }));
+    expect(screen.getByText("Modificar documento")).toBeInTheDocument();
+  });
+
+  it("shows Loading when isPending", async () => {
+    vi.mocked(axiosInstance.get).mockReturnValue(new Promise(() => {}));
+    renderOneDocument();
+
+    expect(screen.getByTestId("loading")).toBeInTheDocument();
+  });
+
+  it("shows ErrorMessage when isError", async () => {
+    vi.mocked(axiosInstance.get).mockRejectedValue(new Error("Network error"));
+    renderOneDocument();
+
+    expect(await screen.findByTestId("error")).toBeInTheDocument();
   });
 });

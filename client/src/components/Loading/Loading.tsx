@@ -4,6 +4,7 @@ import { Box, CircularProgress } from "@mui/material";
 export const Loading = () => {
   return (
     <Box
+      data-testid="loading"
       sx={{
         display: "flex",
         justifyContent: "center",
