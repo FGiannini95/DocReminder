@@ -1,4 +1,5 @@
-import { containedButtonSx, textFieldSx } from "@/styles/commonStyle";
+import React from "react";
+
 import {
   Button,
   Dialog,
@@ -7,7 +8,11 @@ import {
   DialogContentText,
   TextField,
 } from "@mui/material";
-import React from "react";
+
+import { containedButtonSx, textFieldSx } from "@/styles/commonStyle";
+import { useAuth } from "@/context";
+import { axiosInstance } from "@/api/axiosInstance";
+import { AUTH_URL } from "@/api/apiConfig";
 
 interface EditProfileDialogProps {
   open: boolean;
@@ -15,13 +20,23 @@ interface EditProfileDialogProps {
 }
 
 export const EditProfileDialog = ({ open, onClose }: EditProfileDialogProps) => {
+  const { updateDisplayName } = useAuth();
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
-    const formJson = Object.fromEntries((formData as any).entries());
-    const email = formJson.email;
-    console.log(email);
-    onClose();
+    const formJson = Object.fromEntries(formData.entries());
+    const displayName = formJson.nombre as string;
+
+    axiosInstance
+      .put(`${AUTH_URL}/update-name`, { displayName })
+      .then(() => {
+        updateDisplayName(displayName);
+        onClose();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   return (

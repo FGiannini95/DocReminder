@@ -94,13 +94,21 @@ class authController {
       await db.query(clearOtp, [email]);
       // Generate access token
       const accessToken = jwt.sign(
-        { userId: user.user_id, email: user.email },
+        {
+          userId: user.user_id,
+          email: user.email,
+          displayName: user.displayName,
+        },
         process.env.JWT_ACCESS_SECRET,
         { expiresIn: "10m" },
       );
 
       const refreshToken = jwt.sign(
-        { userId: user.user_id, email: user.email },
+        {
+          userId: user.user_id,
+          email: user.email,
+          displayName: user.displayName,
+        },
         process.env.JWT_REFRESH_SECRET,
         { expiresIn: "30d" },
       );
@@ -154,7 +162,11 @@ class authController {
 
       // Generate new accessToken
       const newAccessToken = jwt.sign(
-        { userId: user.user_id, email: user.email },
+        {
+          userId: user.user_id,
+          email: user.email,
+          displayName: user.displayName,
+        },
         process.env.JWT_ACCESS_SECRET,
         { expiresIn: "10m" },
       );
