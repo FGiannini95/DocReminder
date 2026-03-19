@@ -10,30 +10,35 @@ vi.mock("axios");
 const fakeTokenWithName = `eyJhbGciOiJIUzI1NiJ9.${btoa(JSON.stringify({ userId: 1, email: "fede@gmail.com", displayName: "Federico" }))}.test`;
 vi.mocked(axios.post).mockResolvedValue({ data: { newAccessToken: fakeTokenWithName } });
 
-import { HomeHeader } from "./HomeHeader";
+import { ProfileHeader } from "./ProfileHeader";
 
-const renderHomeHeader = () =>
+const renderProfileHeader = () =>
   render(
     <AuthProvider>
       <MemoryRouter>
-        <HomeHeader urgent={2} />
+        <ProfileHeader />
       </MemoryRouter>
     </AuthProvider>
   );
 
-describe("HomeHeader", () => {
+describe("ProfileHeader", () => {
   it("renders without crashing", () => {
-    renderHomeHeader();
+    renderProfileHeader();
   });
 
   it("displays email prefix", async () => {
-    renderHomeHeader();
-    expect(await screen.findByText(/Hola fede/i)).toBeInTheDocument();
+    renderProfileHeader();
+    expect((await screen.findAllByText(/fede/i)).length).toBeGreaterThan(0);
   });
 
   it("displays displayName when available", async () => {
     vi.mocked(axios.post).mockResolvedValue({ data: { newAccessToken: fakeTokenWithName } });
-    renderHomeHeader();
-    expect(await screen.findByText(/Federico/i)).toBeInTheDocument();
+    renderProfileHeader();
+    expect(await screen.findByText("Federico")).toBeInTheDocument();
+  });
+
+  it("displays Avatar with initial", async () => {
+    renderProfileHeader();
+    expect(await screen.findByText("F")).toBeInTheDocument();
   });
 });

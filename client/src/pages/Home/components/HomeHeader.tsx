@@ -34,7 +34,7 @@ export const HomeHeader = ({ urgent }: HomeHeaderProps) => {
           </Typography>
         ) : (
           <Typography sx={{ color: "success.light" }}>Todo bajo control.</Typography>
-        )}{" "}
+        )}
       </Box>
     </Box>
   );
