@@ -174,6 +174,30 @@ class authController {
     res.clearCookie("refreshToken");
     return res.status(200).json({ message: "Logged out succesfully" });
   };
+
+  updateName = async (req, res) => {
+    const userId = req.user.userId;
+    const { displayName } = req.body;
+
+    if (!displayName || displayName.trim().length < 2) {
+      return res.status(400).json({ message: "Minimum two characters" });
+    }
+
+    try {
+      const editDisplayName = `
+        UPDATE user SET displayName = ? 
+        WHERE user_id = ? and is_deleted = 0
+      `;
+
+      await db.query(editDisplayName, [displayName, userId]);
+
+      return res
+        .status(200)
+        .json({ message: "displayName updated succesfully" });
+    } catch (err) {
+      return res.status(401).json({ message: "Error during the update" });
+    }
+  };
 }
 
 module.exports = new authController();
