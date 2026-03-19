@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 
-import { Box, Button, CircularProgress } from "@mui/material";
+import { Box, Button, CircularProgress, IconButton, Typography } from "@mui/material";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 
 import { containedButtonSx, scrollableContentSx } from "@/styles/commonStyle";
 import { Document } from "@/types/document";
@@ -15,9 +16,11 @@ import { useAuth } from "@/context";
 import { BottomNav, PageTransition, SecurityCard } from "@/components";
 import { ProfileHeader } from "./components/ProfileHeader";
 import { StatsProfile } from "./components/StatsProfile";
+import { EditProfileDialog } from "./components/EditProfileDIalog";
 
 export const Profile = () => {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(false);
   const navigate = useNavigate();
   const { logout } = useAuth();
 
@@ -43,6 +46,14 @@ export const Profile = () => {
       });
   };
 
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
   return (
     <PageTransition>
       <Box sx={{ height: "100dvh", display: "flex", flexDirection: "column" }}>
@@ -50,6 +61,24 @@ export const Profile = () => {
         {/* Scrollable content */}
         <Box sx={{ ...scrollableContentSx, mb: "66px", gap: 1, px: 3 }}>
           <StatsProfile totalDocuments={totalDocuments ?? 0} totalGroups={0} />
+
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              border: "2px solid",
+              borderRadius: 8,
+              p: 2,
+            }}
+            onClick={handleOpen}
+          >
+            <Typography fontWeight="bold">Cambiar nombre</Typography>
+            <IconButton>
+              <ArrowForwardIosIcon />
+            </IconButton>
+          </Box>
+
           <SecurityCard title="Huella o Face ID" compact onActivate={() => {}} />
           <SecurityCard title="Código PIN" compact onActivate={() => {}} />
 
@@ -67,6 +96,7 @@ export const Profile = () => {
         </Box>
         <BottomNav />
       </Box>
+      <EditProfileDialog open={open} onClose={handleClose} />
     </PageTransition>
   );
 };
