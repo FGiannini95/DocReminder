@@ -1,4 +1,4 @@
-import { containedButtonSx } from "@/styles/commonStyle";
+import { containedButtonSx, textFieldSx } from "@/styles/commonStyle";
 import {
   Button,
   Dialog,
@@ -28,8 +28,9 @@ export const EditProfileDialog = ({ open, onClose }: EditProfileDialogProps) => 
     <Dialog open={open} onClose={onClose}>
       <DialogContent>
         <DialogContentText>Actualiza tu nombre de usuario</DialogContentText>
-        <form onSubmit={handleSubmit} id="subscription-form">
+        <form onSubmit={handleSubmit} id="edit-form">
           <TextField
+            sx={{ ...textFieldSx }}
             autoFocus
             required
             margin="dense"
@@ -49,7 +50,7 @@ export const EditProfileDialog = ({ open, onClose }: EditProfileDialogProps) => 
             flex: 1,
             ...containedButtonSx,
             borderColor: "text.primary",
-            border: "2px solid",
+            border: "1px solid",
             color: "text.primary",
           }}
         >
@@ -57,7 +58,7 @@ export const EditProfileDialog = ({ open, onClose }: EditProfileDialogProps) => 
         </Button>
         <Button
           type="submit"
-          form="subscription-form"
+          form="edit-form"
           variant="contained"
           sx={{ ...containedButtonSx, backgroundColor: "text.primary" }}
         >

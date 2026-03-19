@@ -1,12 +1,21 @@
 export const textFieldSx = {
+  // Border color when input is focused
   "& .MuiOutlinedInput-root.Mui-focused fieldset": {
     borderColor: "text.primary",
   },
+  // Label color when focused
   "& .MuiInputLabel-root.Mui-focused": {
     color: "text.primary",
   },
+  // Prevent browser autofill blue background
   "& input:-webkit-autofill, & input:-webkit-autofill:hover, & input:-webkit-autofill:focus": {
     transition: "background-color 99999s ease-in-out 0s",
+  },
+  "& .MuiInput-underline:after": {
+    borderBottomColor: "text.primary",
+  },
+  "& .MuiInput-underline.Mui-focused:after": {
+    borderBottomColor: "text.primary",
   },
 };
 

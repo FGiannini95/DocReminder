@@ -10,6 +10,7 @@ import { vibrate } from "@/utils/haptics";
 import { DocReminderRoutes } from "@/routes/routes";
 import { PageTransition } from "@/components";
 import { AUTH_URL } from "@/api/apiConfig";
+import { textFieldSx } from "@/styles/commonStyle";
 
 // Shared styles for sections
 const sectionStyles = {
@@ -83,19 +84,7 @@ export const Landing = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               sx={{
-                // Border color when input is focused
-                "& .MuiOutlinedInput-root.Mui-focused fieldset": {
-                  borderColor: "text.primary",
-                },
-                // Label color when focused
-                "& .MuiInputLabel-root.Mui-focused": {
-                  color: "text.primary",
-                },
-                // Prevent browser autofill blue background
-                "& input:-webkit-autofill, & input:-webkit-autofill:hover, & input:-webkit-autofill:focus":
-                  {
-                    transition: "background-color 99999s ease-in-out 0s",
-                  },
+                ...textFieldSx,
               }}
             />
             <Button
