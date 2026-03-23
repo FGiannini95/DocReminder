@@ -9,11 +9,13 @@ import { containedButtonSx, scrollableContentSx, textFieldSx } from "@/styles/co
 import { axiosInstance } from "@/api/axiosInstance";
 import { AUTH_URL } from "@/api/apiConfig";
 import { useAuth } from "@/context";
+import { useAutoAdvance } from "@/hooks";
 
 export const PinSetup = () => {
   const [pin, setPin] = useState<string[]>(Array(4).fill(""));
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { togglePin } = useAuth();
+  const { refs, handleInputChange } = useAutoAdvance(4);
 
   const navigate = useNavigate();
 
@@ -21,6 +23,8 @@ export const PinSetup = () => {
     const newPin = [...pin];
     newPin[index] = value;
     setPin(newPin);
+
+    handleInputChange(value, index);
   };
 
   const handleSubmit = () => {
@@ -38,6 +42,8 @@ export const PinSetup = () => {
       });
   };
 
+  const isPinIncomplete = pin.some((digit) => digit.length === 0);
+
   return (
     <PageTransition>
       <Box sx={{ minHeight: "100dvh", display: "flex", flexDirection: "column" }}>
@@ -50,6 +56,7 @@ export const PinSetup = () => {
               <TextField
                 key={i}
                 autoFocus={i === 0}
+                inputRef={(el) => (refs.current[i] = el)}
                 value={digit}
                 onChange={(e) => handleChange(e.target.value, i)}
                 inputProps={{
@@ -65,15 +72,12 @@ export const PinSetup = () => {
             ))}
           </Box>
 
-          {/* Spacer — pushes buttons to bottom */}
-          <Box sx={{ flex: 1 }} />
-
           <Button
             fullWidth
             variant="contained"
             sx={{ ...containedButtonSx, backgroundColor: "text.primary" }}
             onClick={handleSubmit}
-            disabled={isLoading}
+            disabled={isLoading || isPinIncomplete}
           >
             {isLoading ? <CircularProgress size={20} sx={{ color: "inherit" }} /> : "Guardar PIN"}
           </Button>
