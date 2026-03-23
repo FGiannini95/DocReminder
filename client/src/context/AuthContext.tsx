@@ -15,7 +15,7 @@ interface AuthContextType {
   login: (token: string) => void;
   logout: () => void;
   updateDisplayName: (name: string) => void;
-  updatePinEnabled: (value: boolean) => void;
+  togglePin: (value: boolean) => void;
   pinEnabled: boolean;
 }
 
@@ -62,7 +62,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setDisplayName(name);
   }, []);
 
-  const updatePinEnabled = useCallback((value: boolean) => {
+  const togglePin = useCallback((value: boolean) => {
     setPinEnabled(value);
   }, []);
 
@@ -93,7 +93,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       login,
       logout,
       updateDisplayName,
-      updatePinEnabled,
+      togglePin,
     }),
     [
       user,
@@ -106,7 +106,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       login,
       logout,
       updateDisplayName,
-      updatePinEnabled,
+      togglePin,
     ]
   );
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

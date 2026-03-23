@@ -13,7 +13,7 @@ import { useAuth } from "@/context";
 export const PinSetup = () => {
   const [pin, setPin] = useState<string[]>(Array(4).fill(""));
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { updatePinEnabled } = useAuth();
+  const { togglePin } = useAuth();
 
   const navigate = useNavigate();
 
@@ -29,7 +29,7 @@ export const PinSetup = () => {
       .post(`${AUTH_URL}/save-pin`, { pin: pin.join("") })
 
       .then(() => {
-        updatePinEnabled(true);
+        togglePin(true);
         navigate(-1);
         setIsLoading(false);
       })

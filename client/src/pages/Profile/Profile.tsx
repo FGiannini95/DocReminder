@@ -22,7 +22,7 @@ export const Profile = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
   const navigate = useNavigate();
-  const { logout, pinEnabled, updatePinEnabled } = useAuth();
+  const { logout, pinEnabled, togglePin } = useAuth();
 
   const { data: documents } = useQuery<Document[]>({
     queryKey: ["documents"],
@@ -86,11 +86,12 @@ export const Profile = () => {
             onActivate={() => {}}
             onClick={() => {}}
           />
+
           <SecurityCard
             title="Código PIN"
             checked={pinEnabled}
             compact
-            onActivate={() => updatePinEnabled(!pinEnabled)}
+            onActivate={() => togglePin(!pinEnabled)}
             onClick={() => navigate(DocReminderRoutes.pinSetup)}
           />
 
