@@ -72,7 +72,7 @@ class authController {
     try {
       // Find user in DB
       const selectUser = `
-         SELECT user_id, email, otp_code, otp_expires_at 
+         SELECT user_id, email, displayName, otp_code, otp_expires_at 
          FROM user 
          WHERE email = ? AND is_deleted = 0
          `;
