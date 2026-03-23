@@ -7,6 +7,8 @@ interface SecurityCardProps {
   buttonLabel?: string;
   onActivate: () => void;
   compact?: boolean;
+  onClick: () => void;
+  checked: boolean;
 }
 
 export const SecurityCard = ({
@@ -15,6 +17,8 @@ export const SecurityCard = ({
   buttonLabel,
   onActivate,
   compact,
+  onClick,
+  checked = false,
 }: SecurityCardProps) => {
   if (compact) {
     return (
@@ -26,11 +30,14 @@ export const SecurityCard = ({
             justifyContent: "space-between",
             pb: "16px !important",
           }}
+          onClick={onClick}
         >
           <Typography fontWeight="bold">{title}</Typography>
 
           <Switch
+            checked={checked}
             onChange={onActivate}
+            onClick={(e) => e.stopPropagation()}
             sx={{
               "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
                 backgroundColor: "text.primary",

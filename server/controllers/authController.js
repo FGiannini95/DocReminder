@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const sgMail = require("@sendgrid/mail");
 const db = require("../config/db");
+const bcrypt = require("bcrypt");
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
@@ -72,10 +73,10 @@ class authController {
     try {
       // Find user in DB
       const selectUser = `
-         SELECT user_id, email, otp_code, otp_expires_at 
-         FROM user 
-         WHERE email = ? AND is_deleted = 0
-         `;
+        SELECT user_id, email, displayName, otp_code, otp_expires_at, pin_enabled 
+        FROM user 
+        WHERE email = ? AND is_deleted = 0
+      `;
       const [rows] = await db.query(selectUser, [email]);
       const user = rows[0];
 
@@ -90,17 +91,30 @@ class authController {
         return res.status(401).json({ message: "Unauthorized" });
       }
       // Clear OTP from DB
-      const clearOtp = `UPDATE user SET otp_code = NULL, otp_expires_at = NULL WHERE email = ? AND is_deleted = 0`;
+      const clearOtp = `
+        UPDATE user SET otp_code = NULL, otp_expires_at = NULL 
+        WHERE email = ? AND is_deleted = 0
+      `;
       await db.query(clearOtp, [email]);
       // Generate access token
       const accessToken = jwt.sign(
-        { userId: user.user_id, email: user.email },
+        {
+          userId: user.user_id,
+          email: user.email,
+          displayName: user.displayName,
+          pin_enabled: user.pin_enabled ?? false,
+        },
         process.env.JWT_ACCESS_SECRET,
         { expiresIn: "10m" },
       );
 
       const refreshToken = jwt.sign(
-        { userId: user.user_id, email: user.email },
+        {
+          userId: user.user_id,
+          email: user.email,
+          displayName: user.displayName,
+          pin_enabled: user.pin_enabled ?? false,
+        },
         process.env.JWT_REFRESH_SECRET,
         { expiresIn: "30d" },
       );
@@ -135,7 +149,10 @@ class authController {
       // Verify refreshToken
       const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
       // Find user in DB
-      const selectUser = `SELECT user_id, email, refresh_token FROM user WHERE user_id = ? AND is_deleted = 0`;
+      const selectUser = `
+        SELECT user_id, email, refresh_token, displayName, pin_enabled 
+        FROM user WHERE user_id = ? AND is_deleted = 0
+      `;
       const [rows] = await db.query(selectUser, [decoded.userId]);
       const user = rows[0];
 
@@ -154,7 +171,12 @@ class authController {
 
       // Generate new accessToken
       const newAccessToken = jwt.sign(
-        { userId: user.user_id, email: user.email },
+        {
+          userId: user.user_id,
+          email: user.email,
+          displayName: user.displayName,
+          pin_enabled: true,
+        },
         process.env.JWT_ACCESS_SECRET,
         { expiresIn: "10m" },
       );
@@ -173,6 +195,68 @@ class authController {
   logOut = async (req, res) => {
     res.clearCookie("refreshToken");
     return res.status(200).json({ message: "Logged out succesfully" });
+  };
+
+  updateName = async (req, res) => {
+    const userId = req.user.userId;
+    const { displayName } = req.body;
+
+    if (!displayName || displayName.trim().length < 2) {
+      return res.status(400).json({ message: "Minimum two characters" });
+    }
+
+    try {
+      const editDisplayName = `
+        UPDATE user SET displayName = ? 
+        WHERE user_id = ? and is_deleted = 0
+      `;
+
+      await db.query(editDisplayName, [displayName, userId]);
+
+      return res
+        .status(200)
+        .json({ message: "displayName updated succesfully" });
+    } catch (err) {
+      return res.status(401).json({ message: "Error during the update" });
+    }
+  };
+
+  createPin = async (req, res) => {
+    const userId = req.user.userId;
+    const { pin } = req.body;
+
+    if (!pin || pin.length < 4) {
+      return res.status(400).json({ message: "Pin incorrect" });
+    }
+
+    try {
+      const updatePin = `
+        UPDATE user SET pin = ?, pin_enabled = true
+        WHERE user_id = ? AND is_deleted = 0  
+      `;
+
+      const hashedPin = await bcrypt.hash(pin, 10);
+
+      await db.query(updatePin, [hashedPin, userId]);
+
+      // Generate new accessToken
+      const newAccessToken = jwt.sign(
+        {
+          userId: req.user.userId,
+          email: req.user.email,
+          displayName: req.user.displayName,
+          pin_enabled: user.pin_enabled ?? false,
+        },
+        process.env.JWT_ACCESS_SECRET,
+        { expiresIn: "10m" },
+      );
+
+      return res
+        .status(200)
+        .json({ newAccessToken, message: "Pin updated succesfully" });
+    } catch (err) {
+      return res.status(500).json({ message: "Internal server error" });
+    }
   };
 }
 

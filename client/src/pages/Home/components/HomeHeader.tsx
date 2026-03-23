@@ -9,8 +9,8 @@ interface HomeHeaderProps {
 }
 
 export const HomeHeader = ({ urgent }: HomeHeaderProps) => {
-  const { email } = useAuth();
-  const emailPrefix = email?.split("@")[0];
+  const { email, displayName } = useAuth();
+  const headerName = displayName ?? email?.split("@")[0];
 
   return (
     <Box
@@ -26,7 +26,7 @@ export const HomeHeader = ({ urgent }: HomeHeaderProps) => {
     >
       <Box sx={{ display: "flex", flexDirection: "column" }}>
         <Typography variant="h6" fontWeight="bold" color="white">
-          Hola {emailPrefix}
+          Hola {headerName}!
         </Typography>
         {urgent > 0 ? (
           <Typography sx={{ color: "error.light" }}>
@@ -34,7 +34,7 @@ export const HomeHeader = ({ urgent }: HomeHeaderProps) => {
           </Typography>
         ) : (
           <Typography sx={{ color: "success.light" }}>Todo bajo control.</Typography>
-        )}{" "}
+        )}
       </Box>
     </Box>
   );

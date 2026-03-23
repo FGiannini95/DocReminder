@@ -8,11 +8,15 @@ import { setAuthToken } from "@/api/axiosInstance";
 interface AuthContextType {
   user: number | null;
   email: string | null;
+  displayName: string | null;
   accessToken: string | null;
   isLoading: boolean;
   isLogged: boolean;
   login: (token: string) => void;
   logout: () => void;
+  updateDisplayName: (name: string) => void;
+  togglePin: (value: boolean) => void;
+  pinEnabled: boolean;
 }
 
 export const AuthContext = createContext<AuthContextType | null>(null);
@@ -22,16 +26,25 @@ AuthContext.displayName = "AuthContext";
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<number | null>(null);
   const [email, setEmail] = useState<string | null>(null);
+  const [displayName, setDisplayName] = useState<string | null>(null);
   const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [pinEnabled, setPinEnabled] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isLogged, setIsLogged] = useState<boolean>(false);
 
   const login = useCallback((token: string) => {
     setAccessToken(token);
     setAuthToken(token);
-    const decoded = jwtDecode<{ userId: number; email: string }>(token);
+    const decoded = jwtDecode<{
+      userId: number;
+      email: string;
+      displayName: string;
+      pin_enabled: boolean;
+    }>(token);
     setUser(decoded.userId);
     setEmail(decoded.email);
+    setDisplayName(decoded.displayName);
+    setPinEnabled(decoded.pin_enabled ?? false);
     setIsLogged(true);
   }, []);
 
@@ -40,7 +53,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setAuthToken(null);
     setUser(null);
     setEmail(null);
+    setDisplayName(null);
+    setPinEnabled(false);
     setIsLogged(false);
+  }, []);
+
+  const updateDisplayName = useCallback((name: string) => {
+    setDisplayName(name);
+  }, []);
+
+  const togglePin = useCallback((value: boolean) => {
+    setPinEnabled(value);
   }, []);
 
   useEffect(() => {
@@ -62,13 +85,29 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     () => ({
       user,
       email,
+      displayName,
       accessToken,
       isLoading,
       isLogged,
+      pinEnabled,
       login,
       logout,
+      updateDisplayName,
+      togglePin,
     }),
-    [user, email, accessToken, isLoading, isLogged, login, logout]
+    [
+      user,
+      email,
+      displayName,
+      accessToken,
+      isLoading,
+      isLogged,
+      pinEnabled,
+      login,
+      logout,
+      updateDisplayName,
+      togglePin,
+    ]
   );
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
