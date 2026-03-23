@@ -260,14 +260,45 @@ class authController {
   };
 
   verifyPin = async (req, res) => {
-    console.log("hi from verifyPin");
-    // get email and pin from body
-    // find user in DB by email
-    // compare pin with bcrypt
-    // if match → generate accessToken and refreshToken
-    // save refreshToken in DB and cookie
-    // return 200 with accessToken
-    // if no match → return 401
+    const { email, pin } = req.body;
+
+    if (!email || !pin) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
+
+    try {
+      const selectUser = `
+        SELECT user_id, email, pin, displayName, pin_enabled
+        FROM user 
+        WHERE email = ? AND is_deleted = 0
+      `;
+
+      const [rows] = await db.query(selectUser, [email]);
+      const user = rows[0];
+
+      if (!user) return res.status(401).json({ message: "Unauthorized" });
+
+      const pinMatch = await bcrypt.compare(pin, user.pin);
+      if (!pinMatch) return res.status(401).json({ message: "Unauthorized" });
+
+      // Generate new accessToken
+      const newAccessToken = jwt.sign(
+        {
+          userId: user.user_id,
+          email: user.email,
+          displayName: user.displayName,
+          pin_enabled: user.pin_enabled ?? false,
+        },
+        process.env.JWT_ACCESS_SECRET,
+        { expiresIn: "10m" },
+      );
+
+      return res
+        .status(200)
+        .json({ newAccessToken, message: "Logged succesfully" });
+    } catch (err) {
+      return res.status(500).json({ message: "Internal server error" });
+    }
   };
 }
 
