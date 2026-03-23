@@ -6,6 +6,8 @@ import { Box, Button, CircularProgress, TextField } from "@mui/material";
 import { PageTransition } from "../PageTransition/PageTransition";
 import { DocumentHeader } from "../DocumentHeader/DocumentHeader";
 import { containedButtonSx, scrollableContentSx, textFieldSx } from "@/styles/commonStyle";
+import { axiosInstance } from "@/api/axiosInstance";
+import { AUTH_URL } from "@/api/apiConfig";
 
 export const PinSetup = () => {
   const [pin, setPin] = useState<string[]>(Array(4).fill(""));
@@ -20,7 +22,18 @@ export const PinSetup = () => {
   };
 
   const handleSubmit = () => {
-    console.log("Hi from submitting pin");
+    setIsLoading(true);
+    axiosInstance
+      .post(`${AUTH_URL}/save-pin`, { pin: pin.join("") })
+
+      .then(() => {
+        navigate(-1);
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+      });
   };
 
   return (
@@ -57,7 +70,7 @@ export const PinSetup = () => {
             onClick={handleSubmit}
             disabled={isLoading}
           >
-            {isLoading ? <CircularProgress size={20} /> : "Guardar PIN"}
+            {isLoading ? <CircularProgress size={20} sx={{ color: "inherit" }} /> : "Guardar PIN"}
           </Button>
         </Box>
       </Box>

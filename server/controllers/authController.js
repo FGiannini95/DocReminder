@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const sgMail = require("@sendgrid/mail");
 const db = require("../config/db");
+const bcrypt = require("bcrypt");
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
@@ -208,6 +209,29 @@ class authController {
         .json({ message: "displayName updated succesfully" });
     } catch (err) {
       return res.status(401).json({ message: "Error during the update" });
+    }
+  };
+
+  createPin = async (req, res) => {
+    const userId = req.user.userId;
+    const { pin } = req.body;
+
+    if (!pin || pin.length < 4) {
+      return res.status(400).json({ message: "Pin incorrect" });
+    }
+
+    try {
+      const updatePin = `
+        UPDATE user SET pin = ?
+        WHERE user_id = ? AND is_deleted = 0  
+      `;
+
+      const hashedPin = await bcrypt.hash(pin, 10);
+
+      await db.query(updatePin, [hashedPin, userId]);
+      return res.status(200).json({ Message: "Pin updated succesfully" });
+    } catch (err) {
+      return res.status(500).json({ message: "Internal server error" });
     }
   };
 }
