@@ -8,10 +8,12 @@ import { DocumentHeader } from "../DocumentHeader/DocumentHeader";
 import { containedButtonSx, scrollableContentSx, textFieldSx } from "@/styles/commonStyle";
 import { axiosInstance } from "@/api/axiosInstance";
 import { AUTH_URL } from "@/api/apiConfig";
+import { useAuth } from "@/context";
 
 export const PinSetup = () => {
   const [pin, setPin] = useState<string[]>(Array(4).fill(""));
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { updatePinEnabled } = useAuth();
 
   const navigate = useNavigate();
 
@@ -27,6 +29,7 @@ export const PinSetup = () => {
       .post(`${AUTH_URL}/save-pin`, { pin: pin.join("") })
 
       .then(() => {
+        updatePinEnabled(true);
         navigate(-1);
         setIsLoading(false);
       })
@@ -62,6 +65,9 @@ export const PinSetup = () => {
               />
             ))}
           </Box>
+
+          {/* Spacer — pushes buttons to bottom */}
+          <Box sx={{ flex: 1 }} />
 
           <Button
             fullWidth

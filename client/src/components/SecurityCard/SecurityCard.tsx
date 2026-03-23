@@ -8,6 +8,7 @@ interface SecurityCardProps {
   onActivate: () => void;
   compact?: boolean;
   onClick: () => void;
+  checked: boolean;
 }
 
 export const SecurityCard = ({
@@ -17,6 +18,7 @@ export const SecurityCard = ({
   onActivate,
   compact,
   onClick,
+  checked = false,
 }: SecurityCardProps) => {
   if (compact) {
     return (
@@ -33,6 +35,7 @@ export const SecurityCard = ({
           <Typography fontWeight="bold">{title}</Typography>
 
           <Switch
+            checked={checked}
             onChange={onActivate}
             onClick={(e) => e.stopPropagation()}
             sx={{

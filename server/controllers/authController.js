@@ -102,7 +102,7 @@ class authController {
           userId: user.user_id,
           email: user.email,
           displayName: user.displayName,
-          pin_enabled: user.pin_enabled,
+          pin_enabled: user.pin_enabled ?? false,
         },
         process.env.JWT_ACCESS_SECRET,
         { expiresIn: "10m" },
@@ -113,7 +113,7 @@ class authController {
           userId: user.user_id,
           email: user.email,
           displayName: user.displayName,
-          pin_enabled: user.pin_enabled,
+          pin_enabled: user.pin_enabled ?? false,
         },
         process.env.JWT_REFRESH_SECRET,
         { expiresIn: "30d" },
@@ -175,7 +175,7 @@ class authController {
           userId: user.user_id,
           email: user.email,
           displayName: user.displayName,
-          pin_enabled: user.pin_enabled,
+          pin_enabled: true,
         },
         process.env.JWT_ACCESS_SECRET,
         { expiresIn: "10m" },
@@ -238,7 +238,22 @@ class authController {
       const hashedPin = await bcrypt.hash(pin, 10);
 
       await db.query(updatePin, [hashedPin, userId]);
-      return res.status(200).json({ Message: "Pin updated succesfully" });
+
+      // Generate new accessToken
+      const newAccessToken = jwt.sign(
+        {
+          userId: req.user.userId,
+          email: req.user.email,
+          displayName: req.user.displayName,
+          pin_enabled: user.pin_enabled ?? false,
+        },
+        process.env.JWT_ACCESS_SECRET,
+        { expiresIn: "10m" },
+      );
+
+      return res
+        .status(200)
+        .json({ newAccessToken, message: "Pin updated succesfully" });
     } catch (err) {
       return res.status(500).json({ message: "Internal server error" });
     }

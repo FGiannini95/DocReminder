@@ -15,6 +15,8 @@ interface AuthContextType {
   login: (token: string) => void;
   logout: () => void;
   updateDisplayName: (name: string) => void;
+  updatePinEnabled: (value: boolean) => void;
+  pinEnabled: boolean;
 }
 
 export const AuthContext = createContext<AuthContextType | null>(null);
@@ -26,16 +28,23 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [email, setEmail] = useState<string | null>(null);
   const [displayName, setDisplayName] = useState<string | null>(null);
   const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [pinEnabled, setPinEnabled] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isLogged, setIsLogged] = useState<boolean>(false);
 
   const login = useCallback((token: string) => {
     setAccessToken(token);
     setAuthToken(token);
-    const decoded = jwtDecode<{ userId: number; email: string; displayName: string }>(token);
+    const decoded = jwtDecode<{
+      userId: number;
+      email: string;
+      displayName: string;
+      pin_enabled: boolean;
+    }>(token);
     setUser(decoded.userId);
     setEmail(decoded.email);
     setDisplayName(decoded.displayName);
+    setPinEnabled(decoded.pin_enabled ?? false);
     setIsLogged(true);
   }, []);
 
@@ -45,11 +54,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setUser(null);
     setEmail(null);
     setDisplayName(null);
+    setPinEnabled(false);
     setIsLogged(false);
   }, []);
 
   const updateDisplayName = useCallback((name: string) => {
     setDisplayName(name);
+  }, []);
+
+  const updatePinEnabled = useCallback((value: boolean) => {
+    setPinEnabled(value);
   }, []);
 
   useEffect(() => {
@@ -75,11 +89,25 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       accessToken,
       isLoading,
       isLogged,
+      pinEnabled,
       login,
       logout,
       updateDisplayName,
+      updatePinEnabled,
     }),
-    [user, email, displayName, accessToken, isLoading, isLogged, login, logout, updateDisplayName]
+    [
+      user,
+      email,
+      displayName,
+      accessToken,
+      isLoading,
+      isLogged,
+      pinEnabled,
+      login,
+      logout,
+      updateDisplayName,
+      updatePinEnabled,
+    ]
   );
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
