@@ -7,4 +7,5 @@ export const DocReminderRoutes = {
   addDocument: "/add-document",
   oneDocument: "/document/:id",
   editDocument: "/edit-document/:id",
+  pinSetup: "/pin-setup",
 };

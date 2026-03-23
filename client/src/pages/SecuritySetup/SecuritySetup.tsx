@@ -47,6 +47,7 @@ export const SecuritySetup = () => {
             description="Accede en segundos con tu huella o reconocimiento facial."
             buttonLabel="Activar"
             onActivate={() => {}}
+            onClick={() => {}}
           />
 
           <SecurityCard
@@ -54,6 +55,7 @@ export const SecuritySetup = () => {
             description="Crea un PIN de 4 dígitos para acceder rápidamente."
             buttonLabel="Crear"
             onActivate={() => {}}
+            onClick={() => navigate(DocReminderRoutes.pinSetup)}
           />
 
           <Typography

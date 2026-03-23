@@ -16,7 +16,7 @@ import { useAuth } from "@/context";
 import { BottomNav, PageTransition, SecurityCard } from "@/components";
 import { ProfileHeader } from "./components/ProfileHeader";
 import { StatsProfile } from "./components/StatsProfile";
-import { EditProfileDialog } from "./components/EditProfileDIalog";
+import { EditProfileDialog } from "./components/EditProfileDialog";
 
 export const Profile = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -79,8 +79,13 @@ export const Profile = () => {
             </IconButton>
           </Box>
 
-          <SecurityCard title="Huella o Face ID" compact onActivate={() => {}} />
-          <SecurityCard title="Código PIN" compact onActivate={() => {}} />
+          <SecurityCard title="Huella o Face ID" compact onActivate={() => {}} onClick={() => {}} />
+          <SecurityCard
+            title="Código PIN"
+            compact
+            onActivate={() => {}}
+            onClick={() => navigate(DocReminderRoutes.pinSetup)}
+          />
 
           {/* Spacer — pushes buttons to bottom */}
           <Box sx={{ flex: 1 }} />

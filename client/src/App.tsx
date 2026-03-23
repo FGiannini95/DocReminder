@@ -5,6 +5,7 @@ import { AnimatePresence } from "framer-motion";
 import { DocumentForm, Home, Landing, OneDocument, Otp, Profile, SecuritySetup } from "@/pages";
 import { DocReminderRoutes } from "./routes/routes";
 import { useAuth } from "./context";
+import { PinSetup } from "./components";
 
 const AppRoutes = () => {
   const { isLogged, isLoading } = useAuth();
@@ -24,6 +25,7 @@ const AppRoutes = () => {
             <Route path={DocReminderRoutes.addDocument} element={<DocumentForm />} />
             <Route path={DocReminderRoutes.editDocument} element={<DocumentForm />} />
             <Route path={DocReminderRoutes.oneDocument} element={<OneDocument />} />
+            <Route path={DocReminderRoutes.pinSetup} element={<PinSetup />} />
             <Route path="*" element={<Navigate to={DocReminderRoutes.home} replace />} />
           </Routes>
         )}
