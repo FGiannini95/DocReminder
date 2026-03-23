@@ -258,6 +258,17 @@ class authController {
       return res.status(500).json({ message: "Internal server error" });
     }
   };
+
+  verifyPin = async (req, res) => {
+    console.log("hi from verifyPin");
+    // get email and pin from body
+    // find user in DB by email
+    // compare pin with bcrypt
+    // if match → generate accessToken and refreshToken
+    // save refreshToken in DB and cookie
+    // return 200 with accessToken
+    // if no match → return 401
+  };
 }
 
 module.exports = new authController();

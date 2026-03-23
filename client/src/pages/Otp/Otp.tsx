@@ -53,6 +53,7 @@ export const Otp = () => {
         vibrate();
         login(res.data.accessToken);
         navigate(DocReminderRoutes.security, { state: { email } });
+        localStorage.setItem("userEmail", email);
       })
       .catch((err) => {
         console.log(err);
@@ -133,6 +134,11 @@ export const Otp = () => {
                 autoFocus={i === 0}
                 inputRef={(el) => (refs.current[i] = el)}
                 onChange={(e) => handleChange(e.target.value, i)}
+                onKeyDown={(e) => {
+                  if (!/[0-9]/.test(e.key) && e.key !== "Backspace") {
+                    e.preventDefault();
+                  }
+                }}
                 inputProps={{ maxLength: 1, style: { textAlign: "center" }, inputMode: "numeric" }}
                 sx={{
                   ...textFieldSx,

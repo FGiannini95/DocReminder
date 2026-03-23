@@ -1,4 +1,4 @@
-import { useState } from "react";
+import react, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -11,6 +11,7 @@ import { DocReminderRoutes } from "@/routes/routes";
 import { PageTransition } from "@/components";
 import { AUTH_URL } from "@/api/apiConfig";
 import { textFieldSx } from "@/styles/commonStyle";
+import { FastAccesButtons } from "./components/FastAccesButtons";
 
 // Shared styles for sections
 const sectionStyles = {
@@ -21,8 +22,9 @@ const sectionStyles = {
 };
 
 export const Landing = () => {
-  const [email, setEmail] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [email, setEmail] = useState<string>("");
+  const [savedEmail] = useState<string | null>(() => localStorage.getItem("userEmail"));
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const navigate = useNavigate();
 
   const handleSubmit = () => {
@@ -114,11 +116,9 @@ export const Landing = () => {
             >
               Continuar con Google
             </Button>
-          </Box>
 
-          <Typography variant="caption" color="text.secondary">
-            ¿Primera vez? Tu cuenta se crea automáticamente.
-          </Typography>
+            {savedEmail && <FastAccesButtons />}
+          </Box>
         </Box>
       </Box>
     </PageTransition>

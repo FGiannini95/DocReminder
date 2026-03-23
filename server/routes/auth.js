@@ -10,5 +10,6 @@ router.post("/refresh", authController.refresh);
 router.post("/logout", authenticateToken, authController.logOut);
 router.put("/update-name", authenticateToken, authController.updateName);
 router.post("/save-pin", authenticateToken, authController.createPin);
+router.post("/verify-pin", authController.verifyPin);
 
 module.exports = router;

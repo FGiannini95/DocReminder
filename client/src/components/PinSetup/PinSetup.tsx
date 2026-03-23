@@ -10,12 +10,21 @@ import { axiosInstance } from "@/api/axiosInstance";
 import { AUTH_URL } from "@/api/apiConfig";
 import { useAuth } from "@/context";
 import { useAutoAdvance } from "@/hooks";
+import { DocReminderRoutes } from "@/routes/routes";
 
-export const PinSetup = () => {
+type PinMode = "create" | "verify";
+
+interface PinSetupProps {
+  mode: PinMode;
+}
+
+export const PinSetup = ({ mode }: PinSetupProps) => {
   const [pin, setPin] = useState<string[]>(Array(4).fill(""));
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { togglePin } = useAuth();
+  const { togglePin, login } = useAuth();
   const { refs, handleInputChange } = useAutoAdvance(4);
+
+  const savedEmail = localStorage.getItem("userEmail");
 
   const navigate = useNavigate();
 
@@ -29,11 +38,21 @@ export const PinSetup = () => {
 
   const handleSubmit = () => {
     setIsLoading(true);
-    axiosInstance
-      .post(`${AUTH_URL}/save-pin`, { pin: pin.join("") })
-      .then(() => {
-        togglePin(true);
-        navigate(-1);
+
+    const request =
+      mode === "create"
+        ? axiosInstance.post(`${AUTH_URL}/save-pin`, { pin: pin.join("") })
+        : axiosInstance.post(`${AUTH_URL}/verify-pin`, { pin: pin.join(""), email: savedEmail });
+
+    request
+      .then((res) => {
+        if (mode === "create") {
+          togglePin(true);
+          navigate(-1);
+        } else {
+          login(res.data.accessToken);
+          navigate(DocReminderRoutes.home);
+        }
         setIsLoading(false);
       })
       .catch((err) => {
@@ -48,7 +67,10 @@ export const PinSetup = () => {
     <PageTransition>
       <Box sx={{ minHeight: "100dvh", display: "flex", flexDirection: "column" }}>
         {/* Header */}
-        <DocumentHeader title="Código PIN" onBack={() => navigate(-1)} />
+        <DocumentHeader
+          title={mode === "create" ? "Código PIN" : "Acceder con PIN"}
+          onBack={() => navigate(-1)}
+        />
         <Box sx={{ ...scrollableContentSx, p: 3 }}>
           {/* PIN boxes */}
           <Box sx={{ display: "flex", gap: 1, py: 1.5 }}>
@@ -59,6 +81,11 @@ export const PinSetup = () => {
                 inputRef={(el) => (refs.current[i] = el)}
                 value={digit}
                 onChange={(e) => handleChange(e.target.value, i)}
+                onKeyDown={(e) => {
+                  if (!/[0-9]/.test(e.key) && e.key !== "Backspace") {
+                    e.preventDefault();
+                  }
+                }}
                 inputProps={{
                   maxLength: 1,
                   style: { textAlign: "center" },
@@ -79,7 +106,13 @@ export const PinSetup = () => {
             onClick={handleSubmit}
             disabled={isLoading || isPinIncomplete}
           >
-            {isLoading ? <CircularProgress size={20} sx={{ color: "inherit" }} /> : "Guardar PIN"}
+            {isLoading ? (
+              <CircularProgress size={20} sx={{ color: "inherit" }} />
+            ) : mode === "create" ? (
+              "Guardar PIN"
+            ) : (
+              "Acceder"
+            )}
           </Button>
         </Box>
       </Box>
