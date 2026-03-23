@@ -126,7 +126,7 @@ export const Otp = () => {
                 key={i}
                 value={digit}
                 onChange={(e) => handleChange(e.target.value, i)}
-                inputProps={{ maxLength: 1, style: { textAlign: "center" } }}
+                inputProps={{ maxLength: 1, style: { textAlign: "center" }, inputMode: "numeric" }}
                 sx={{
                   // Border color when input is focused
                   "& .MuiOutlinedInput-root.Mui-focused fieldset": {

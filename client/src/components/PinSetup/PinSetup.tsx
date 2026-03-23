@@ -27,7 +27,6 @@ export const PinSetup = () => {
     setIsLoading(true);
     axiosInstance
       .post(`${AUTH_URL}/save-pin`, { pin: pin.join("") })
-
       .then(() => {
         togglePin(true);
         navigate(-1);
