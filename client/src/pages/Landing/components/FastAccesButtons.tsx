@@ -4,7 +4,9 @@ import { useNavigate } from "react-router-dom";
 import { Box, Divider, IconButton, Typography } from "@mui/material";
 import DialpadIcon from "@mui/icons-material/Dialpad";
 import FingerprintIcon from "@mui/icons-material/Fingerprint";
+
 import { DocReminderRoutes } from "@/routes/routes";
+import { vibrate } from "@/utils/haptics";
 
 export const FastAccesButtons = () => {
   const navigate = useNavigate();
@@ -19,7 +21,10 @@ export const FastAccesButtons = () => {
       <Box sx={{ display: "flex", justifyContent: "center", gap: 2 }}>
         <IconButton
           sx={{ border: "1px solid", borderRadius: 3, p: 1.5 }}
-          onClick={() => navigate(DocReminderRoutes.pinLogin)}
+          onClick={() => {
+            vibrate();
+            navigate(DocReminderRoutes.pinLogin);
+          }}
         >
           <DialpadIcon sx={{ fontSize: 32 }} />
         </IconButton>
