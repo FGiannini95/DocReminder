@@ -371,7 +371,86 @@ class authController {
   };
 
   finishRegisterWebAuthn = async (req, res) => {
-    console.log("hi from register finish");
+    const userId = req.user.userId;
+    const { registration } = req.body;
+
+    try {
+      // Get challenge from DB
+      const selectUser = `
+        SELECT webauthn_challenge, email, displayName, webauthn_credentials
+        FROM user 
+        WHERE user_id = ? AND is_deleted = 0
+      `;
+
+      const [rows] = await db.query(selectUser, [userId]);
+      const user = rows[0];
+
+      if (!user || !user.webauthn_challenge) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+
+      // Verify registration
+      const verification = await verifyRegistrationResponse({
+        response: registration,
+        expectedChallenge: user.webauthn_challenge,
+        expectedOrigin: process.env.ORIGIN || "http://localhost:5173",
+        expectedRPID: process.env.RP_ID || "localhost",
+        requireUserVerification: true,
+      });
+
+      if (!verification.verified) {
+        return res.status(401).json({ message: "Verification failed" });
+      }
+
+      const { credential } = verification.registrationInfo;
+
+      // Parse existing credentials to prevent duplicare registration
+      const existingCredentials = user.webauthn_credentials
+        ? JSON.parse(user.webauthn_credentials)
+        : [];
+
+      // Add new credential to existing ones
+      const updatedCredentials = [
+        ...existingCredentials,
+        {
+          id: credential.id,
+          publicKey: Buffer.from(credential.publicKey).toString("base64"),
+          counter: credential.counter,
+        },
+      ];
+
+      // Save credentials
+      const updateCredentials = `
+        UPDATE user SET 
+          webauthn_credentials = ?, webauthn_challenge = NULL, fingerprint_enabled = true
+        WHERE user_id = ?
+      `;
+
+      await db.query(updateCredentials, [
+        JSON.stringify(updatedCredentials),
+        userId,
+      ]);
+
+      // Generate new accessToken
+      const newAccessToken = jwt.sign(
+        {
+          userId: req.user.userId,
+          email: req.user.email,
+          displayName: req.user.displayName,
+          pin_enabled: req.user.pin_enabled ?? false,
+          fingerprint_enabled: true,
+        },
+        process.env.JWT_ACCESS_SECRET,
+        { expiresIn: "10m" },
+      );
+
+      return res.status(200).json({
+        newAccessToken,
+        message: "Fingerprint registered succesfully",
+      });
+    } catch (err) {
+      return res.status(500).json({ message: "Unauthorized" });
+    }
   };
 }
 
