@@ -74,6 +74,10 @@ export const Profile = () => {
     }
   };
 
+  const handleFingerPrint = () => {
+    console.log("hi from huella");
+  };
+
   return (
     <PageTransition>
       <Box sx={{ height: "100dvh", display: "flex", flexDirection: "column" }}>
@@ -103,7 +107,7 @@ export const Profile = () => {
             title="Huella o Face ID"
             checked={false}
             compact
-            onActivate={() => {}}
+            onActivate={handleFingerPrint}
             onClick={() => {}}
           />
 

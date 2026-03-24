@@ -9,3 +9,4 @@ export { DocumentHeader } from "./DocumentHeader/DocumentHeader.tsx";
 export { Loading } from "./Loading/Loading.tsx";
 export { ErrorMessage } from "./ErrorMessage/ErrorMessage.tsx";
 export { SecurityCard } from "./SecurityCard/SecurityCard.tsx";
+export { FingerPrintSetup } from "./FingerPrintSetup/FingerPrintSetup.tsx";
