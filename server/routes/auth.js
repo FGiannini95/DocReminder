@@ -24,5 +24,12 @@ router.post(
   authenticateToken,
   authController.finishRegisterWebAuthn,
 );
+router.post("/webauthn/auth/start", authController.startAuthWebAuthn);
+router.post("/webauthn/auth/finish", authController.finishAuthWebAuthn);
+router.put(
+  "/toggle-fingerprint",
+  authenticateToken,
+  authController.toggleFingerprint,
+);
 
 module.exports = router;

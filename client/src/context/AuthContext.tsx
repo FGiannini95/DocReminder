@@ -17,6 +17,8 @@ interface AuthContextType {
   updateDisplayName: (name: string) => void;
   togglePin: (value: boolean) => void;
   pinEnabled: boolean;
+  toggleFingerprint: (value: boolean) => void;
+  fingerprintEnabled: boolean;
 }
 
 export const AuthContext = createContext<AuthContextType | null>(null);
@@ -29,6 +31,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [displayName, setDisplayName] = useState<string | null>(null);
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [pinEnabled, setPinEnabled] = useState<boolean>(false);
+  const [fingerprintEnabled, setFingerprintEnabled] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isLogged, setIsLogged] = useState<boolean>(false);
 
@@ -40,11 +43,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       email: string;
       displayName: string;
       pin_enabled: boolean;
+      fingerprint_enabled: boolean;
     }>(token);
     setUser(decoded.userId);
     setEmail(decoded.email);
     setDisplayName(decoded.displayName);
     setPinEnabled(decoded.pin_enabled ?? false);
+    setFingerprintEnabled(decoded.fingerprint_enabled ?? false);
     setIsLogged(true);
   }, []);
 
@@ -55,6 +60,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setEmail(null);
     setDisplayName(null);
     setPinEnabled(false);
+    setFingerprintEnabled(false);
     setIsLogged(false);
   }, []);
 
@@ -64,6 +70,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const togglePin = useCallback((value: boolean) => {
     setPinEnabled(value);
+  }, []);
+
+  const toggleFingerprint = useCallback((value: boolean) => {
+    setFingerprintEnabled(value);
   }, []);
 
   useEffect(() => {
@@ -90,10 +100,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       isLoading,
       isLogged,
       pinEnabled,
+      fingerprintEnabled,
       login,
       logout,
       updateDisplayName,
       togglePin,
+      toggleFingerprint,
     }),
     [
       user,
@@ -103,10 +115,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       isLoading,
       isLogged,
       pinEnabled,
+      fingerprintEnabled,
       login,
       logout,
       updateDisplayName,
       togglePin,
+      toggleFingerprint,
     ]
   );
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -17,12 +17,14 @@ import { BottomNav, PageTransition, SecurityCard } from "@/components";
 import { ProfileHeader } from "./components/ProfileHeader";
 import { StatsProfile } from "./components/StatsProfile";
 import { EditProfileDialog } from "./components/EditProfileDialog";
+import { useWebAuthn } from "@/hooks";
 
 export const Profile = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
+  const { logout, pinEnabled, togglePin, fingerprintEnabled, toggleFingerprint, login } = useAuth();
+  const { registerFingerprint } = useWebAuthn();
   const navigate = useNavigate();
-  const { logout, pinEnabled, togglePin } = useAuth();
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const { data: documents } = useQuery<Document[]>({
@@ -74,8 +76,30 @@ export const Profile = () => {
     }
   };
 
-  const handleFingerPrint = () => {
-    console.log("hi from huella");
+  const handleFingerPrint = async () => {
+    if (!fingerprintEnabled && !localStorage.getItem("fingerprintEnabled")) {
+      // fingerprint not registered → start registration
+      try {
+        const data = await registerFingerprint();
+        login(data.newAccessToken);
+        toggleFingerprint(true);
+        localStorage.setItem("fingerprintEnabled", "true");
+      } catch (err) {
+        console.log(err);
+      }
+    } else {
+      // fingerprint alredy registered → toggle on/off
+      const newValue = !fingerprintEnabled;
+      toggleFingerprint(newValue);
+      localStorage.setItem("fingerprintEnabled", String(newValue));
+
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+      debounceRef.current = setTimeout(() => {
+        axiosInstance
+          .put(`${AUTH_URL}/toggle-fingerprint`, { fingerprint_enabled: newValue })
+          .catch((err) => console.log(err));
+      }, 500);
+    }
   };
 
   return (

@@ -2,6 +2,10 @@ const jwt = require("jsonwebtoken");
 const sgMail = require("@sendgrid/mail");
 const db = require("../config/db");
 const bcrypt = require("bcrypt");
+const {
+  generateRegistrationOptions,
+  verifyRegistrationResponse,
+} = require("@simplewebauthn/server");
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
@@ -150,7 +154,7 @@ class authController {
       const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
       // Find user in DB
       const selectUser = `
-        SELECT user_id, email, refresh_token, displayName, pin_enabled 
+        SELECT user_id, email, refresh_token, displayName, pin_enabled, fingerprint_enabled
         FROM user WHERE user_id = ? AND is_deleted = 0
       `;
       const [rows] = await db.query(selectUser, [decoded.userId]);
@@ -175,7 +179,8 @@ class authController {
           userId: user.user_id,
           email: user.email,
           displayName: user.displayName,
-          pin_enabled: true,
+          pin_enabled: user.pin_enabled ?? false,
+          fingerprint_enabled: user.fingerprint_enabled ?? false,
         },
         process.env.JWT_ACCESS_SECRET,
         { expiresIn: "10m" },
@@ -246,6 +251,7 @@ class authController {
           email: req.user.email,
           displayName: req.user.displayName,
           pin_enabled: true,
+          fingerprint_enabled: req.user.fingerprint_enabled ?? false,
         },
         process.env.JWT_ACCESS_SECRET,
         { expiresIn: "10m" },
@@ -268,7 +274,7 @@ class authController {
 
     try {
       const selectUser = `
-        SELECT user_id, email, pin, displayName, pin_enabled
+        SELECT user_id, email, pin, displayName, pin_enabled, fingerprint_enabled
         FROM user 
         WHERE email = ? AND is_deleted = 0
       `;
@@ -288,6 +294,7 @@ class authController {
           email: user.email,
           displayName: user.displayName,
           pin_enabled: user.pin_enabled ?? false,
+          fingerprint_enabled: user.fingerprint_enabled ?? false,
         },
         process.env.JWT_ACCESS_SECRET,
         { expiresIn: "10m" },
@@ -450,6 +457,31 @@ class authController {
       });
     } catch (err) {
       return res.status(500).json({ message: "Unauthorized" });
+    }
+  };
+
+  startAuthWebAuthn = async (req, res) => {
+    console.log("Hi from start Auth");
+  };
+
+  finishAuthWebAuthn = async (req, res) => {
+    console.log("Hi from finish Auth");
+  };
+
+  toggleFingerprint = async (req, res) => {
+    const userId = req.user.userId;
+    const { fingerprint_enabled } = req.body;
+
+    try {
+      const updatePinStatus = `
+        UPDATE user SET fingerprint_enabled = ? WHERE user_id = ? AND is_deleted = 0
+      `;
+
+      await db.query(updatePinStatus, [fingerprint_enabled, userId]);
+
+      return res.status(200).json({ message: "Status updated succesfully" });
+    } catch (err) {
+      return res.status(500).json({ message: "Error updating the toggle" });
     }
   };
 }
