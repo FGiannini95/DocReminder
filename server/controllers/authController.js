@@ -317,6 +317,62 @@ class authController {
       return res.status(500).json({ message: "Error updating the toggle" });
     }
   };
+
+  startRegisterWebAuthn = async (req, res) => {
+    const userId = req.user.userId;
+    const email = req.user.email;
+
+    try {
+      const selectUser = `
+        SELECT user_id, email, displayName, webauthn_credentials
+        FROM user 
+        WHERE user_id = ? AND is_deleted = 0
+      `;
+
+      const [rows] = await db.query(selectUser, [userId]);
+      const user = rows[0];
+
+      if (!user) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+
+      // Parse existing credentials to prevent duplicare registration
+      const existingCredentials = user.webauthn_credentials
+        ? JSON.parse(user.webauthn_credentials)
+        : [];
+
+      // Generate registration options for the device
+      const options = await generateRegistrationOptions({
+        rpName: "DocReminder",
+        rpID: process.env.RP_ID || "localhost",
+        userID: Buffer.from(String(userId)),
+        userName: email,
+        userDisplayName: user.displayName || email,
+        excludeCredentials: existingCredentials.map((cred) => ({
+          id: cred.id,
+          type: "public-key",
+        })),
+        authenticatorSelection: {
+          authenticatorAttachment: "platform", // use device biometrics (Face ID, fingerprint)
+          userVerification: "required",
+        },
+      });
+
+      // Save challenge  temporarily in db for verification
+      const updateChallenge = `
+        UPDATE user SET webauthn_challenge = ? WHERE user_id = ?
+      `;
+      await db.query(updateChallenge, [options.challenge, userId]);
+
+      return res.status(200).json(options);
+    } catch (err) {
+      return res.status(500).json({ message: "Internal server error" });
+    }
+  };
+
+  finishRegisterWebAuthn = async (req, res) => {
+    console.log("hi from register finish");
+  };
 }
 
 module.exports = new authController();
