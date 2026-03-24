@@ -12,6 +12,8 @@ import { DocReminderRoutes } from "@/routes/routes";
 import { AUTH_URL } from "@/api/apiConfig";
 import { useAuth } from "@/context";
 import { PageTransition } from "@/components";
+import { textFieldSx } from "@/styles/commonStyle";
+import { useAutoAdvance } from "@/hooks";
 
 // Shared styles for sections
 const sectionStyles = {
@@ -27,6 +29,7 @@ export const Otp = () => {
   const [isResending, setIsResending] = useState(false);
   const [countdown, setCountdown] = useState(60);
   const [error, setError] = useState<string | null>(null);
+  const { refs, handleInputChange } = useAutoAdvance(6);
 
   const { login } = useAuth();
   const { state } = useLocation();
@@ -38,6 +41,8 @@ export const Otp = () => {
     const newOtp = [...otp];
     newOtp[index] = value;
     setOtp(newOtp);
+
+    handleInputChange(value, index);
   };
 
   const handleSubmit = () => {
@@ -48,6 +53,7 @@ export const Otp = () => {
         vibrate();
         login(res.data.accessToken);
         navigate(DocReminderRoutes.security, { state: { email } });
+        localStorage.setItem("userEmail", email);
       })
       .catch((err) => {
         console.log(err);
@@ -125,17 +131,17 @@ export const Otp = () => {
               <TextField
                 key={i}
                 value={digit}
+                autoFocus={i === 0}
+                inputRef={(el) => (refs.current[i] = el)}
                 onChange={(e) => handleChange(e.target.value, i)}
+                onKeyDown={(e) => {
+                  if (!/[0-9]/.test(e.key) && e.key !== "Backspace") {
+                    e.preventDefault();
+                  }
+                }}
                 inputProps={{ maxLength: 1, style: { textAlign: "center" }, inputMode: "numeric" }}
                 sx={{
-                  // Border color when input is focused
-                  "& .MuiOutlinedInput-root.Mui-focused fieldset": {
-                    borderColor: "text.primary",
-                  },
-                  // Label color when focused
-                  "& .MuiInputLabel-root.Mui-focused": {
-                    color: "text.primary",
-                  },
+                  ...textFieldSx,
                 }}
               />
             ))}

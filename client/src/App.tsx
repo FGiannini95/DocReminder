@@ -25,7 +25,7 @@ const AppRoutes = () => {
             <Route path={DocReminderRoutes.addDocument} element={<DocumentForm />} />
             <Route path={DocReminderRoutes.editDocument} element={<DocumentForm />} />
             <Route path={DocReminderRoutes.oneDocument} element={<OneDocument />} />
-            <Route path={DocReminderRoutes.pinSetup} element={<PinSetup />} />
+            <Route path={DocReminderRoutes.pinSetup} element={<PinSetup mode="create" />} />
             <Route path="*" element={<Navigate to={DocReminderRoutes.home} replace />} />
           </Routes>
         )}
@@ -34,6 +34,7 @@ const AppRoutes = () => {
             <Route path={DocReminderRoutes.landing} element={<Landing />} />
             <Route path={DocReminderRoutes.otp} element={<Otp />} />
             <Route path={DocReminderRoutes.security} element={<SecuritySetup />} />
+            <Route path={DocReminderRoutes.pinLogin} element={<PinSetup mode="verify" />} />
             <Route path="*" element={<Navigate to={DocReminderRoutes.landing} replace />} />
           </Routes>
         )}
