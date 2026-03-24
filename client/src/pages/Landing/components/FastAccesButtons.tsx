@@ -10,6 +10,13 @@ import { vibrate } from "@/utils/haptics";
 
 export const FastAccesButtons = () => {
   const navigate = useNavigate();
+
+  const savedPin = localStorage.getItem("pinEnabled") === "true";
+  //const savedHuella = localStorage.getItem("huellaEnabled") === "true";
+
+  if (!savedPin) return null;
+  // if (!savedPin && !savedHuella) return null;
+
   return (
     <>
       <Divider sx={{ width: "100%" }}>
@@ -19,15 +26,17 @@ export const FastAccesButtons = () => {
         Acceso rápido
       </Typography>
       <Box sx={{ display: "flex", justifyContent: "center", gap: 2 }}>
-        <IconButton
-          sx={{ border: "1px solid", borderRadius: 3, p: 1.5 }}
-          onClick={() => {
-            vibrate();
-            navigate(DocReminderRoutes.pinLogin);
-          }}
-        >
-          <DialpadIcon sx={{ fontSize: 32 }} />
-        </IconButton>
+        {savedPin && (
+          <IconButton
+            sx={{ border: "1px solid", borderRadius: 3, p: 1.5 }}
+            onClick={() => {
+              vibrate();
+              navigate(DocReminderRoutes.pinLogin);
+            }}
+          >
+            <DialpadIcon sx={{ fontSize: 32 }} />
+          </IconButton>
+        )}
         <IconButton sx={{ border: "1px solid", borderRadius: 3, p: 1.5 }}>
           <FingerprintIcon sx={{ fontSize: 32 }} />
         </IconButton>

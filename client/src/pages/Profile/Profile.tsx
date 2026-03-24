@@ -54,6 +54,18 @@ export const Profile = () => {
     setOpen(true);
   };
 
+  const handlePin = () => {
+    if (!pinEnabled && !localStorage.getItem("pinEnabled")) {
+      // Pin doesn't exist
+      navigate(DocReminderRoutes.pinSetup);
+    } else {
+      // pin exists → toggle on/off
+      const newValue = !pinEnabled;
+      togglePin(newValue);
+      localStorage.setItem("pinEnabled", String(newValue));
+    }
+  };
+
   return (
     <PageTransition>
       <Box sx={{ height: "100dvh", display: "flex", flexDirection: "column" }}>
@@ -91,7 +103,7 @@ export const Profile = () => {
             title="Código PIN"
             checked={pinEnabled}
             compact
-            onActivate={() => togglePin(!pinEnabled)}
+            onActivate={handlePin}
             onClick={() => navigate(DocReminderRoutes.pinSetup)}
           />
 
