@@ -300,6 +300,23 @@ class authController {
       return res.status(500).json({ message: "Internal server error" });
     }
   };
+
+  togglePin = async (req, res) => {
+    const userId = req.user.userId;
+    const { pin_enabled } = req.body;
+
+    try {
+      const updatePinStatus = `
+        UPDATE user SET pin_enabled = ? WHERE user_id = ? AND is_deleted = 0
+      `;
+
+      await db.query(updatePinStatus, [pin_enabled, userId]);
+
+      return res.status(200).json({ message: "Status updated succesfully" });
+    } catch (err) {
+      return res.status(500).json({ message: "Error updating the toggle" });
+    }
+  };
 }
 
 module.exports = new authController();

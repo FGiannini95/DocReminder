@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 
@@ -23,6 +23,7 @@ export const Profile = () => {
   const [open, setOpen] = useState<boolean>(false);
   const navigate = useNavigate();
   const { logout, pinEnabled, togglePin } = useAuth();
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const { data: documents } = useQuery<Document[]>({
     queryKey: ["documents"],
@@ -63,6 +64,13 @@ export const Profile = () => {
       const newValue = !pinEnabled;
       togglePin(newValue);
       localStorage.setItem("pinEnabled", String(newValue));
+
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+      debounceRef.current = setTimeout(() => {
+        axiosInstance
+          .put(`${AUTH_URL}/toggle-pin`, { pin_enabled: newValue })
+          .catch((err) => console.log(err));
+      }, 500);
     }
   };
 
