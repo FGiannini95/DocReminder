@@ -50,7 +50,7 @@ export const PinSetup = ({ mode }: PinSetupProps) => {
           togglePin(true);
           navigate(-1);
         } else {
-          login(res.data.accessToken);
+          login(res.data.newAccessToken);
           navigate(DocReminderRoutes.home);
         }
         setIsLoading(false);

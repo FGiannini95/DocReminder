@@ -245,7 +245,7 @@ class authController {
           userId: req.user.userId,
           email: req.user.email,
           displayName: req.user.displayName,
-          pin_enabled: user.pin_enabled ?? false,
+          pin_enabled: true,
         },
         process.env.JWT_ACCESS_SECRET,
         { expiresIn: "10m" },
