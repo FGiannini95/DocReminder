@@ -51,10 +51,9 @@ export const PinSetup = ({ mode }: PinSetupProps) => {
           localStorage.setItem("pinEnabled", "true");
           navigate(-1);
         } else {
-          login(res.data.newAccessToken);
           navigate(DocReminderRoutes.home);
+          login(res.data.newAccessToken);
         }
-        setIsLoading(false);
       })
       .catch((err) => {
         console.log(err);
