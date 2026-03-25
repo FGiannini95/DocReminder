@@ -77,7 +77,7 @@ class authController {
     try {
       // Find user in DB
       const selectUser = `
-        SELECT user_id, email, displayName, otp_code, otp_expires_at, pin_enabled 
+        SELECT user_id, email, displayName, otp_code, otp_expires_at, pin_enabled, fingerprint_enabled 
         FROM user 
         WHERE email = ? AND is_deleted = 0
       `;
@@ -107,6 +107,7 @@ class authController {
           email: user.email,
           displayName: user.displayName,
           pin_enabled: user.pin_enabled ?? false,
+          fingerprint_enabled: user.fingerprint_enabled ?? false,
         },
         process.env.JWT_ACCESS_SECRET,
         { expiresIn: "10m" },
@@ -118,6 +119,7 @@ class authController {
           email: user.email,
           displayName: user.displayName,
           pin_enabled: user.pin_enabled ?? false,
+          fingerprint_enabled: user.fingerprint_enabled ?? false,
         },
         process.env.JWT_REFRESH_SECRET,
         { expiresIn: "30d" },
