@@ -5,6 +5,7 @@ const bcrypt = require("bcrypt");
 const {
   generateRegistrationOptions,
   verifyRegistrationResponse,
+  generateAuthenticationOptions,
 } = require("@simplewebauthn/server");
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
@@ -463,7 +464,51 @@ class authController {
   };
 
   startAuthWebAuthn = async (req, res) => {
-    console.log("Hi from start Auth");
+    const { email } = req.body;
+
+    try {
+      const selectUser = `
+      SELECT user_id, email, displayName, webauthn_credentials 
+      FROM user 
+      WHERE email = ? AND is_deleted = 0
+    `;
+
+      const [rows] = await db.query(selectUser, [email]);
+      const user = rows[0];
+
+      if (!user) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+
+      if (!user.webauthn_credentials) {
+        return res.status(401).json({ message: "Biometrics not registered" });
+      }
+
+      // Parse existing credentials to prevent duplicare registration
+      const existingCredentials = user.webauthn_credentials
+        ? JSON.parse(user.webauthn_credentials)
+        : [];
+
+      // Generate authentication options for the device
+      const options = await generateAuthenticationOptions({
+        rpID: process.env.RP_ID || "localhost",
+        allowCredentials: existingCredentials.map((cred) => ({
+          id: cred.id,
+          type: "public-key",
+        })),
+        userVerification: "required",
+      });
+
+      // Save challenge  temporarily in db for verification
+      const updateChallenge = `
+        UPDATE user SET webauthn_challenge = ? WHERE email = ?
+      `;
+      await db.query(updateChallenge, [options.challenge, email]);
+
+      return res.status(200).json(options);
+    } catch (err) {
+      return res.status(500).json({ message: "Unauthorized" });
+    }
   };
 
   finishAuthWebAuthn = async (req, res) => {
