@@ -7,15 +7,17 @@ import FingerprintIcon from "@mui/icons-material/Fingerprint";
 
 import { DocReminderRoutes } from "@/routes/routes";
 import { vibrate } from "@/utils/haptics";
+import { useWebAuthn } from "@/hooks";
 
 export const FastAccesButtons = () => {
   const navigate = useNavigate();
+  const { verifyFingerprint } = useWebAuthn();
 
   const savedPin = localStorage.getItem("pinEnabled") === "true";
-  //const savedHuella = localStorage.getItem("huellaEnabled") === "true";
+  const savedFingerprint = localStorage.getItem("huellaEnabled") === "true";
+  const savedEmail = localStorage.getItem("userEmail");
 
-  if (!savedPin) return null;
-  // if (!savedPin && !savedHuella) return null;
+  if (!savedPin && !savedFingerprint) return null;
 
   return (
     <>
@@ -37,9 +39,17 @@ export const FastAccesButtons = () => {
             <DialpadIcon sx={{ fontSize: 32 }} />
           </IconButton>
         )}
-        <IconButton sx={{ border: "1px solid", borderRadius: 3, p: 1.5 }}>
-          <FingerprintIcon sx={{ fontSize: 32 }} />
-        </IconButton>
+        {savedFingerprint && (
+          <IconButton
+            sx={{ border: "1px solid", borderRadius: 3, p: 1.5 }}
+            onClick={() => {
+              vibrate();
+              verifyFingerprint(savedEmail!);
+            }}
+          >
+            <FingerprintIcon sx={{ fontSize: 32 }} />
+          </IconButton>
+        )}
       </Box>
     </>
   );

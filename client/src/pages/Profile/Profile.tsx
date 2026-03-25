@@ -129,7 +129,7 @@ export const Profile = () => {
 
           <SecurityCard
             title="Huella o Face ID"
-            checked={false}
+            checked={fingerprintEnabled}
             compact
             onActivate={handleFingerPrint}
             onClick={() => {}}
