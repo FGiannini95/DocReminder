@@ -14,7 +14,7 @@ export const FastAccesButtons = () => {
   const { verifyFingerprint } = useWebAuthn();
 
   const savedPin = localStorage.getItem("pinEnabled") === "true";
-  const savedFingerprint = localStorage.getItem("huellaEnabled") === "true";
+  const savedFingerprint = localStorage.getItem("fingerprintEnabled") === "true";
   const savedEmail = localStorage.getItem("userEmail");
 
   if (!savedPin && !savedFingerprint) return null;
