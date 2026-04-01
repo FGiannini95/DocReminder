@@ -7,7 +7,8 @@ const cors = require("cors");
 var cronScheduler = require("./utils/cronScheduler");
 
 var authRouter = require("./routes/auth");
-var docRouther = require("./routes/document");
+var docRouter = require("./routes/document");
+var groupRouter = require("./routes/group");
 
 var app = express();
 
@@ -37,7 +38,8 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // API routes
 app.use("/auth", authRouter);
-app.use("/docs", docRouther);
+app.use("/docs", docRouter);
+app.use("/groups", groupRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
