@@ -3,8 +3,6 @@ const sgMail = require("@sendgrid/mail");
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-const UNSUBSCRIBE_BASE_URL = `${process.env.FRONTEND_URL}/unsubscribe`;
-
 // Mirror of frontend typeLabels
 const typeLabels = {
   passport: "Pasaporte",
@@ -30,15 +28,17 @@ async function sendReminderEmail(
   const formattedDate = new Date(expiryDate).toLocaleDateString("es-ES");
   const unsubscribeToken = jwt.sign(
     { user_id: userId, purpose: "unsubscribe" },
-    process.env.JWT_SECRET,
+    process.env.JWT_ACCESS_SECRET,
     { expiresIn: "90d" },
   );
-  const unsubscribeUrl = `${UNSUBSCRIBE_BASE_URL}?token=${unsubscribeToken}`;
+  console.log("BACKEND_URL:", process.env.BACKEND_URL);
+
+  const unsubscribeUrl = `${process.env.BACKEND_URL}/auth/unsubscribe?token=${unsubscribeToken}`;
 
   const msg = {
     to: email,
     from: process.env.SENDGRID_FROM,
-    subject: `DOCREMINDER · DOCUMENT STATUS · ${daysLeft} DÍAS`,
+    subject: `DOCREMINDER · TU DOCUMENTO CADUCA EN ${daysLeft} DÍAS`,
     html: `
       <div style="font-family: sans-serif; max-width: 480px; margin: auto; padding: 24px;">
         <h2 style="color: #1c1c1e;">Hola, ${recipientName} 👋</h2>

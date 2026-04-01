@@ -541,7 +541,7 @@ class authController {
 
     try {
       // Verify and decode the token
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
 
       if (decoded.purpose !== "unsubscribe") {
         return res.status(400).send("<p>Invalid token.</p>");
@@ -555,8 +555,8 @@ class authController {
 
       res.send(`
       <div style="font-family: sans-serif; text-align: center; padding: 48px;">
-        <h2>Unsubscribed succesfully</h2>
-        <p>You won't receive anymore emails from DocReminder.</p>
+        <h2>Dado de baja correctamente</h2>
+        <p>Ya no recibirás ningún recordatorio por parte de DocReminder.</p>
       </div>
     `);
     } catch (err) {
