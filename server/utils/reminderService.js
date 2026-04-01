@@ -9,6 +9,7 @@ async function getDocumentsDueToday() {
       JOIN user ON document.user_id = user.user_id
       WHERE document.is_deleted = 0 
         AND user.is_deleted = 0
+        AND user.email_notifications = 1
         AND JSON_CONTAINS(document.reminder_days, CAST(DATEDIFF(document.expiry_date, CURDATE()) AS JSON))
     `;
 
@@ -33,6 +34,7 @@ async function sendDailyReminders() {
       await sendReminderEmail(
         doc.email,
         doc.displayName,
+        doc.user_id,
         doc.name,
         doc.type,
         doc.expiry_date,

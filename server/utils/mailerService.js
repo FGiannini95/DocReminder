@@ -1,9 +1,9 @@
-// utils/mailService.js
+const jwt = require("jsonwebtoken");
 const sgMail = require("@sendgrid/mail");
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-const UNSUBSCRIBE_BASE_URL = "https://docreminder.app/unsubscribe";
+const UNSUBSCRIBE_BASE_URL = `${process.env.FRONTEND_URL}/unsubscribe`;
 
 // Mirror of frontend typeLabels
 const typeLabels = {
@@ -18,6 +18,7 @@ const typeLabels = {
 async function sendReminderEmail(
   email,
   displayName,
+  userId,
   docName,
   docType,
   expiryDate,
@@ -27,7 +28,12 @@ async function sendReminderEmail(
   const docLabel = typeLabels[docType] ?? docType;
   const docTitle = docName ? `"${docName}"` : docLabel;
   const formattedDate = new Date(expiryDate).toLocaleDateString("es-ES");
-  const unsubscribeUrl = `${UNSUBSCRIBE_BASE_URL}?token=MOCK_TOKEN`;
+  const unsubscribeToken = jwt.sign(
+    { user_id: userId, purpose: "unsubscribe" },
+    process.env.JWT_SECRET,
+    { expiresIn: "90d" },
+  );
+  const unsubscribeUrl = `${UNSUBSCRIBE_BASE_URL}?token=${unsubscribeToken}`;
 
   const msg = {
     to: email,

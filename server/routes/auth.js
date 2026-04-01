@@ -31,5 +31,6 @@ router.put(
   authenticateToken,
   authController.toggleFingerprint,
 );
+router.get("/unsubscribe", authController.unsubscribe);
 
 module.exports = router;

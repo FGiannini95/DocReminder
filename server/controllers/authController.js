@@ -531,6 +531,38 @@ class authController {
       return res.status(500).json({ message: "Error updating the toggle" });
     }
   };
+
+  unsubscribe = async (req, res) => {
+    const { token } = req.query;
+
+    if (!token) {
+      return res.status(400).send("<p>Invalid token.</p>");
+    }
+
+    try {
+      // Verify and decode the token
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+      if (decoded.purpose !== "unsubscribe") {
+        return res.status(400).send("<p>Invalid token.</p>");
+      }
+
+      const updateNotifications = `
+        UPDATE user SET email_notifications = FALSE WHERE user_id = ?
+      `;
+
+      await db.query(updateNotifications, [decoded.user_id]);
+
+      res.send(`
+      <div style="font-family: sans-serif; text-align: center; padding: 48px;">
+        <h2>Unsubscribed succesfully</h2>
+        <p>You won't receive anymore emails from DocReminder.</p>
+      </div>
+    `);
+    } catch (err) {
+      return res.status(400).send("<p>Token scaduto o non valido.</p>");
+    }
+  };
 }
 
 module.exports = new authController();
