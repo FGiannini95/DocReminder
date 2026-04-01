@@ -11,6 +11,7 @@ export default defineConfig({
   },
   server: {
     host: true,
+    allowedHosts: ["miguelina-foliolate-daniell.ngrok-free.dev"],
     proxy: {
       "/auth": {
         target: "http://localhost:3000",
