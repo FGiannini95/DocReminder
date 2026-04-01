@@ -7,6 +7,8 @@ const cors = require("cors");
 var cronScheduler = require("./utils/cronScheduler");
 
 var authRouter = require("./routes/auth");
+var pinRouter = require("./routes/pin");
+var webAuthnRouter = require("./routes/webauthn");
 var docRouter = require("./routes/document");
 var groupRouter = require("./routes/group");
 
@@ -38,6 +40,8 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // API routes
 app.use("/auth", authRouter);
+app.use("/auth", pinRouter);
+app.use("/auth", webAuthnRouter);
 app.use("/docs", docRouter);
 app.use("/groups", groupRouter);
 
