@@ -1,6 +1,10 @@
 const jwt = require("jsonwebtoken");
 const db = require("../config/db");
-const bcrypt = require("bcrypt");
+const {
+  generateRegistrationOptions,
+  verifyRegistrationResponse,
+  generateAuthenticationOptions,
+} = require("@simplewebauthn/server");
 
 class webAuthnController {
   startRegisterWebAuthn = async (req, res) => {
