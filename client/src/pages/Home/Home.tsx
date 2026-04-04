@@ -7,13 +7,14 @@ import AddIcon from "@mui/icons-material/Add";
 
 import { DocReminderRoutes } from "@/routes/routes";
 import { scrollableContentSx } from "@/styles/commonStyle";
-import { Document, Group } from "@/types/document";
+import { Document } from "@/types/document";
 import { fetchAllDocuments } from "@/api/documentApi";
 import { fetchAllGroups } from "@/api/groupApi";
 import { BottomNav, DocumentCard, PageTransition } from "@/components";
 import { HomeHeader } from "./components/HomeHeader";
 import { StatusBlocks } from "./components/StatusBlocks";
 import { GroupCard } from "../Group/components/GroupCard/GroupCard";
+import { Group } from "@/types/group";
 
 const daysUntil = (dateStr: string) =>
   Math.ceil((new Date(dateStr).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
