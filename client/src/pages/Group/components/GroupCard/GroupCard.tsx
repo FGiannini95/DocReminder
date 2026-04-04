@@ -4,8 +4,8 @@ import { Box, Button, Typography } from "@mui/material";
 
 import { EmptyState } from "../../../../components/EmptyState/EmptyState";
 import { GroupDrawer } from "../GroupDrawer/GroupDrawer";
-import { Group } from "@/types/document";
 import { ErrorMessage, Loading } from "@/components";
+import { Group } from "@/types/group";
 
 interface GroupCardProps {
   groups: Group[];
