@@ -35,3 +35,9 @@ export interface DocumentFormValues {
   reminderDays: number[];
   personalNote: string | null;
 }
+
+export interface Group {
+  private_groups_id: number;
+  name: string;
+  icon: string | null;
+}

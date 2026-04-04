@@ -4,9 +4,20 @@ import { Box, Button, Typography } from "@mui/material";
 
 import { EmptyState } from "../../../../components/EmptyState/EmptyState";
 import { GroupDrawer } from "../GroupDrawer/GroupDrawer";
+import { Group } from "@/types/document";
+import { ErrorMessage, Loading } from "@/components";
 
-export const GroupCard = () => {
+interface GroupCardProps {
+  groups: Group[];
+  isError: boolean;
+  isPending: boolean;
+}
+
+export const GroupCard = ({ groups, isError, isPending }: GroupCardProps) => {
   const [open, setOpen] = useState<boolean>(false);
+
+  if (isPending) return <Loading />;
+  if (isError) return <ErrorMessage message="Error al cargar el grupo" />;
 
   return (
     <>

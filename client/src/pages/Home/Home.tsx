@@ -7,8 +7,9 @@ import AddIcon from "@mui/icons-material/Add";
 
 import { DocReminderRoutes } from "@/routes/routes";
 import { scrollableContentSx } from "@/styles/commonStyle";
-import { Document } from "@/types/document";
+import { Document, Group } from "@/types/document";
 import { fetchAllDocuments } from "@/api/documentApi";
+import { fetchAllGroups } from "@/api/groupApi";
 import { BottomNav, DocumentCard, PageTransition } from "@/components";
 import { HomeHeader } from "./components/HomeHeader";
 import { StatusBlocks } from "./components/StatusBlocks";
@@ -22,11 +23,20 @@ export const Home = () => {
 
   const {
     data: documents,
-    isPending,
-    isError,
+    isPending: documentsPending,
+    isError: documentsError,
   } = useQuery<Document[]>({
     queryKey: ["documents"],
     queryFn: fetchAllDocuments,
+  });
+
+  const {
+    data: groups,
+    isPending: groupsPending,
+    isError: groupsError,
+  } = useQuery<Group[]>({
+    queryKey: ["groups"],
+    queryFn: fetchAllGroups,
   });
 
   const sortedDocuments = [...(documents ?? [])].sort(
@@ -39,6 +49,8 @@ export const Home = () => {
   ).length;
   const ok = documents?.filter((d) => daysUntil(d.expiryDate) > 60).length;
 
+  const sortedGroups = [...(groups ?? [])].sort((a, b) => a.name.localeCompare(b.name));
+
   return (
     <PageTransition>
       <Box sx={{ height: "100dvh", display: "flex", flexDirection: "column" }}>
@@ -46,8 +58,12 @@ export const Home = () => {
         {/* Scrollable content */}
         <Box sx={{ ...scrollableContentSx, mb: "56px", display: "block" }}>
           <StatusBlocks urgent={urgent ?? 0} upcoming={upcoming ?? 0} ok={ok ?? 0} />{" "}
-          <DocumentCard documents={sortedDocuments} isError={isError} isPending={isPending} />
-          <GroupCard />
+          <DocumentCard
+            documents={sortedDocuments}
+            isError={documentsError}
+            isPending={documentsPending}
+          />
+          <GroupCard groups={sortedGroups} isError={groupsError} isPending={groupsPending} />
         </Box>
         <Fab
           aria-label="add"
