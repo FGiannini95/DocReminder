@@ -2,7 +2,13 @@ import React from "react";
 
 import { Card, CardContent, Typography } from "@mui/material";
 
-export const EmptyState = () => {
+interface EmptyStateProps {
+  message?: string;
+}
+
+export const EmptyState = ({
+  message = "Aún no has añadido ningún documento.",
+}: EmptyStateProps) => {
   return (
     <Card
       sx={{
@@ -13,7 +19,7 @@ export const EmptyState = () => {
       }}
     >
       <CardContent>
-        <Typography variant="body2">Aún no has creado ningún documento.</Typography>
+        <Typography variant="body2">{message}</Typography>
       </CardContent>
     </Card>
   );
