@@ -2,7 +2,7 @@ import React from "react";
 
 import { Box, Button, Typography } from "@mui/material";
 
-import { EmptyState } from "../EmptyState/EmptyState";
+import { EmptyState } from "../../../../components/EmptyState/EmptyState";
 
 export const GroupCard = () => {
   return (

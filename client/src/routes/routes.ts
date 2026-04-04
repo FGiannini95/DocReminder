@@ -9,4 +9,5 @@ export const DocReminderRoutes = {
   editDocument: "/edit-document/:id",
   pinSetup: "/pin-setup",
   pinLogin: "/pin-setup",
+  group: "/group",
 };

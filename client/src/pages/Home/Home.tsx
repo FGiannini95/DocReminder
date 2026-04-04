@@ -9,9 +9,10 @@ import { DocReminderRoutes } from "@/routes/routes";
 import { scrollableContentSx } from "@/styles/commonStyle";
 import { Document } from "@/types/document";
 import { fetchAllDocuments } from "@/api/documentApi";
-import { BottomNav, DocumentCard, GroupCard, PageTransition } from "@/components";
+import { BottomNav, DocumentCard, PageTransition } from "@/components";
 import { HomeHeader } from "./components/HomeHeader";
 import { StatusBlocks } from "./components/StatusBlocks";
+import { GroupCard } from "../Group/components/GroupCard/GroupCard";
 
 const daysUntil = (dateStr: string) =>
   Math.ceil((new Date(dateStr).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
