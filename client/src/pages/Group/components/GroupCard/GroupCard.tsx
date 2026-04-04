@@ -1,6 +1,7 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, Card, CardContent, Typography } from "@mui/material";
 
 import { EmptyState } from "../../../../components/EmptyState/EmptyState";
 import { GroupDrawer } from "../GroupDrawer/GroupDrawer";
@@ -15,6 +16,7 @@ interface GroupCardProps {
 
 export const GroupCard = ({ groups, isError, isPending }: GroupCardProps) => {
   const [open, setOpen] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   if (isPending) return <Loading />;
   if (isError) return <ErrorMessage message="Error al cargar el grupo" />;
@@ -31,7 +33,26 @@ export const GroupCard = ({ groups, isError, isPending }: GroupCardProps) => {
               + Crear grupo
             </Button>
           </Box>
-          <EmptyState message="Aún no has creado ningún grupo." />
+          {groups.length === 0 ? (
+            <EmptyState message="Aún no has creado ningún grupo." />
+          ) : (
+            groups.map((group) => {
+              return (
+                <Card
+                  //key={group.groupId}
+                  //onClick={() => navigate(`/document/${group.groupId}`)}
+                  sx={{
+                    borderRadius: 2,
+                    boxShadow: "0px 0px 12px rgba(0,0,0,0.08)",
+                    border: "1px solid",
+                    cursor: "pointer",
+                  }}
+                >
+                  <CardContent></CardContent>
+                </Card>
+              );
+            })
+          )}
         </Box>
       </Box>
       <GroupDrawer open={open} onClose={() => setOpen(false)} />
