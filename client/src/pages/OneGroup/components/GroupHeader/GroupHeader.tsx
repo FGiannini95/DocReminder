@@ -4,12 +4,13 @@ import { useNavigate } from "react-router-dom";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import { Box, Divider, IconButton, Typography } from "@mui/material";
 
-interface DocumentHeaderProps {
+interface GroupHeaderProps {
   title: string;
+  memberCount: number;
   onBack?: () => void;
 }
 
-export const GroupHeader = ({ title, onBack }: DocumentHeaderProps) => {
+export const GroupHeader = ({ title, memberCount, onBack }: GroupHeaderProps) => {
   const navigate = useNavigate();
   return (
     <Box
@@ -23,15 +24,21 @@ export const GroupHeader = ({ title, onBack }: DocumentHeaderProps) => {
         zIndex: 1000,
       }}
     >
-      <Box sx={{ display: "flex", alignItems: "center" }}>
+      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
         <IconButton onClick={onBack ?? (() => navigate(-1))} sx={{ color: "white" }}>
           <ArrowBackIosIcon />
         </IconButton>
 
-        <Typography variant="h6" fontWeight="bold" color="white">
-          {title}
-        </Typography>
+        <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
+          <Typography variant="h6" fontWeight="bold" color="white" lineHeight={1.2}>
+            {title}
+          </Typography>
+          <Typography variant="caption" color="grey.400">
+            {memberCount === 1 ? "1 miembro" : `${memberCount} miembros`}
+          </Typography>
+        </Box>
       </Box>
+
       <Divider sx={{ borderColor: "grey.700" }} />
     </Box>
   );

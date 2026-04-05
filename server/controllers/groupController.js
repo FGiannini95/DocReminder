@@ -45,7 +45,7 @@ class groupController {
 
       const selectMembers = `
         SELECT
-         user_id, displayName, email, status
+          group_members.user_id, user.displayName, user.email, group_members.status
         FROM group_members JOIN user ON user.user_id = group_members.user_id
         WHERE group_id = ?  
       `;
