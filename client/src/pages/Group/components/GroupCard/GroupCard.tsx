@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { Box, Button, Card, CardContent, Typography } from "@mui/material";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 
 import { EmptyState } from "../../../../components/EmptyState/EmptyState";
 import { GroupDrawer } from "../GroupDrawer/GroupDrawer";
@@ -23,7 +24,7 @@ export const GroupCard = ({ groups, isError, isPending }: GroupCardProps) => {
 
   return (
     <>
-      <Box sx={{ px: 3 }}>
+      <Box sx={{ px: 3, pb: 3 }}>
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
           <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <Typography variant="h6" fontWeight="bold">
@@ -39,8 +40,8 @@ export const GroupCard = ({ groups, isError, isPending }: GroupCardProps) => {
             groups.map((group) => {
               return (
                 <Card
-                  //key={group.groupId}
-                  //onClick={() => navigate(`/document/${group.groupId}`)}
+                  key={group.private_groups_id}
+                  onClick={() => navigate(`/groups/${group.private_groups_id}`)}
                   sx={{
                     borderRadius: 2,
                     boxShadow: "0px 0px 12px rgba(0,0,0,0.08)",
@@ -48,7 +49,24 @@ export const GroupCard = ({ groups, isError, isPending }: GroupCardProps) => {
                     cursor: "pointer",
                   }}
                 >
-                  <CardContent></CardContent>
+                  <CardContent
+                    sx={{ display: "flex", alignItems: "center", gap: 2, py: "12px !important" }}
+                  >
+                    <Typography fontSize={28}> {group.icon}</Typography>
+
+                    <Box sx={{ flex: 1 }}>
+                      <Typography fontWeight="bold"> {group.name}</Typography>
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        sx={{ display: "block" }}
+                      >
+                        {group.member_count === 1 ? "1 miembro" : `${group.member_count} miembros`}
+                      </Typography>
+                    </Box>
+
+                    <ArrowForwardIosIcon sx={{ fontSize: 14, color: "text.secondary" }} />
+                  </CardContent>
                 </Card>
               );
             })
