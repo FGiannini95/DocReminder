@@ -3,8 +3,9 @@ import { useNavigate } from "react-router-dom";
 
 import { Box } from "@mui/material";
 
-import { DocumentHeader, PageTransition } from "@/components";
+import { PageTransition } from "@/components";
 import { DocReminderRoutes } from "@/routes/routes";
+import { GroupHeader } from "../OneDocument/components/GroupHeader/GroupHeader";
 
 export const OneGroup = () => {
   const navigate = useNavigate();
@@ -12,10 +13,7 @@ export const OneGroup = () => {
     <PageTransition>
       <Box sx={{ minHeight: "100dvh", display: "flex", flexDirection: "column" }}>
         {/* Header */}
-        <DocumentHeader
-          title="Un grupo y ya está"
-          onBack={() => navigate(DocReminderRoutes.home)}
-        />
+        <GroupHeader title="Un grupo y ya está" onBack={() => navigate(DocReminderRoutes.home)} />
       </Box>
     </PageTransition>
   );
