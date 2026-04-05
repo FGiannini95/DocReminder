@@ -21,7 +21,7 @@ export const BottomNav = () => {
         <BottomNavigationAction
           label="Grupos"
           icon={<GroupIcon />}
-          onClick={() => navigate(DocReminderRoutes.home)}
+          onClick={() => navigate(DocReminderRoutes.group)}
         />
         <BottomNavigationAction
           label="Perfil"
