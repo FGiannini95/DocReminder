@@ -38,7 +38,8 @@ export const GroupDrawer = ({ open, onClose }: GroupDrawerProps) => {
 
     axiosInstance
       .post(`${GROUP_URL}/add-group`, { name, icon })
-      .then(() => {
+      .then((res) => {
+        navigate(`/group/${res.data.groupId}`);
         onClose();
       })
       .catch((err) => {

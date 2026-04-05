@@ -10,4 +10,5 @@ export const DocReminderRoutes = {
   pinSetup: "/pin-setup",
   pinLogin: "/pin-setup",
   group: "/group",
+  oneGroup: "/group/:id",
 };

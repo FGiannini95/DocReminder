@@ -41,7 +41,7 @@ export const GroupCard = ({ groups, isError, isPending }: GroupCardProps) => {
               return (
                 <Card
                   key={group.private_groups_id}
-                  onClick={() => navigate(`/groups/${group.private_groups_id}`)}
+                  onClick={() => navigate(`/group/${group.private_groups_id}`)}
                   sx={{
                     borderRadius: 2,
                     boxShadow: "0px 0px 12px rgba(0,0,0,0.08)",

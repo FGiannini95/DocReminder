@@ -8,6 +8,7 @@ import {
   Home,
   Landing,
   OneDocument,
+  OneGroup,
   Otp,
   Profile,
   SecuritySetup,
@@ -36,6 +37,7 @@ const AppRoutes = () => {
             <Route path={DocReminderRoutes.oneDocument} element={<OneDocument />} />
             <Route path={DocReminderRoutes.pinSetup} element={<PinSetup mode="create" />} />
             <Route path={DocReminderRoutes.group} element={<Group />} />
+            <Route path={DocReminderRoutes.oneGroup} element={<OneGroup />} />
             <Route path="*" element={<Navigate to={DocReminderRoutes.home} replace />} />
           </Routes>
         )}
