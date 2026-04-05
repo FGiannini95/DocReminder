@@ -5,7 +5,9 @@ import { Box } from "@mui/material";
 
 import { PageTransition } from "@/components";
 import { DocReminderRoutes } from "@/routes/routes";
-import { GroupHeader } from "../OneDocument/components/GroupHeader/GroupHeader";
+import { GroupHeader } from "./components/GroupHeader/GroupHeader";
+import { GroupDependentsSection } from "./components/GroupDependentsSection/GroupDependentsSection";
+import { GroupMembersSection } from "./components/GroupMembersSection/GroupMembersSection";
 
 export const OneGroup = () => {
   const navigate = useNavigate();
@@ -14,6 +16,8 @@ export const OneGroup = () => {
       <Box sx={{ minHeight: "100dvh", display: "flex", flexDirection: "column" }}>
         {/* Header */}
         <GroupHeader title="Un grupo y ya está" onBack={() => navigate(DocReminderRoutes.home)} />
+        <GroupMembersSection />
+        <GroupDependentsSection />
       </Box>
     </PageTransition>
   );
