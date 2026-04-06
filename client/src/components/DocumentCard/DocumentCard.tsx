@@ -28,9 +28,7 @@ export const DocumentCard = ({ documents, isError, isPending }: DocumentCardProp
   return (
     <Box sx={{ px: 3, pb: 3 }}>
       <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-        <Typography variant="h6" fontWeight="bold">
-          Mis documentos:
-        </Typography>
+        <Typography fontWeight="bold">Mis documentos:</Typography>
         {documents.length === 0 ? (
           <EmptyState />
         ) : (
