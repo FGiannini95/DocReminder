@@ -33,7 +33,7 @@ export const OneGroup = () => {
         {/* Header */}
         <GroupHeader
           title={data?.group.name ?? ""}
-          memberCount={(data?.members.length ?? 0) + 1}
+          memberCount={data?.members.length ?? 0}
           onBack={() => navigate(DocReminderRoutes.home)}
         />
         {/* Scrollable content */}
