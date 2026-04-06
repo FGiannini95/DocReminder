@@ -44,13 +44,26 @@ class groupController {
       }
 
       const selectMembers = `
-        SELECT
+        -- fetch active and pending members
+        SELECT 
           group_members.user_id, user.displayName, user.email, group_members.status
         FROM group_members JOIN user ON user.user_id = group_members.user_id
-        WHERE group_id = ?  
+        WHERE group_members.group_id = ?
+
+        UNION
+
+        -- add admin with active status
+        SELECT 
+          user.user_id, user.displayName, user.email, 'active' AS status
+        FROM user
+        JOIN private_groups ON private_groups.admin_id = user.user_id
+        WHERE private_groups.private_groups_id = ?
       `;
 
-      const [members] = await db.query(selectMembers, [private_groups_id]);
+      const [members] = await db.query(selectMembers, [
+        private_groups_id,
+        private_groups_id,
+      ]);
 
       const selectDependents = `
         SELECT
