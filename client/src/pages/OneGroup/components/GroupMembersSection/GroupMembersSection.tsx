@@ -4,7 +4,7 @@ import { Avatar, Box, Button, Typography } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 import { GroupMember } from "@/types/group";
-import { useAuth } from "@/context";
+import { useGroupMember } from "@/hooks";
 
 interface GroupMembersSectionProps {
   members: GroupMember[];
@@ -12,8 +12,7 @@ interface GroupMembersSectionProps {
 }
 
 export const GroupMembersSection = ({ members, adminId }: GroupMembersSectionProps) => {
-  const { user } = useAuth();
-  const isAdmin = user === adminId;
+  const { isAdmin, sortedMembers, getMemberInfo } = useGroupMember({ members, adminId });
 
   return (
     <Box sx={{ px: 3, pb: 3 }}>
@@ -25,18 +24,26 @@ export const GroupMembersSection = ({ members, adminId }: GroupMembersSectionPro
       </Box>
 
       <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-        {members.map((member) => (
-          <Box key={member.user_id} sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-            <Avatar />
-            <Box sx={{ flex: 1 }}>
-              <Typography fontWeight="bold"> federico</Typography>
-              <Typography variant="caption" color="text.secondary" sx={{ display: "block" }}>
-                admin
-              </Typography>
+        {sortedMembers.map((member) => {
+          const { displayName, avatar } = getMemberInfo(member);
+          const isMemberAdmin = member.user_id === adminId;
+
+          return (
+            <Box key={member.user_id} sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+              <Avatar>{avatar}</Avatar>
+
+              <Box sx={{ flex: 1 }}>
+                <Typography fontWeight="bold">{displayName}</Typography>
+                <Typography variant="caption" color="text.secondary" sx={{ display: "block" }}>
+                  {isMemberAdmin ? "Admin" : member.status === "pending" ? "Pendiente" : "Miembro"}
+                </Typography>
+              </Box>
+
+              {/* delete icon: only if current user is admin AND member is not admin */}
+              {isAdmin && !isMemberAdmin && <DeleteIcon />}
             </Box>
-            {isAdmin && <DeleteIcon />}
-          </Box>
-        ))}
+          );
+        })}
       </Box>
     </Box>
   );
