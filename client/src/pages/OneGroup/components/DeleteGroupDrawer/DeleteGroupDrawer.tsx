@@ -30,10 +30,11 @@ export const DeleteGroupDrawer = ({
         <Box sx={{ width: 36, height: 4, bgcolor: "grey.300", borderRadius: 2, mx: "auto" }} />
         <Box>
           <Typography fontWeight="bold" fontSize={16}>
-            ¿Eliminar a el grupo?
+            ¿Eliminar el grupo?
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Todos los miembros perderán aceso a este espacio
+            Se eliminará el grupo y todos los documentos de las personas a cargo. Los documentos
+            personales de los miembros no se verán afectados.
           </Typography>
         </Box>
 
