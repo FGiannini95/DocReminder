@@ -20,6 +20,7 @@ import { useGroupMember } from "@/hooks";
 import { axiosInstance } from "@/api/axiosInstance";
 import { DocReminderRoutes } from "@/routes/routes";
 import { GROUP_URL } from "@/api/apiConfig";
+import { DeleteGroupDrawer } from "../DeleteGroupDrawer/DeleteGroupDrawer";
 
 interface GroupHeaderProps {
   title: string;
@@ -31,9 +32,17 @@ interface GroupHeaderProps {
 
 export const GroupHeader = ({ title, memberCount, onBack, adminId, groupId }: GroupHeaderProps) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(false);
+
+  const navigate = useNavigate();
   const { isAdmin } = useGroupMember({ adminId });
+
+  const handleOpen = () => {
+    setOpen(true);
+    setAnchorEl(null);
+  };
+  const handleClose = () => setOpen(false);
 
   const handleDelete = () => {
     setIsLoading(true);
@@ -48,54 +57,62 @@ export const GroupHeader = ({ title, memberCount, onBack, adminId, groupId }: Gr
   };
 
   return (
-    <Box
-      sx={{
-        p: 2,
-        backgroundColor: "grey.900",
-        position: "fixed",
-        top: 0,
-        left: 0,
-        right: 0,
-        zIndex: 1000,
-      }}
-    >
-      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-        <IconButton onClick={onBack ?? (() => navigate(-1))} sx={{ color: "white" }}>
-          <ArrowBackIosIcon />
-        </IconButton>
-        <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
-          <Typography variant="h6" fontWeight="bold" color="white" lineHeight={1.2}>
-            {title}
-          </Typography>
-          <Typography variant="caption" color="grey.400">
-            {memberCount === 1 ? "1 miembro" : `${memberCount} miembros`}
-          </Typography>
+    <>
+      <Box
+        sx={{
+          p: 2,
+          backgroundColor: "grey.900",
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 1000,
+        }}
+      >
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <IconButton onClick={onBack ?? (() => navigate(-1))} sx={{ color: "white" }}>
+            <ArrowBackIosIcon />
+          </IconButton>
+          <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
+            <Typography variant="h6" fontWeight="bold" color="white" lineHeight={1.2}>
+              {title}
+            </Typography>
+            <Typography variant="caption" color="grey.400">
+              {memberCount === 1 ? "1 miembro" : `${memberCount} miembros`}
+            </Typography>
+          </Box>
+          {isAdmin && (
+            <>
+              <IconButton
+                onClick={(e) => setAnchorEl(e.currentTarget)}
+                sx={{ color: "white", ml: "auto" }}
+              >
+                <MoreVertIcon />
+              </IconButton>
+
+              {/* Menu anchored to the icon button */}
+              <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)}>
+                <MenuItem onClick={() => setAnchorEl(null)} sx={{ gap: 1 }}>
+                  <EditIcon fontSize="small" />
+                  Modificar grupo
+                </MenuItem>
+                <MenuItem onClick={handleOpen} sx={{ color: "error.main", gap: 1 }}>
+                  <DeleteIcon fontSize="small" />
+                  Eliminar grupo
+                </MenuItem>
+              </Menu>
+            </>
+          )}
         </Box>
-        {isAdmin && (
-          <>
-            <IconButton
-              onClick={(e) => setAnchorEl(e.currentTarget)}
-              sx={{ color: "white", ml: "auto" }}
-            >
-              <MoreVertIcon />
-            </IconButton>
 
-            {/* Menu anchored to the icon button */}
-            <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)}>
-              <MenuItem onClick={() => setAnchorEl(null)} sx={{ gap: 1 }}>
-                <EditIcon fontSize="small" />
-                Modificar grupo
-              </MenuItem>
-              <MenuItem onClick={handleDelete} sx={{ color: "error.main", gap: 1 }}>
-                <DeleteIcon fontSize="small" />
-                {isLoading ? <CircularProgress size={20} /> : "Eliminar grupo"}
-              </MenuItem>
-            </Menu>
-          </>
-        )}
+        <Divider sx={{ borderColor: "grey.700" }} />
       </Box>
-
-      <Divider sx={{ borderColor: "grey.700" }} />
-    </Box>
+      <DeleteGroupDrawer
+        open={open}
+        onClose={handleClose}
+        onConfirm={handleDelete}
+        isLoading={isLoading}
+      />
+    </>
   );
 };
