@@ -158,8 +158,24 @@ class groupController {
   editGroup = async (req, res) => {
     console.log("Hi from editGroup");
   };
+
   deleteGroup = async (req, res) => {
-    console.log("Hi from deleteGroup");
+    const { groupId } = req.params;
+
+    try {
+      const deleteGroup = `
+        DELETE FROM private_groups WHERE private_groups_id = ?
+      `;
+
+      const [row] = await db.query(deleteGroup, [groupId]);
+      if (row.affectedRows === 0) {
+        return res.status(404).json({ message: "Group not found" });
+      }
+
+      return res.status(200).json({ message: "Group deleted succesfully" });
+    } catch (err) {
+      return res.status(500).json({ message: "Internal server error" });
+    }
   };
 }
 

@@ -19,13 +19,13 @@ router.get(
 router.get("/", authenticateToken, groupController.getAllGroup);
 // only admin can edit or delete
 router.put(
-  "/edit-group/:id",
+  "/edit-group/:groupId",
   authenticateToken,
   isGroupAdmin,
   groupController.editGroup,
 );
 router.delete(
-  "/delete-group/:id",
+  "/delete-group/:groupId",
   authenticateToken,
   isGroupAdmin,
   groupController.deleteGroup,

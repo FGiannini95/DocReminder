@@ -1,21 +1,51 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { Box, Divider, IconButton, Typography } from "@mui/material";
+import {
+  Box,
+  CircularProgress,
+  Divider,
+  IconButton,
+  Menu,
+  MenuItem,
+  Typography,
+} from "@mui/material";
+
+import DeleteIcon from "@mui/icons-material/Delete";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
+import EditIcon from "@mui/icons-material/Edit";
+
 import { useGroupMember } from "@/hooks";
+import { axiosInstance } from "@/api/axiosInstance";
+import { DocReminderRoutes } from "@/routes/routes";
+import { GROUP_URL } from "@/api/apiConfig";
 
 interface GroupHeaderProps {
   title: string;
   memberCount: number;
   onBack?: () => void;
   adminId: number;
+  groupId: string;
 }
 
-export const GroupHeader = ({ title, memberCount, onBack, adminId }: GroupHeaderProps) => {
+export const GroupHeader = ({ title, memberCount, onBack, adminId, groupId }: GroupHeaderProps) => {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const { isAdmin } = useGroupMember({ adminId });
+
+  const handleDelete = () => {
+    setIsLoading(true);
+    axiosInstance
+      .delete(`${GROUP_URL}/delete-group/${groupId}`)
+      .then(() => {
+        setAnchorEl(null);
+        setIsLoading(false);
+        navigate(DocReminderRoutes.home);
+      })
+      .catch(() => setIsLoading(false));
+  };
 
   return (
     <Box
@@ -42,9 +72,26 @@ export const GroupHeader = ({ title, memberCount, onBack, adminId }: GroupHeader
           </Typography>
         </Box>
         {isAdmin && (
-          <IconButton onClick={onBack ?? (() => navigate(-1))} sx={{ color: "white", ml: "auto" }}>
-            <MoreVertIcon />
-          </IconButton>
+          <>
+            <IconButton
+              onClick={(e) => setAnchorEl(e.currentTarget)}
+              sx={{ color: "white", ml: "auto" }}
+            >
+              <MoreVertIcon />
+            </IconButton>
+
+            {/* Menu anchored to the icon button */}
+            <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)}>
+              <MenuItem onClick={() => setAnchorEl(null)} sx={{ gap: 1 }}>
+                <EditIcon fontSize="small" />
+                Modificar grupo
+              </MenuItem>
+              <MenuItem onClick={handleDelete} sx={{ color: "error.main", gap: 1 }}>
+                <DeleteIcon fontSize="small" />
+                {isLoading ? <CircularProgress size={20} /> : "Eliminar grupo"}
+              </MenuItem>
+            </Menu>
+          </>
         )}
       </Box>
 
