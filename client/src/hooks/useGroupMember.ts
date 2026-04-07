@@ -2,12 +2,13 @@ import { GroupMember } from "@/types/group";
 import { useAuth } from "@/context/AuthContext";
 import { getMemberInfo } from "@/utils/memberInfo";
 
-interface UseGroupMemberProps {
-  members: GroupMember[];
+export const useGroupMember = ({
+  members = [],
+  adminId,
+}: {
+  members?: GroupMember[];
   adminId: number;
-}
-
-export const useGroupMember = ({ members, adminId }: UseGroupMemberProps) => {
+}) => {
   const { user } = useAuth();
   const isAdmin = user === adminId;
 

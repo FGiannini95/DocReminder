@@ -33,6 +33,7 @@ export const OneGroup = () => {
           title={data?.group.name ?? ""}
           memberCount={data?.members.length ?? 0}
           onBack={() => navigate(DocReminderRoutes.home)}
+          adminId={data.group.admin_id}
         />
         {/* Scrollable content */}
         <Box sx={{ ...scrollableContentSx, mb: "56px", display: "block" }}>

@@ -1,17 +1,22 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import { Box, Divider, IconButton, Typography } from "@mui/material";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import { useGroupMember } from "@/hooks";
 
 interface GroupHeaderProps {
   title: string;
   memberCount: number;
   onBack?: () => void;
+  adminId: number;
 }
 
-export const GroupHeader = ({ title, memberCount, onBack }: GroupHeaderProps) => {
+export const GroupHeader = ({ title, memberCount, onBack, adminId }: GroupHeaderProps) => {
   const navigate = useNavigate();
+  const { isAdmin } = useGroupMember({ adminId });
+
   return (
     <Box
       sx={{
@@ -28,7 +33,6 @@ export const GroupHeader = ({ title, memberCount, onBack }: GroupHeaderProps) =>
         <IconButton onClick={onBack ?? (() => navigate(-1))} sx={{ color: "white" }}>
           <ArrowBackIosIcon />
         </IconButton>
-
         <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
           <Typography variant="h6" fontWeight="bold" color="white" lineHeight={1.2}>
             {title}
@@ -37,6 +41,11 @@ export const GroupHeader = ({ title, memberCount, onBack }: GroupHeaderProps) =>
             {memberCount === 1 ? "1 miembro" : `${memberCount} miembros`}
           </Typography>
         </Box>
+        {isAdmin && (
+          <IconButton onClick={onBack ?? (() => navigate(-1))} sx={{ color: "white", ml: "auto" }}>
+            <MoreVertIcon />
+          </IconButton>
+        )}
       </Box>
 
       <Divider sx={{ borderColor: "grey.700" }} />
