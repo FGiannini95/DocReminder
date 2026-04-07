@@ -22,8 +22,6 @@ export const OneGroup = () => {
     queryFn: () => fetchOneGroup(id!),
   });
 
-  console.log("data in one group", data);
-
   if (isPending) return <Loading />;
   if (isError) return <ErrorMessage message="Error al cargar el grupo" />;
 
@@ -38,7 +36,7 @@ export const OneGroup = () => {
         />
         {/* Scrollable content */}
         <Box sx={{ ...scrollableContentSx, mb: "56px", display: "block" }}>
-          <GroupMembersSection members={data.members} adminId={data.group.admin_id} />
+          <GroupMembersSection members={data.members} adminId={data.group.admin_id} groupId={id!} />
           <GroupDependentsSection />
         </Box>
       </Box>

@@ -1,7 +1,7 @@
 const db = require("../config/db");
 
 const isGroupAdmin = async (req, res, next) => {
-  const { id: group_id } = req.params;
+  const { groupId: group_id } = req.params;
   const userId = req.user.userId;
 
   try {

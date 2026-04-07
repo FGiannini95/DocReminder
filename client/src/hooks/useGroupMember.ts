@@ -1,5 +1,6 @@
 import { GroupMember } from "@/types/group";
 import { useAuth } from "@/context/AuthContext";
+import { getMemberInfo } from "@/utils/memberInfo";
 
 interface UseGroupMemberProps {
   members: GroupMember[];
@@ -13,12 +14,6 @@ export const useGroupMember = ({ members, adminId }: UseGroupMemberProps) => {
   const sortedMembers = [...(members ?? [])].sort((a, b) =>
     a.user_id === adminId ? -1 : b.user_id === adminId ? 1 : 0
   );
-
-  const getMemberInfo = (member: GroupMember) => {
-    const raw = member.displayName ?? member.email.split("@")[0];
-    const name = raw.charAt(0).toUpperCase() + raw.slice(1);
-    return { displayName: name, avatar: name.charAt(0) };
-  };
 
   return {
     isAdmin,
