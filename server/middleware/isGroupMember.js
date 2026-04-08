@@ -13,9 +13,10 @@ const isGroupMember = async (req, res, next) => {
     if (admin.length > 0) return next();
 
     const checkMember = `
-      SELECT id FROM group_members 
+      SELECT group_members_id FROM group_members 
       WHERE group_id = ? AND user_id = ? AND status = 'active'
     `;
+
     const [member] = await db.query(checkMember, [group_id, userId]);
     if (member.length === 0)
       return res.status(403).json({ message: "Access denied" });

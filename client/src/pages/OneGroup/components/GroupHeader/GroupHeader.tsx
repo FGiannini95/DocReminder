@@ -1,20 +1,13 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import {
-  Box,
-  CircularProgress,
-  Divider,
-  IconButton,
-  Menu,
-  MenuItem,
-  Typography,
-} from "@mui/material";
+import { Box, Divider, IconButton, Menu, MenuItem, Typography } from "@mui/material";
 
 import DeleteIcon from "@mui/icons-material/Delete";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import EditIcon from "@mui/icons-material/Edit";
+import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 
 import { useGroupMember } from "@/hooks";
 import { axiosInstance } from "@/api/axiosInstance";
@@ -81,28 +74,36 @@ export const GroupHeader = ({ title, memberCount, onBack, adminId, groupId }: Gr
               {memberCount === 1 ? "1 miembro" : `${memberCount} miembros`}
             </Typography>
           </Box>
-          {isAdmin && (
-            <>
-              <IconButton
-                onClick={(e) => setAnchorEl(e.currentTarget)}
-                sx={{ color: "white", ml: "auto" }}
-              >
-                <MoreVertIcon />
-              </IconButton>
 
-              {/* Menu anchored to the icon button */}
-              <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)}>
-                <MenuItem onClick={() => setAnchorEl(null)} sx={{ gap: 1 }}>
-                  <EditIcon fontSize="small" />
-                  Modificar grupo
+          {/* Menu anchored to the icon button */}
+          <>
+            <IconButton
+              onClick={(e) => setAnchorEl(e.currentTarget)}
+              sx={{ color: "white", ml: "auto" }}
+            >
+              <MoreVertIcon />
+            </IconButton>
+
+            <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)}>
+              {isAdmin ? (
+                <>
+                  <MenuItem onClick={() => setAnchorEl(null)} sx={{ gap: 1 }}>
+                    <EditIcon fontSize="small" />
+                    Modificar grupo
+                  </MenuItem>
+                  <MenuItem onClick={handleOpen} sx={{ color: "error.main", gap: 1 }}>
+                    <DeleteIcon fontSize="small" />
+                    Eliminar grupo
+                  </MenuItem>
+                </>
+              ) : (
+                <MenuItem onClick={() => {}} sx={{ color: "error.main", gap: 1 }}>
+                  <ExitToAppIcon fontSize="small" />
+                  Abandonar grupo
                 </MenuItem>
-                <MenuItem onClick={handleOpen} sx={{ color: "error.main", gap: 1 }}>
-                  <DeleteIcon fontSize="small" />
-                  Eliminar grupo
-                </MenuItem>
-              </Menu>
-            </>
-          )}
+              )}
+            </Menu>
+          </>
         </Box>
 
         <Divider sx={{ borderColor: "grey.700" }} />
