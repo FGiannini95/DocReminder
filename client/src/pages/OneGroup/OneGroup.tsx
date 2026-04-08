@@ -31,6 +31,7 @@ export const OneGroup = () => {
         {/* Header */}
         <GroupHeader
           title={data?.group.name ?? ""}
+          icon={data?.group.icon}
           memberCount={data?.members.length ?? 0}
           onBack={() => navigate(DocReminderRoutes.home)}
           adminId={data.group.admin_id}

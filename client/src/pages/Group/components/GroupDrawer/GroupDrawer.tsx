@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { Box, Button, CircularProgress, TextField } from "@mui/material";
 
@@ -11,17 +12,24 @@ import { BaseDrawer } from "@/components";
 interface GroupDrawerProps {
   open: boolean;
   onClose: () => void;
+  groupId?: string;
+  initialValues?: {
+    name: string;
+    icon: string | null;
+  };
 }
 
 const emojis: string[] = ["👨‍👩‍👧", "🏠", "💼", "⭐", "❤️", "✈️", "🎓"];
 
-export const GroupDrawer = ({ open, onClose }: GroupDrawerProps) => {
-  const [name, setName] = useState<string>("");
+export const GroupDrawer = ({ open, onClose, groupId, initialValues }: GroupDrawerProps) => {
+  const [name, setName] = useState<string>(initialValues?.name ?? "");
+  const [icon, setIcon] = useState<string>(initialValues?.icon ?? emojis[0]);
   const [error, setError] = useState<string>("");
-
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [icon, setIcon] = useState<string>(emojis[0]);
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  const isEdit = !!initialValues;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value);
@@ -54,6 +62,24 @@ export const GroupDrawer = ({ open, onClose }: GroupDrawerProps) => {
     setError("");
     setIcon(emojis[0]);
     onClose();
+  };
+
+  const handleEdit = () => {
+    setIsLoading(true);
+    if (!name.trim()) {
+      setError("Nombre obligatorio");
+      setIsLoading(false);
+      return;
+    }
+
+    axiosInstance
+      .put(`${GROUP_URL}/edit-group/${groupId}`, { name, icon })
+      .then(() => {
+        queryClient.invalidateQueries({ queryKey: ["group", groupId] });
+        setIsLoading(false);
+        onClose();
+      })
+      .catch(() => setIsLoading(false));
   };
 
   return (
@@ -99,10 +125,10 @@ export const GroupDrawer = ({ open, onClose }: GroupDrawerProps) => {
         fullWidth
         variant="contained"
         sx={{ ...containedButtonSx, backgroundColor: "text.primary" }}
-        onClick={handleSubmit}
+        onClick={isEdit ? handleEdit : handleSubmit}
         disabled={isLoading}
       >
-        {isLoading ? <CircularProgress size={20} /> : "Crear grupo"}
+        {isLoading ? <CircularProgress size={20} /> : isEdit ? "Guardar" : "Crear grupo"}
       </Button>
     </BaseDrawer>
   );
