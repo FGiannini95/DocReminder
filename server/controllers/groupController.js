@@ -1,5 +1,7 @@
 const db = require("../config/db");
-const jwt = require("jsonwebtoken");
+const sgMail = require("@sendgrid/mail");
+
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 class groupController {
   addGroup = async (req, res) => {
@@ -26,7 +28,89 @@ class groupController {
   };
 
   getOneGroup = async (req, res) => {
-    console.log("Hi from getOneGroup");
+    const { id: private_groups_id } = req.params;
+
+    try {
+      const selectGroup = `
+        SELECT 
+          name, icon, admin_id, private_groups_id
+        FROM private_groups
+        WHERE private_groups_id = ?
+      `;
+
+      const [resultInfo] = await db.query(selectGroup, [private_groups_id]);
+      const group = resultInfo[0];
+
+      if (!group) {
+        return res.status(404).json({ message: "Group not found" });
+      }
+
+      const selectMembers = `
+        -- fetch active and pending members
+        SELECT 
+          group_members.user_id, user.displayName, user.email, group_members.status
+        FROM group_members JOIN user ON user.user_id = group_members.user_id
+        WHERE group_members.group_id = ?
+
+        UNION
+
+        -- add admin with active status
+        SELECT 
+          user.user_id, user.displayName, user.email, 'active' AS status
+        FROM user
+        JOIN private_groups ON private_groups.admin_id = user.user_id
+        WHERE private_groups.private_groups_id = ?
+      `;
+
+      const [members] = await db.query(selectMembers, [
+        private_groups_id,
+        private_groups_id,
+      ]);
+
+      const selectDependents = `
+        SELECT
+         group_dependents_id, name, relationship, birth_date
+        FROM group_dependents 
+        WHERE group_id = ?  
+      `;
+
+      const [dependants] = await db.query(selectDependents, [
+        private_groups_id,
+      ]);
+
+      const memberIds = members.map((m) => m.user_id);
+      const allUserIds = [...new Set([group.admin_id, ...memberIds])];
+      const dependentIds = dependants.map((d) => d.group_dependents_id);
+
+      if (dependentIds.length === 0) {
+        const oneGroup = { group, members, dependants, documents: [] };
+        return res.status(200).json(oneGroup);
+      }
+
+      const selectDocuments = `
+        SELECT 
+          document_id AS documentId, type, name, expiry_date AS expiryDate, user_id, NULL AS dependent_id
+        FROM document
+        WHERE user_id IN (?) AND is_deleted = 0
+
+        UNION
+
+        SELECT 
+          document_id AS documentId, type, name, expiry_date AS expiryDate, NULL AS user_id, dependent_id
+        FROM document
+        WHERE dependent_id IN (?) AND is_deleted = 0
+     `;
+
+      const [documents] = await db.query(selectDocuments, [
+        allUserIds,
+        dependentIds,
+      ]);
+
+      const oneGroup = { group, members, dependants, documents };
+      return res.status(200).json(oneGroup);
+    } catch (err) {
+      res.status(500).json({ message: "Internal server error" });
+    }
   };
 
   getAllGroup = async (req, res) => {
@@ -76,8 +160,47 @@ class groupController {
   editGroup = async (req, res) => {
     console.log("Hi from editGroup");
   };
+
   deleteGroup = async (req, res) => {
-    console.log("Hi from deleteGroup");
+    const { groupId } = req.params;
+
+    try {
+      // fetch all active members and group name before deleting
+      const selectMembersAndGroup = `
+        SELECT user.email, private_groups.name AS groupName
+        FROM group_members
+        JOIN user ON user.user_id = group_members.user_id
+        JOIN private_groups ON private_groups.private_groups_id = ?
+        WHERE group_members.group_id = ? AND group_members.status = 'active'
+      `;
+
+      const [rows] = await db.query(selectMembersAndGroup, [groupId, groupId]);
+
+      const deleteGroup = `
+        DELETE FROM private_groups WHERE private_groups_id = ?
+      `;
+
+      const [row] = await db.query(deleteGroup, [groupId]);
+      if (row.affectedRows === 0) {
+        return res.status(404).json({ message: "Group not found" });
+      }
+
+      const emails = rows.map((r) => r.email);
+
+      if (emails.length > 0) {
+        const msg = {
+          to: emails,
+          from: process.env.SENDGRID_FROM,
+          subject: "DocReminder - Grupo eliminado",
+          text: `El administrador ha eliminado el grupo "${rows[0].groupName}".`,
+        };
+        await sgMail.send(msg);
+      }
+
+      return res.status(200).json({ message: "Group deleted succesfully" });
+    } catch (err) {
+      return res.status(500).json({ message: "Internal server error" });
+    }
   };
 }
 

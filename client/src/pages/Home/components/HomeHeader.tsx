@@ -6,12 +6,15 @@ import { useAuth } from "@/context";
 
 interface HomeHeaderProps {
   urgent: number;
+  hasDocuments: boolean;
 }
 
-export const HomeHeader = ({ urgent }: HomeHeaderProps) => {
+export const HomeHeader = ({ urgent, hasDocuments }: HomeHeaderProps) => {
   const { email, displayName } = useAuth();
-  const headerName = displayName ?? email?.split("@")[0];
-
+  // First letter always in capital
+  const headerName = (displayName ?? email?.split("@")[0] ?? "").replace(/^./, (c) =>
+    c.toUpperCase()
+  );
   return (
     <Box
       sx={{
@@ -28,13 +31,14 @@ export const HomeHeader = ({ urgent }: HomeHeaderProps) => {
         <Typography variant="h6" fontWeight="bold" color="white">
           Hola {headerName}!
         </Typography>
-        {urgent > 0 ? (
-          <Typography sx={{ color: "error.light" }}>
-            Tienes {urgent} documentos urgentes.
-          </Typography>
-        ) : (
-          <Typography sx={{ color: "success.light" }}>Todo bajo control.</Typography>
-        )}
+        {hasDocuments &&
+          (urgent > 0 ? (
+            <Typography sx={{ color: "error.light" }}>
+              Tienes {urgent} {urgent === 1 ? "documento urgente" : "documentos urgentes"}
+            </Typography>
+          ) : (
+            <Typography sx={{ color: "success.light" }}>Todo bajo control.</Typography>
+          ))}
       </Box>
     </Box>
   );

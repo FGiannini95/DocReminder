@@ -27,9 +27,7 @@ export const GroupCard = ({ groups, isError, isPending }: GroupCardProps) => {
       <Box sx={{ px: 3, pb: 3 }}>
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
           <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-            <Typography variant="h6" fontWeight="bold">
-              Mis grupos:
-            </Typography>
+            <Typography fontWeight="bold">Mis grupos:</Typography>
             <Button variant="contained" size="small" color="inherit" onClick={() => setOpen(true)}>
               + Crear grupo
             </Button>

@@ -51,11 +51,12 @@ export const Home = () => {
   const ok = documents?.filter((d) => daysUntil(d.expiryDate) > 60).length;
 
   const sortedGroups = [...(groups ?? [])].sort((a, b) => a.name.localeCompare(b.name));
+  const hasDocuments = (documents?.length ?? 0) > 0;
 
   return (
     <PageTransition>
       <Box sx={{ height: "100dvh", display: "flex", flexDirection: "column" }}>
-        <HomeHeader urgent={urgent ?? 0} />
+        <HomeHeader urgent={urgent ?? 0} hasDocuments={hasDocuments} />
         {/* Scrollable content */}
         <Box sx={{ ...scrollableContentSx, mb: "56px", display: "block" }}>
           <StatusBlocks urgent={urgent ?? 0} upcoming={upcoming ?? 0} ok={ok ?? 0} />{" "}
