@@ -1,5 +1,7 @@
 const db = require("../config/db");
-const jwt = require("jsonwebtoken");
+const sgMail = require("@sendgrid/mail");
+
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 class groupController {
   addGroup = async (req, res) => {
@@ -163,6 +165,17 @@ class groupController {
     const { groupId } = req.params;
 
     try {
+      // fetch all active members and group name before deleting
+      const selectMembersAndGroup = `
+        SELECT user.email, private_groups.name AS groupName
+        FROM group_members
+        JOIN user ON user.user_id = group_members.user_id
+        JOIN private_groups ON private_groups.private_groups_id = ?
+        WHERE group_members.group_id = ? AND group_members.status = 'active'
+      `;
+
+      const [rows] = await db.query(selectMembersAndGroup, [groupId, groupId]);
+
       const deleteGroup = `
         DELETE FROM private_groups WHERE private_groups_id = ?
       `;
@@ -170,6 +183,18 @@ class groupController {
       const [row] = await db.query(deleteGroup, [groupId]);
       if (row.affectedRows === 0) {
         return res.status(404).json({ message: "Group not found" });
+      }
+
+      const emails = rows.map((r) => r.email);
+
+      if (emails.length > 0) {
+        const msg = {
+          to: emails,
+          from: process.env.SENDGRID_FROM,
+          subject: "DocReminder - Grupo eliminado",
+          text: `El administrador ha eliminado el grupo "${rows[0].groupName}".`,
+        };
+        await sgMail.send(msg);
       }
 
       return res.status(200).json({ message: "Group deleted succesfully" });
