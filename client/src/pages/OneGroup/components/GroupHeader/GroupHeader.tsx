@@ -49,6 +49,18 @@ export const GroupHeader = ({ title, memberCount, onBack, adminId, groupId }: Gr
       .catch(() => setIsLoading(false));
   };
 
+  const handleLeave = () => {
+    setIsLoading(true);
+    axiosInstance
+      .delete(`${GROUP_URL}/${groupId}/leave`)
+      .then(() => {
+        setAnchorEl(null);
+        setIsLoading(false);
+        navigate(DocReminderRoutes.home);
+      })
+      .catch(() => setIsLoading(false));
+  };
+
   return (
     <>
       <Box
@@ -97,7 +109,7 @@ export const GroupHeader = ({ title, memberCount, onBack, adminId, groupId }: Gr
                   </MenuItem>
                 </>
               ) : (
-                <MenuItem onClick={() => {}} sx={{ color: "error.main", gap: 1 }}>
+                <MenuItem onClick={handleLeave} sx={{ color: "error.main", gap: 1 }}>
                   <ExitToAppIcon fontSize="small" />
                   Abandonar grupo
                 </MenuItem>

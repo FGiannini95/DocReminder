@@ -49,6 +49,26 @@ class groupMemberController {
       res.status(500).json({ message: "Internal server error" });
     }
   };
+
+  leaveGroup = async (req, res) => {
+    const { groupId } = req.params;
+    const userId = req.user.userId;
+
+    try {
+      const leaveGroup = `
+        DELETE FROM group_members WHERE group_id = ? and user_id = ?
+      `;
+
+      const [row] = await db.query(leaveGroup, [groupId, userId]);
+      if (row.affectedRows === 0) {
+        return res.status(404).json({ message: "Group not found" });
+      }
+
+      return res.status(200).json({ message: "Group withdraw succesfully" });
+    } catch (err) {
+      res.status(500).json({ message: "Internal server error" });
+    }
+  };
 }
 
 module.exports = new groupMemberController();
