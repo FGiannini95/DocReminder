@@ -34,7 +34,7 @@ export const HomeHeader = ({ urgent, hasDocuments }: HomeHeaderProps) => {
         {hasDocuments &&
           (urgent > 0 ? (
             <Typography sx={{ color: "error.light" }}>
-              Tienes {urgent} documentos urgentes.
+              Tienes {urgent} {urgent === 1 ? "documento urgente" : "documentos urgentes"}
             </Typography>
           ) : (
             <Typography sx={{ color: "success.light" }}>Todo bajo control.</Typography>
