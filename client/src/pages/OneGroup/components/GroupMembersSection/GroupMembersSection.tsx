@@ -4,8 +4,9 @@ import { Avatar, Box, Button, Typography } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 import { GroupMember } from "@/types/group";
-import { useMemberDisplay, useRemoveMember } from "@/hooks";
+import { useInviteMember, useMemberDisplay, useRemoveMember } from "@/hooks";
 import { RemoveMemberDrawer } from "../RemoveMemberDrawer/RemoveMemberDrawer";
+import { InviteMemberDrawer } from "../InviteMemberDrawer/InviteMemberDrawer";
 
 interface GroupMembersSectionProps {
   members: GroupMember[];
@@ -24,12 +25,22 @@ export const GroupMembersSection = ({ members, adminId, groupId }: GroupMembersS
     handleRemove,
   } = useRemoveMember(groupId);
 
+  const {
+    inviteEmail,
+    inviteError,
+    isInviteLoading,
+    inviteOpen,
+    handleChangeEmail,
+    handleOpenInviteDrawer,
+    handleCloseInviteDrawer,
+    handleInvite,
+  } = useInviteMember(groupId);
   return (
     <>
       <Box sx={{ px: 3, pb: 3 }}>
         <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <Typography fontWeight="bold">Miembros</Typography>
-          <Button variant="contained" size="small" color="inherit">
+          <Button variant="contained" size="small" color="inherit" onClick={handleOpenInviteDrawer}>
             + Invitar
           </Button>
         </Box>
@@ -67,6 +78,15 @@ export const GroupMembersSection = ({ members, adminId, groupId }: GroupMembersS
         member={removeMember}
         onConfirm={handleRemove}
         isLoading={isLoading}
+      />
+      <InviteMemberDrawer
+        open={inviteOpen}
+        email={inviteEmail}
+        onClose={handleCloseInviteDrawer}
+        onChange={handleChangeEmail}
+        onConfirm={handleInvite}
+        error={inviteError}
+        isLoading={isInviteLoading}
       />
     </>
   );

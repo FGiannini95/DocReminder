@@ -4,55 +4,55 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 
 export const useInviteMember = (groupId: string) => {
-  const [email, setEmail] = useState<string>("");
-  const [error, setError] = useState<string>("");
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [open, setOpen] = useState<boolean>(false);
+  const [inviteEmail, setInviteEmail] = useState<string>("");
+  const [inviteError, setInviteError] = useState<string>("");
+  const [isInviteLoading, setIsInviteLoading] = useState<boolean>(false);
+  const [inviteOpen, setInviteOpen] = useState<boolean>(false);
   const queryClient = useQueryClient();
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(e.target.value);
-    setError("");
+  const handleChangeEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInviteEmail(e.target.value);
+    setInviteError("");
   };
 
-  const handleOpen = () => setOpen(true);
+  const handleOpenInviteDrawer = () => setInviteOpen(true);
 
-  const handleClose = () => {
-    setEmail("");
-    setError("");
-    setIsLoading(false);
-    setOpen(false);
+  const handleCloseInviteDrawer = () => {
+    setInviteEmail("");
+    setInviteError("");
+    setIsInviteLoading(false);
+    setInviteOpen(false);
   };
 
   const handleInvite = () => {
-    setIsLoading(true);
+    setIsInviteLoading(true);
 
-    if (!email || !emailRegex.test(email)) {
-      setError("Email requerida");
-      setIsLoading(false);
+    if (!inviteEmail || !emailRegex.test(inviteEmail)) {
+      setInviteError("Email requerida");
+      setIsInviteLoading(false);
       return;
     }
 
     axiosInstance
-      .post(`${GROUP_URL}/${groupId}/invite-member`, { email })
+      .post(`${GROUP_URL}/${groupId}/invite-member`, { email: inviteEmail })
       .then(() => {
         queryClient.invalidateQueries({ queryKey: ["group", groupId] });
-        setIsLoading(false);
-        handleClose();
+        setIsInviteLoading(false);
+        handleCloseInviteDrawer();
       })
-      .catch(() => setIsLoading(false));
+      .catch(() => setIsInviteLoading(false));
   };
 
   return {
-    email,
-    error,
-    isLoading,
-    open,
-    handleChange,
-    handleOpen,
-    handleClose,
+    inviteEmail,
+    inviteError,
+    isInviteLoading,
+    inviteOpen,
+    handleChangeEmail,
+    handleOpenInviteDrawer,
+    handleCloseInviteDrawer,
     handleInvite,
   };
 };
