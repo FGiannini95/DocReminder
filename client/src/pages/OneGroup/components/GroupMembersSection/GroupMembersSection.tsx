@@ -16,14 +16,8 @@ interface GroupMembersSectionProps {
 
 export const GroupMembersSection = ({ members, adminId, groupId }: GroupMembersSectionProps) => {
   const { isAdmin, sortedMembers, getMemberInfo } = useMemberDisplay({ members, adminId });
-  const {
-    open: openRemoveDrawer,
-    removeMember,
-    isLoading,
-    handleOpen,
-    handleClose,
-    handleRemove,
-  } = useRemoveMember(groupId);
+  const { open, removeMember, isLoading, handleOpen, handleClose, handleRemove } =
+    useRemoveMember(groupId);
 
   const {
     inviteEmail,
@@ -35,6 +29,9 @@ export const GroupMembersSection = ({ members, adminId, groupId }: GroupMembersS
     handleCloseInviteDrawer,
     handleInvite,
   } = useInviteMember(groupId);
+
+  const visibleMembers = sortedMembers.filter((member) => member.status === "active" || isAdmin);
+
   return (
     <>
       <Box sx={{ px: 3, pb: 3 }}>
@@ -46,12 +43,20 @@ export const GroupMembersSection = ({ members, adminId, groupId }: GroupMembersS
         </Box>
 
         <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-          {sortedMembers.map((member) => {
+          {visibleMembers.map((member) => {
             const { displayName, avatar } = getMemberInfo(member);
             const isMemberAdmin = member.user_id === adminId;
 
             return (
-              <Box key={member.user_id} sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+              <Box
+                key={member.user_id}
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 2,
+                  opacity: member.status === "pending" ? 0.5 : 1,
+                }}
+              >
                 <Avatar>{avatar}</Avatar>
 
                 <Box sx={{ flex: 1 }}>
@@ -66,14 +71,16 @@ export const GroupMembersSection = ({ members, adminId, groupId }: GroupMembersS
                 </Box>
 
                 {/* delete icon: only if current user is admin AND member is not admin */}
-                {isAdmin && !isMemberAdmin && <DeleteIcon onClick={() => handleOpen(member)} />}
+                {isAdmin && !isMemberAdmin && member.status === "active" && (
+                  <DeleteIcon onClick={() => handleOpen(member)} />
+                )}
               </Box>
             );
           })}
         </Box>
       </Box>
       <RemoveMemberDrawer
-        open={openRemoveDrawer}
+        open={open}
         onClose={handleClose}
         member={removeMember}
         onConfirm={handleRemove}
