@@ -138,7 +138,7 @@ class groupMemberController {
       const msg = {
         to: email,
         from: process.env.SENDGRID_FROM,
-        subject: "DocReminder - Te han invitado a un grupo",
+        subject: "DocReminder - Invitación pendiente a un grupo",
         text: `Has sido invitado al grupo "${group.name}". Haz clic aquí para unirte: ${process.env.FRONTEND_URL}/invite/${inviteToken}`,
       };
 
