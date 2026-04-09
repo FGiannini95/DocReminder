@@ -4,7 +4,7 @@ import { Avatar, Box, Button, Typography } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 import { GroupMember } from "@/types/group";
-import { useGroupMember, useRemoveMember } from "@/hooks";
+import { useMemberDisplay, useRemoveMember } from "@/hooks";
 import { RemoveMemberDrawer } from "../RemoveMemberDrawer/RemoveMemberDrawer";
 
 interface GroupMembersSectionProps {
@@ -14,9 +14,15 @@ interface GroupMembersSectionProps {
 }
 
 export const GroupMembersSection = ({ members, adminId, groupId }: GroupMembersSectionProps) => {
-  const { isAdmin, sortedMembers, getMemberInfo } = useGroupMember({ members, adminId });
-  const { open, removeMember, isLoading, handleOpen, handleClose, handleRemove } =
-    useRemoveMember(groupId);
+  const { isAdmin, sortedMembers, getMemberInfo } = useMemberDisplay({ members, adminId });
+  const {
+    open: openRemoveDrawer,
+    removeMember,
+    isLoading,
+    handleOpen,
+    handleClose,
+    handleRemove,
+  } = useRemoveMember(groupId);
 
   return (
     <>
@@ -56,7 +62,7 @@ export const GroupMembersSection = ({ members, adminId, groupId }: GroupMembersS
         </Box>
       </Box>
       <RemoveMemberDrawer
-        open={open}
+        open={openRemoveDrawer}
         onClose={handleClose}
         member={removeMember}
         onConfirm={handleRemove}

@@ -9,7 +9,7 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import EditIcon from "@mui/icons-material/Edit";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 
-import { useGroupMember } from "@/hooks";
+import { useMemberDisplay } from "@/hooks";
 import { axiosInstance } from "@/api/axiosInstance";
 import { DocReminderRoutes } from "@/routes/routes";
 import { GROUP_URL } from "@/api/apiConfig";
@@ -39,7 +39,7 @@ export const GroupHeader = ({
   const [openEditDrawer, setOpenEditDrawer] = useState<boolean>(false);
 
   const navigate = useNavigate();
-  const { isAdmin } = useGroupMember({ adminId });
+  const { isAdmin } = useMemberDisplay({ adminId });
 
   const handleOpen = () => {
     setOpenDeleteDrawer(true);
