@@ -171,6 +171,8 @@ class groupMemberController {
         token,
       ]);
 
+      console.log("result", result);
+
       if (result.affectedRows === 0) {
         return res.status(404).json({ message: "Group member not found" });
       }
