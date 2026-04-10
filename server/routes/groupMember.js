@@ -6,7 +6,6 @@ const { isGroupAdmin } = require("../middleware/isGroupAdmin");
 const { isGroupMember } = require("../middleware/isGroupMember");
 
 // base path http://localhost:3000/groups
-router.post("/add-member", groupMemberController.addMember);
 router.delete(
   "/:groupId/delete-member/:userId",
   authenticateToken,
@@ -19,5 +18,12 @@ router.delete(
   isGroupMember,
   groupMemberController.leaveGroup,
 );
+router.post(
+  "/:groupId/invite-member",
+  authenticateToken,
+  isGroupAdmin,
+  groupMemberController.inviteMember,
+);
+router.get("/accept-invite/:token", groupMemberController.acceptInvite);
 
 module.exports = router;

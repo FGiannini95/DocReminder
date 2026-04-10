@@ -2,7 +2,7 @@ import { GroupMember } from "@/types/group";
 import { useAuth } from "@/context/AuthContext";
 import { getMemberInfo } from "@/utils/memberInfo";
 
-export const useGroupMember = ({
+export const useMemberDisplay = ({
   members = [],
   adminId,
 }: {

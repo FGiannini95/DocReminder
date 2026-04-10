@@ -6,6 +6,7 @@ import {
   DocumentForm,
   Group,
   Home,
+  Invitation,
   Landing,
   OneDocument,
   OneGroup,
@@ -38,6 +39,7 @@ const AppRoutes = () => {
             <Route path={DocReminderRoutes.pinSetup} element={<PinSetup mode="create" />} />
             <Route path={DocReminderRoutes.group} element={<Group />} />
             <Route path={DocReminderRoutes.oneGroup} element={<OneGroup />} />
+            <Route path={DocReminderRoutes.invitation} element={<Invitation />} />
             <Route path="*" element={<Navigate to={DocReminderRoutes.home} replace />} />
           </Routes>
         )}
@@ -47,6 +49,7 @@ const AppRoutes = () => {
             <Route path={DocReminderRoutes.otp} element={<Otp />} />
             <Route path={DocReminderRoutes.security} element={<SecuritySetup />} />
             <Route path={DocReminderRoutes.pinLogin} element={<PinSetup mode="verify" />} />
+            <Route path={DocReminderRoutes.invitation} element={<Invitation />} />
             <Route path="*" element={<Navigate to={DocReminderRoutes.landing} replace />} />
           </Routes>
         )}

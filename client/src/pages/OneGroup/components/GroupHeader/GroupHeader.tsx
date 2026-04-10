@@ -9,33 +9,47 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import EditIcon from "@mui/icons-material/Edit";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 
-import { useGroupMember } from "@/hooks";
+import { useMemberDisplay } from "@/hooks";
 import { axiosInstance } from "@/api/axiosInstance";
 import { DocReminderRoutes } from "@/routes/routes";
 import { GROUP_URL } from "@/api/apiConfig";
 import { DeleteGroupDrawer } from "../DeleteGroupDrawer/DeleteGroupDrawer";
+import { GroupDrawer } from "@/pages/Group/components/GroupDrawer/GroupDrawer";
 
 interface GroupHeaderProps {
   title: string;
+  icon: string | null;
   memberCount: number;
   onBack?: () => void;
   adminId: number;
   groupId: string;
 }
 
-export const GroupHeader = ({ title, memberCount, onBack, adminId, groupId }: GroupHeaderProps) => {
+export const GroupHeader = ({
+  title,
+  icon,
+  memberCount,
+  onBack,
+  adminId,
+  groupId,
+}: GroupHeaderProps) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [open, setOpen] = useState<boolean>(false);
+  const [openDeleteDrawer, setOpenDeleteDrawer] = useState<boolean>(false);
+  const [openEditDrawer, setOpenEditDrawer] = useState<boolean>(false);
 
   const navigate = useNavigate();
-  const { isAdmin } = useGroupMember({ adminId });
+  const { isAdmin } = useMemberDisplay({ adminId });
 
   const handleOpen = () => {
-    setOpen(true);
+    setOpenDeleteDrawer(true);
     setAnchorEl(null);
   };
-  const handleClose = () => setOpen(false);
+
+  const handleClose = () => {
+    setOpenDeleteDrawer(false);
+    setOpenEditDrawer(false);
+  };
 
   const handleDelete = () => {
     setIsLoading(true);
@@ -99,7 +113,13 @@ export const GroupHeader = ({ title, memberCount, onBack, adminId, groupId }: Gr
             <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)}>
               {isAdmin ? (
                 <>
-                  <MenuItem onClick={() => setAnchorEl(null)} sx={{ gap: 1 }}>
+                  <MenuItem
+                    onClick={() => {
+                      setAnchorEl(null);
+                      setOpenEditDrawer(true);
+                    }}
+                    sx={{ gap: 1 }}
+                  >
                     <EditIcon fontSize="small" />
                     Modificar grupo
                   </MenuItem>
@@ -121,10 +141,16 @@ export const GroupHeader = ({ title, memberCount, onBack, adminId, groupId }: Gr
         <Divider sx={{ borderColor: "grey.700" }} />
       </Box>
       <DeleteGroupDrawer
-        open={open}
+        open={openDeleteDrawer}
         onClose={handleClose}
         onConfirm={handleDelete}
         isLoading={isLoading}
+      />
+      <GroupDrawer
+        open={openEditDrawer}
+        onClose={handleClose}
+        groupId={groupId}
+        initialValues={{ name: title, icon: icon }}
       />
     </>
   );

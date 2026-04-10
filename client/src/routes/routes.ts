@@ -11,4 +11,5 @@ export const DocReminderRoutes = {
   pinLogin: "/pin-setup",
   group: "/group",
   oneGroup: "/group/:id",
+  invitation: "/invite/:token",
 };

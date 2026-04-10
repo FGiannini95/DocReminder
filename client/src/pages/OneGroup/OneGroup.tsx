@@ -20,6 +20,7 @@ export const OneGroup = () => {
   const { data, isPending, isError } = useQuery<GroupDetail>({
     queryKey: ["group", id],
     queryFn: () => fetchOneGroup(id!),
+    refetchInterval: 30000,
   });
 
   if (isPending) return <Loading />;
@@ -31,7 +32,8 @@ export const OneGroup = () => {
         {/* Header */}
         <GroupHeader
           title={data?.group.name ?? ""}
-          memberCount={data?.members.length ?? 0}
+          icon={data?.group.icon}
+          memberCount={data?.members.filter((m) => m.status === "active").length ?? 0}
           onBack={() => navigate(DocReminderRoutes.home)}
           adminId={data.group.admin_id}
           groupId={id!}

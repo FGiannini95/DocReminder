@@ -1,9 +1,9 @@
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { GroupMember } from "@/types/group";
 import { axiosInstance } from "@/api/axiosInstance";
 import { GROUP_URL } from "@/api/apiConfig";
-import { useQueryClient } from "@tanstack/react-query";
 
 export const useRemoveMember = (groupId: string) => {
   const [removeMember, setRemoveMember] = useState<GroupMember | null>(null);
