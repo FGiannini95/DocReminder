@@ -38,6 +38,7 @@ export const Home = () => {
   } = useQuery<Group[]>({
     queryKey: ["groups"],
     queryFn: fetchAllGroups,
+    refetchInterval: 30000,
   });
 
   const sortedDocuments = [...(documents ?? [])].sort(
