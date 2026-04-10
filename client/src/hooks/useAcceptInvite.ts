@@ -11,8 +11,6 @@ export const useAcceptInvite = (token: string | undefined) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log("token:", token);
-
     if (!token) return;
 
     setIsLoading(true);
