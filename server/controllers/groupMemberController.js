@@ -149,6 +149,37 @@ class groupMemberController {
       res.status(500).json({ message: "Internal server error" });
     }
   };
+
+  acceptInvite = async (req, res) => {
+    const { token } = req.params;
+
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
+
+      if (decoded.purpose !== "invite") {
+        return res.status(400).json({ message: "Invalid token" });
+      }
+
+      const acceptInvitation = `
+        UPDATE group_members SET status = ?, joined_at = ?
+        WHERE invite_token = ? AND status = "pending"
+      `;
+
+      const [result] = await db.query(acceptInvitation, [
+        "active",
+        new Date(),
+        token,
+      ]);
+
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ message: "Group member not found" });
+      }
+
+      return res.status(200).json({ groupId: decoded.groupId });
+    } catch (err) {
+      res.status(500).json({ message: "Internal server error" });
+    }
+  };
 }
 
 module.exports = new groupMemberController();

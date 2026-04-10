@@ -24,5 +24,6 @@ router.post(
   isGroupAdmin,
   groupMemberController.inviteMember,
 );
+router.get("/accept-invite/:token", groupMemberController.acceptInvite);
 
 module.exports = router;
