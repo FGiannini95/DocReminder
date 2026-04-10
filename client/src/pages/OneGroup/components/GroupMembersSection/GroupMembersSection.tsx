@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Avatar, Box, Button, Typography } from "@mui/material";
+import { Avatar, Box, Button, IconButton, Typography } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 import { GroupMember } from "@/types/group";
@@ -72,7 +72,9 @@ export const GroupMembersSection = ({ members, adminId, groupId }: GroupMembersS
 
                 {/* delete icon: only if current user is admin AND member is not admin */}
                 {isAdmin && !isMemberAdmin && member.status === "active" && (
-                  <DeleteIcon onClick={() => handleOpen(member)} />
+                  <IconButton onClick={() => handleOpen(member)} size="small" color="inherit">
+                    <DeleteIcon fontSize="small" />
+                  </IconButton>
                 )}
               </Box>
             );
