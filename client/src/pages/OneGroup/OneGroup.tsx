@@ -41,7 +41,7 @@ export const OneGroup = () => {
         {/* Scrollable content */}
         <Box sx={{ ...scrollableContentSx, mb: "56px", display: "block" }}>
           <GroupMembersSection members={data.members} adminId={data.group.admin_id} groupId={id!} />
-          <GroupDependentsSection />
+          <GroupDependentsSection groupId={id!} />
         </Box>
       </Box>
     </PageTransition>

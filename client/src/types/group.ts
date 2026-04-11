@@ -13,10 +13,11 @@ export interface GroupMember {
 }
 
 export interface GroupDependent {
-  group_dependents_id: number;
+  group_dependents_id?: number;
   name: string;
   relationship: string | null;
   birth_date: string | null;
+  avatar: string | null;
 }
 
 export interface GroupDocument {

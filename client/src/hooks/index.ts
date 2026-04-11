@@ -4,3 +4,4 @@ export { useMemberDisplay } from "./useMemberDisplay";
 export { useRemoveMember } from "./useRemoveMember";
 export { useInviteMember } from "./useInviteMember";
 export { useAcceptInvite } from "./useAcceptInvite";
+export { useAddDependent } from "./useAddDependent";
