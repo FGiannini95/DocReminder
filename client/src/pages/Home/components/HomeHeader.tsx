@@ -11,10 +11,8 @@ interface HomeHeaderProps {
 
 export const HomeHeader = ({ urgent, hasDocuments }: HomeHeaderProps) => {
   const { email, displayName } = useAuth();
-  // First letter always in capital
-  const headerName = (displayName ?? email?.split("@")[0] ?? "").replace(/^./, (c) =>
-    c.toUpperCase()
-  );
+  const headerName = displayName ?? email?.split("@")[0];
+
   return (
     <Box
       sx={{
