@@ -1,5 +1,8 @@
 import { useState } from "react";
 import { GroupDependent } from "@/types/group";
+import { axiosInstance } from "@/api/axiosInstance";
+import { GROUP_URL } from "@/api/apiConfig";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const useAddDependent = (groupId: string) => {
   const [form, setForm] = useState<GroupDependent>({
@@ -11,6 +14,7 @@ export const useAddDependent = (groupId: string) => {
   const [error, setError] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
+  const queryClient = useQueryClient();
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
@@ -24,11 +28,22 @@ export const useAddDependent = (groupId: string) => {
     if (field === "name") setError("");
   };
 
-  // handleSubmit:
-  // validate name
-  // call POST /:groupId/add-dependent
-  // on success: invalidateQueries ["group", groupId] + handleClose
-  // on error: setIsLoading(false)
+  const handleSubmit = () => {
+    if (!form.name.trim()) {
+      setError("Nombre obligatorio");
+      return;
+    }
+
+    setIsLoading(true);
+    axiosInstance
+      .post(`${GROUP_URL}/${groupId}/add-dependent`, form)
+      .then(() => {
+        queryClient.invalidateQueries({ queryKey: ["group", groupId] });
+        setIsLoading(false);
+        handleClose();
+      })
+      .catch(() => setIsLoading(false));
+  };
 
   return {
     form,
@@ -38,6 +53,6 @@ export const useAddDependent = (groupId: string) => {
     handleOpen,
     handleClose,
     handleChange,
-    // handleSubmit,
+    handleSubmit,
   };
 };

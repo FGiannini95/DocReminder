@@ -10,7 +10,7 @@ interface GroupDependentsSectionProps {
 }
 
 export const GroupDependentsSection = ({ groupId }: GroupDependentsSectionProps) => {
-  const { form, error, isLoading, open, handleOpen, handleClose, handleChange } =
+  const { form, error, isLoading, open, handleOpen, handleClose, handleChange, handleSubmit } =
     useAddDependent(groupId);
   return (
     <>
@@ -27,7 +27,7 @@ export const GroupDependentsSection = ({ groupId }: GroupDependentsSectionProps)
         form={form}
         onClose={handleClose}
         onChange={handleChange}
-        //onConfrim={handleAddDependent}
+        onConfirm={handleSubmit}
         error={error}
         isLoading={isLoading}
       />

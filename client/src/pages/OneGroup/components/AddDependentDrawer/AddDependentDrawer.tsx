@@ -11,7 +11,7 @@ interface AddDependentDrawerProps {
   form: GroupDependent;
   onClose: () => void;
   onChange: (field: keyof GroupDependent, value: string) => void;
-  //onConfirm: () => void;
+  onConfirm: () => void;
   error: string;
   isLoading: boolean;
 }
@@ -23,8 +23,9 @@ export const AddDependentDrawer = ({
   form,
   onClose,
   onChange,
-  isLoading,
+  onConfirm,
   error,
+  isLoading,
 }: AddDependentDrawerProps) => {
   return (
     <BaseDrawer open={open} onClose={onClose}>
@@ -105,6 +106,7 @@ export const AddDependentDrawer = ({
       <Button
         fullWidth
         variant="contained"
+        onClick={onConfirm}
         sx={{ ...containedButtonSx, backgroundColor: "text.primary" }}
         disabled={!form.name}
       >
