@@ -69,7 +69,7 @@ class groupController {
 
       const selectDependents = `
         SELECT
-         group_dependents_id, name, relationship, birth_date
+         group_dependents_id, name, relationship, birth_date, avatar
         FROM group_dependents 
         WHERE group_id = ?  
       `;
