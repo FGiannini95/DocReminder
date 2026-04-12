@@ -3,6 +3,7 @@ export interface Group {
   name: string;
   icon: string | null;
   member_count: number;
+  dependent_count: number;
 }
 
 export interface GroupMember {

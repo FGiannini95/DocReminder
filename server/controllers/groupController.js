@@ -128,7 +128,12 @@ class groupController {
             FROM group_members 
             WHERE group_members.group_id = private_groups.private_groups_id 
             AND group_members.status = 'active'
-          ) + 1 AS member_count
+          ) + 1 AS member_count,
+          (
+            SELECT COUNT(*) 
+            FROM group_dependents 
+            WHERE group_dependents.group_id = private_groups.private_groups_id
+          ) AS dependent_count
         FROM private_groups
         WHERE private_groups.admin_id = ?
 
@@ -144,7 +149,12 @@ class groupController {
             FROM group_members 
             WHERE group_members.group_id = private_groups.private_groups_id 
             AND group_members.status = 'active'
-          ) + 1 AS member_count
+          ) + 1 AS member_count,
+          (
+            SELECT COUNT(*) 
+            FROM group_dependents 
+            WHERE group_dependents.group_id = private_groups.private_groups_id
+          ) AS dependent_count
         FROM private_groups
         JOIN group_members ON group_members.group_id = private_groups.private_groups_id
         WHERE group_members.user_id = ? AND group_members.status = 'active'

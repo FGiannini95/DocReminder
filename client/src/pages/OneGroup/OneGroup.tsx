@@ -33,7 +33,10 @@ export const OneGroup = () => {
         <GroupHeader
           title={data?.group.name ?? ""}
           icon={data?.group.icon}
-          memberCount={data?.members.filter((m) => m.status === "active").length ?? 0}
+          memberCount={
+            (data?.members.filter((m) => m.status === "active").length ?? 0) +
+            (data?.dependents.length ?? 0)
+          }
           onBack={() => navigate(DocReminderRoutes.home)}
           adminId={data.group.admin_id}
           groupId={id!}

@@ -59,7 +59,9 @@ export const GroupCard = ({ groups, isError, isPending }: GroupCardProps) => {
                         color="text.secondary"
                         sx={{ display: "block" }}
                       >
-                        {group.member_count === 1 ? "1 miembro" : `${group.member_count} miembros`}
+                        {group.member_count + group.dependent_count === 1
+                          ? "1 persona"
+                          : `${group.member_count + group.dependent_count} personas`}
                       </Typography>
                     </Box>
 
