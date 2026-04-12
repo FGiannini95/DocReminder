@@ -26,8 +26,6 @@ export const OneGroup = () => {
   if (isPending) return <Loading />;
   if (isError) return <ErrorMessage message="Error al cargar el grupo" />;
 
-  console.log("data", data);
-
   return (
     <PageTransition>
       <Box sx={{ minHeight: "100dvh", display: "flex", flexDirection: "column" }}>
@@ -43,7 +41,7 @@ export const OneGroup = () => {
         {/* Scrollable content */}
         <Box sx={{ ...scrollableContentSx, mb: "56px", display: "block" }}>
           <GroupMembersSection members={data.members} adminId={data.group.admin_id} groupId={id!} />
-          <GroupDependentsSection groupId={id!} dependents={data.dependants} />
+          <GroupDependentsSection groupId={id!} dependents={data.dependents} />
         </Box>
       </Box>
     </PageTransition>

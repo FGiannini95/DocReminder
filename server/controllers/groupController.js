@@ -69,21 +69,21 @@ class groupController {
 
       const selectDependents = `
         SELECT
-         group_dependents_id, name, relationship, birth_date, avatar
+         group_dependents_id, name, relationship, avatar
         FROM group_dependents 
         WHERE group_id = ?  
       `;
 
-      const [dependants] = await db.query(selectDependents, [
+      const [dependents] = await db.query(selectDependents, [
         private_groups_id,
       ]);
 
       const memberIds = members.map((m) => m.user_id);
       const allUserIds = [...new Set([group.admin_id, ...memberIds])];
-      const dependentIds = dependants.map((d) => d.group_dependents_id);
+      const dependentIds = dependents.map((d) => d.group_dependents_id);
 
       if (dependentIds.length === 0) {
-        const oneGroup = { group, members, dependants, documents: [] };
+        const oneGroup = { group, members, dependents, documents: [] };
         return res.status(200).json(oneGroup);
       }
 
@@ -106,7 +106,7 @@ class groupController {
         dependentIds,
       ]);
 
-      const oneGroup = { group, members, dependants, documents };
+      const oneGroup = { group, members, dependents, documents };
       return res.status(200).json(oneGroup);
     } catch (err) {
       res.status(500).json({ message: "Internal server error" });

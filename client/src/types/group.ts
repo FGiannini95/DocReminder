@@ -16,7 +16,6 @@ export interface GroupDependent {
   group_dependents_id?: number;
   name: string;
   relationship: string | null;
-  birth_date: string | null;
   avatar: string | null;
 }
 
@@ -37,6 +36,6 @@ export interface GroupDetail {
     admin_id: number;
   };
   members: GroupMember[];
-  dependants: GroupDependent[];
+  dependents: GroupDependent[];
   documents: GroupDocument[];
 }

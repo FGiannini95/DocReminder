@@ -71,14 +71,6 @@ export const AddDependentDrawer = ({
         </Box>
       </Box>
 
-      <TextField
-        label="Fecha de nacimiento"
-        value={form.birth_date}
-        //onChange={onChange}
-        variant="outlined"
-        sx={textFieldSx}
-      />
-
       <Box sx={{ display: "flex", gap: 1 }}>
         {dependentEmojis.map((dependentEmoji) => (
           <Box

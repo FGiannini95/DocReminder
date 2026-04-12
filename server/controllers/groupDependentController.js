@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 class groupDependentController {
   addDependent = async (req, res) => {
     const { groupId } = req.params;
-    const { name, relationship, birth_date, avatar } = req.body;
+    const { name, relationship, avatar } = req.body;
 
     if (!name) {
       return res.status(400).json({ message: "Missing mandatory field" });
@@ -12,14 +12,13 @@ class groupDependentController {
 
     try {
       const insertDependent = `
-        INSERT INTO group_dependents (group_id, name, relationship, birth_date, avatar) VALUES (?, ?, ?, ?, ?)
+        INSERT INTO group_dependents (group_id, name, relationship, avatar) VALUES (?, ?, ?, ?)
       `;
 
       const [result] = await db.query(insertDependent, [
         groupId,
         name,
         relationship,
-        birth_date,
         avatar,
       ]);
 

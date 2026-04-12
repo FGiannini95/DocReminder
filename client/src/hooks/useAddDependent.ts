@@ -8,7 +8,6 @@ export const useAddDependent = (groupId: string) => {
   const [form, setForm] = useState<GroupDependent>({
     name: "",
     relationship: null,
-    birth_date: null,
     avatar: null,
   });
   const [error, setError] = useState<string>("");
@@ -18,7 +17,7 @@ export const useAddDependent = (groupId: string) => {
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
-    setForm({ name: "", relationship: null, birth_date: null, avatar: null });
+    setForm({ name: "", relationship: null, avatar: null });
     setError("");
     setOpen(false);
   };
