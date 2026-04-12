@@ -60,7 +60,7 @@ export const GroupMembersSection = ({ members, adminId, groupId }: GroupMembersS
                 <Avatar>{avatar}</Avatar>
 
                 <Box sx={{ flex: 1 }}>
-                  <Typography fontWeight="bold">
+                  <Typography fontWeight="bold" noWrap sx={{ maxWidth: 180 }}>
                     {member.status === "pending" ? member.email : displayName}
                   </Typography>
                   <Typography variant="caption" color="text.secondary" sx={{ display: "block" }}>
