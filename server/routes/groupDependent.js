@@ -11,5 +11,11 @@ router.post(
   isGroupMember,
   groupDependentController.addDependent,
 );
+router.delete(
+  "/:groupId/delete-dependent/:group_dependents_id",
+  authenticateToken,
+  isGroupMember,
+  groupDependentController.removeDependent,
+);
 
 module.exports = router;

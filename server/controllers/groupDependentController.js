@@ -27,6 +27,19 @@ class groupDependentController {
       res.status(500).json({ message: "Internal server error" });
     }
   };
+
+  removeDependent = async (req, res) => {
+    // extract groupId and group_dependents_id from req.params
+
+    try {
+      // DELETE FROM group_dependents WHERE group_dependents_id = ? AND group_id = ?
+      // (CASCADE handles documents automatically)
+      // if no rows affected return 404
+      // return 200
+    } catch (err) {
+      // return 500
+    }
+  };
 }
 
 module.exports = new groupDependentController();
