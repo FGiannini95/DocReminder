@@ -1,6 +1,7 @@
+import React from "react";
+
 import { ConfirmDrawer } from "@/components/ConfirmDrawer/ConfirmDrawer";
 import { GroupDependent } from "@/types/group";
-import React from "react";
 
 interface RemoveDependentDrawerProps {
   open: boolean;
