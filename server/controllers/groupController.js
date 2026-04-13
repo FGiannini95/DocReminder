@@ -88,17 +88,33 @@ class groupController {
       }
 
       const selectDocuments = `
+        -- documents belonging to group adults
         SELECT 
-          document_id AS documentId, type, name, expiry_date AS expiryDate, user_id, NULL AS dependent_id
+          document.document_id AS documentId, 
+          document.type, 
+          document.name, 
+          document.expiry_date AS expiryDate, 
+          document.user_id,
+          NULL AS dependent_id,
+          COALESCE(user.displayName, SUBSTRING_INDEX(user.email, '@', 1)) AS ownerName
         FROM document
-        WHERE user_id IN (?) AND is_deleted = 0
+        JOIN user ON user.user_id = document.user_id
+        WHERE document.user_id IN (?) AND document.is_deleted = 0
 
         UNION
 
+        -- documents belonging to group dependents
         SELECT 
-          document_id AS documentId, type, name, expiry_date AS expiryDate, NULL AS user_id, dependent_id
+          document.document_id AS documentId, 
+          document.type, 
+          document.name, 
+          document.expiry_date AS expiryDate, 
+          NULL AS user_id,
+          document.dependent_id,
+          group_dependents.name AS ownerName
         FROM document
-        WHERE dependent_id IN (?) AND is_deleted = 0
+        JOIN group_dependents ON group_dependents.group_dependents_id = document.dependent_id
+        WHERE document.dependent_id IN (?) AND document.is_deleted = 0
      `;
 
       const [documents] = await db.query(selectDocuments, [

@@ -1,3 +1,5 @@
+import { DocumentType } from "./document";
+
 export interface Group {
   private_groups_id: number;
   name: string;
@@ -22,11 +24,12 @@ export interface GroupDependent {
 
 export interface GroupDocument {
   documentId: number;
-  type: string;
+  type: DocumentType;
   name: string;
   expiryDate: string;
   user_id: number | null;
   dependent_id: number | null;
+  ownerName?: string;
 }
 
 export interface GroupDetail {
