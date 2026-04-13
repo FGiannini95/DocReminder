@@ -3,9 +3,10 @@ import React from "react";
 import { Box, Button, Card, CardContent, IconButton, Typography } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-import { useAddDependent } from "@/hooks";
+import { useAddDependent, useRemoveDependent } from "@/hooks";
 import { AddDependentDrawer } from "../AddDependentDrawer/AddDependentDrawer";
 import { GroupDependent } from "@/types/group";
+import { RemoveDependentDrawer } from "../RemoveDependentDrawer/RemoveDependentDrawer";
 
 interface GroupDependentsSectionProps {
   groupId: string;
@@ -15,6 +16,15 @@ interface GroupDependentsSectionProps {
 export const GroupDependentsSection = ({ groupId, dependents }: GroupDependentsSectionProps) => {
   const { form, error, isLoading, open, handleOpen, handleClose, handleChange, handleSubmit } =
     useAddDependent(groupId);
+
+  const {
+    dependentToRemove,
+    removeOpen,
+    isRemoveLoading,
+    openRemoveDrawer,
+    closeRemoveDrawer,
+    handleRemoveDependent,
+  } = useRemoveDependent(groupId);
 
   return (
     <>
@@ -48,7 +58,11 @@ export const GroupDependentsSection = ({ groupId, dependents }: GroupDependentsS
                     </Typography>
                   </Box>
 
-                  <IconButton size="small" color="inherit" onClick={() => {}}>
+                  <IconButton
+                    size="small"
+                    color="inherit"
+                    onClick={() => openRemoveDrawer(dependent)}
+                  >
                     <DeleteIcon fontSize="small" />
                   </IconButton>
                 </CardContent>
@@ -57,6 +71,13 @@ export const GroupDependentsSection = ({ groupId, dependents }: GroupDependentsS
           </Box>
         </Box>
       </Box>
+      <RemoveDependentDrawer
+        open={removeOpen}
+        onClose={closeRemoveDrawer}
+        dependentToRemove={dependentToRemove}
+        onConfirm={handleRemoveDependent}
+        isLoading={isRemoveLoading}
+      />
       <AddDependentDrawer
         open={open}
         form={form}
