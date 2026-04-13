@@ -29,15 +29,25 @@ class groupDependentController {
   };
 
   removeDependent = async (req, res) => {
-    // extract groupId and group_dependents_id from req.params
+    const { groupId, group_dependents_id } = req.params;
 
     try {
-      // DELETE FROM group_dependents WHERE group_dependents_id = ? AND group_id = ?
-      // (CASCADE handles documents automatically)
-      // if no rows affected return 404
-      // return 200
+      const deleteDependent = `
+        DELETE FROM group_dependents WHERE group_dependents_id = ? AND group_id = ?
+       `;
+
+      const [rows] = await db.query(deleteDependent, [
+        group_dependents_id,
+        groupId,
+      ]);
+
+      if (rows.affectedRows === 0) {
+        return res.status(404).json({ message: "Dependent not found" });
+      }
+
+      return res.status(200).json({ message: "Dependent removed succesfully" });
     } catch (err) {
-      // return 500
+      res.status(500).json({ message: "Internal server error" });
     }
   };
 }
