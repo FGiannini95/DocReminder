@@ -1,8 +1,11 @@
+import { DocumentType } from "./document";
+
 export interface Group {
   private_groups_id: number;
   name: string;
   icon: string | null;
   member_count: number;
+  dependent_count: number;
 }
 
 export interface GroupMember {
@@ -13,19 +16,20 @@ export interface GroupMember {
 }
 
 export interface GroupDependent {
-  group_dependents_id: number;
+  group_dependents_id?: number;
   name: string;
   relationship: string | null;
-  birth_date: string | null;
+  avatar: string | null;
 }
 
 export interface GroupDocument {
   documentId: number;
-  type: string;
+  type: DocumentType;
   name: string;
   expiryDate: string;
   user_id: number | null;
   dependent_id: number | null;
+  ownerName?: string;
 }
 
 export interface GroupDetail {
@@ -36,6 +40,6 @@ export interface GroupDetail {
     admin_id: number;
   };
   members: GroupMember[];
-  dependants: GroupDependent[];
+  dependents: GroupDependent[];
   documents: GroupDocument[];
 }

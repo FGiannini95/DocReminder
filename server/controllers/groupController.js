@@ -69,36 +69,52 @@ class groupController {
 
       const selectDependents = `
         SELECT
-         group_dependents_id, name, relationship, birth_date
+         group_dependents_id, name, relationship, avatar
         FROM group_dependents 
         WHERE group_id = ?  
       `;
 
-      const [dependants] = await db.query(selectDependents, [
+      const [dependents] = await db.query(selectDependents, [
         private_groups_id,
       ]);
 
       const memberIds = members.map((m) => m.user_id);
       const allUserIds = [...new Set([group.admin_id, ...memberIds])];
-      const dependentIds = dependants.map((d) => d.group_dependents_id);
+      const dependentIds = dependents.map((d) => d.group_dependents_id);
 
       if (dependentIds.length === 0) {
-        const oneGroup = { group, members, dependants, documents: [] };
+        const oneGroup = { group, members, dependents, documents: [] };
         return res.status(200).json(oneGroup);
       }
 
       const selectDocuments = `
+        -- documents belonging to group adults
         SELECT 
-          document_id AS documentId, type, name, expiry_date AS expiryDate, user_id, NULL AS dependent_id
+          document.document_id AS documentId, 
+          document.type, 
+          document.name, 
+          document.expiry_date AS expiryDate, 
+          document.user_id,
+          NULL AS dependent_id,
+          COALESCE(user.displayName, SUBSTRING_INDEX(user.email, '@', 1)) AS ownerName
         FROM document
-        WHERE user_id IN (?) AND is_deleted = 0
+        JOIN user ON user.user_id = document.user_id
+        WHERE document.user_id IN (?) AND document.is_deleted = 0
 
         UNION
 
+        -- documents belonging to group dependents
         SELECT 
-          document_id AS documentId, type, name, expiry_date AS expiryDate, NULL AS user_id, dependent_id
+          document.document_id AS documentId, 
+          document.type, 
+          document.name, 
+          document.expiry_date AS expiryDate, 
+          NULL AS user_id,
+          document.dependent_id,
+          group_dependents.name AS ownerName
         FROM document
-        WHERE dependent_id IN (?) AND is_deleted = 0
+        JOIN group_dependents ON group_dependents.group_dependents_id = document.dependent_id
+        WHERE document.dependent_id IN (?) AND document.is_deleted = 0
      `;
 
       const [documents] = await db.query(selectDocuments, [
@@ -106,7 +122,7 @@ class groupController {
         dependentIds,
       ]);
 
-      const oneGroup = { group, members, dependants, documents };
+      const oneGroup = { group, members, dependents, documents };
       return res.status(200).json(oneGroup);
     } catch (err) {
       res.status(500).json({ message: "Internal server error" });
@@ -128,7 +144,12 @@ class groupController {
             FROM group_members 
             WHERE group_members.group_id = private_groups.private_groups_id 
             AND group_members.status = 'active'
-          ) + 1 AS member_count
+          ) + 1 AS member_count,
+          (
+            SELECT COUNT(*) 
+            FROM group_dependents 
+            WHERE group_dependents.group_id = private_groups.private_groups_id
+          ) AS dependent_count
         FROM private_groups
         WHERE private_groups.admin_id = ?
 
@@ -144,7 +165,12 @@ class groupController {
             FROM group_members 
             WHERE group_members.group_id = private_groups.private_groups_id 
             AND group_members.status = 'active'
-          ) + 1 AS member_count
+          ) + 1 AS member_count,
+          (
+            SELECT COUNT(*) 
+            FROM group_dependents 
+            WHERE group_dependents.group_id = private_groups.private_groups_id
+          ) AS dependent_count
         FROM private_groups
         JOIN group_members ON group_members.group_id = private_groups.private_groups_id
         WHERE group_members.user_id = ? AND group_members.status = 'active'

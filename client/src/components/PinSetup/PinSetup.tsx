@@ -7,7 +7,7 @@ import { PageTransition } from "../PageTransition/PageTransition";
 import { DocumentHeader } from "../DocumentHeader/DocumentHeader";
 import { containedButtonSx, scrollableContentSx, textFieldSx } from "@/styles/commonStyle";
 import { axiosInstance } from "@/api/axiosInstance";
-import { AUTH_URL } from "@/api/apiConfig";
+import { AUTH_URL, GROUP_URL } from "@/api/apiConfig";
 import { useAuth } from "@/context";
 import { useAutoAdvance } from "@/hooks";
 import { DocReminderRoutes } from "@/routes/routes";
@@ -51,8 +51,19 @@ export const PinSetup = ({ mode }: PinSetupProps) => {
           localStorage.setItem("pinEnabled", "true");
           navigate(-1);
         } else {
-          navigate(DocReminderRoutes.home);
           login(res.data.newAccessToken);
+
+          const pendingInvite = sessionStorage.getItem("inviteToken");
+          if (pendingInvite) {
+            sessionStorage.removeItem("inviteToken");
+            axiosInstance
+              .get(`${GROUP_URL}/accept-invite/${pendingInvite}`)
+              .then((res) => navigate(`/group/${res.data.groupId}`))
+              .catch(() => navigate(DocReminderRoutes.home));
+            return;
+          }
+
+          navigate(DocReminderRoutes.home);
         }
       })
       .catch((err) => {

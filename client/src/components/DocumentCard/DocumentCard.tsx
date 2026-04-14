@@ -2,18 +2,20 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 
-import { Box, Card, CardContent, Typography } from "@mui/material";
+import { Box, Card, CardContent, Chip, Typography } from "@mui/material";
 
 import { statusConfig } from "@/styles/commonStyle";
 import { Document, typeLabels } from "@/types/document";
 import { EmptyState } from "../EmptyState/EmptyState";
 import { Loading } from "../Loading/Loading";
 import { ErrorMessage } from "../ErrorMessage/ErrorMessage";
+import { GroupDocument } from "@/types/group";
 
 interface DocumentCardProps {
-  documents: Document[];
+  documents: Document[] | GroupDocument[];
   isError: boolean;
   isPending: boolean;
+  title?: string;
 }
 
 const daysUntil = (dateStr: string) =>
@@ -21,6 +23,7 @@ const daysUntil = (dateStr: string) =>
 
 export const DocumentCard = ({ documents, isError, isPending }: DocumentCardProps) => {
   const navigate = useNavigate();
+  //Todo hay que cambiarle el nombre
 
   if (isPending) return <Loading />;
   if (isError) return <ErrorMessage message="Error al cargar el documento" />;
@@ -64,6 +67,9 @@ export const DocumentCard = ({ documents, isError, isPending }: DocumentCardProp
 
                   {/* Content */}
                   <Box sx={{ flex: 1 }}>
+                    {"ownerName" in doc && doc.ownerName && (
+                      <Chip label={doc.ownerName} size="small" sx={{ mt: 0.5 }} />
+                    )}
                     <Typography fontWeight="bold"> {doc.name || typeLabels[doc.type]}</Typography>
                     <Typography variant="caption" color="text.secondary">
                       {doc.name ? `${typeLabels[doc.type]} · ` : ""}

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context";
 import { axiosInstance } from "@/api/axiosInstance";
 import { GROUP_URL } from "@/api/apiConfig";
+import { DocReminderRoutes } from "@/routes/routes";
 
 export const useAcceptInvite = (token: string | undefined) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -12,6 +13,12 @@ export const useAcceptInvite = (token: string | undefined) => {
 
   useEffect(() => {
     if (!token) return;
+
+    if (!isLogged) {
+      sessionStorage.setItem("inviteToken", token);
+      navigate(DocReminderRoutes.landing);
+      return;
+    }
 
     setIsLoading(true);
     axiosInstance
@@ -25,7 +32,7 @@ export const useAcceptInvite = (token: string | undefined) => {
         setIsLoading(false);
         setError("El enlace ha caducado o no es válido");
       });
-  }, [token, navigate]);
+  }, [token, navigate, isLogged]);
 
   return { isLoading, error };
 };

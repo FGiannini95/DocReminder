@@ -9,11 +9,12 @@ import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import { validateOtp } from "@/utils/validation";
 import { vibrate } from "@/utils/haptics";
 import { DocReminderRoutes } from "@/routes/routes";
-import { AUTH_URL } from "@/api/apiConfig";
+import { AUTH_URL, GROUP_URL } from "@/api/apiConfig";
 import { useAuth } from "@/context";
 import { PageTransition } from "@/components";
 import { textFieldSx } from "@/styles/commonStyle";
 import { useAutoAdvance } from "@/hooks";
+import { axiosInstance } from "@/api/axiosInstance";
 
 // Shared styles for sections
 const sectionStyles = {
@@ -52,8 +53,19 @@ export const Otp = () => {
       .then((res) => {
         vibrate();
         login(res.data.accessToken);
-        navigate(DocReminderRoutes.security, { state: { email } });
         localStorage.setItem("userEmail", email);
+
+        const pendingInvite = sessionStorage.getItem("inviteToken");
+        if (pendingInvite) {
+          sessionStorage.removeItem("inviteToken");
+          axiosInstance
+            .get(`${GROUP_URL}/accept-invite/${pendingInvite}`)
+            .then((res) => navigate(`/group/${res.data.groupId}`))
+            .catch(() => navigate(DocReminderRoutes.security, { state: { email } }));
+          return;
+        }
+
+        navigate(DocReminderRoutes.security, { state: { email } });
       })
       .catch((err) => {
         console.log(err);
