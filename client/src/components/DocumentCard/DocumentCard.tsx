@@ -23,6 +23,7 @@ const daysUntil = (dateStr: string) =>
 
 export const DocumentCard = ({ documents, isError, isPending }: DocumentCardProps) => {
   const navigate = useNavigate();
+  //Todo hay que cambiarle el nombre
 
   if (isPending) return <Loading />;
   if (isError) return <ErrorMessage message="Error al cargar el documento" />;
