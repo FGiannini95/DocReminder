@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import { Box } from "@mui/material";
 
-import { DocumentCard, ErrorMessage, Loading, PageTransition } from "@/components";
+import { DocumentSection, ErrorMessage, Loading, PageTransition } from "@/components";
 import { DocReminderRoutes } from "@/routes/routes";
 import { GroupHeader } from "./components/GroupHeader/GroupHeader";
 import { GroupDependentsSection } from "./components/GroupDependentsSection/GroupDependentsSection";
@@ -49,7 +49,7 @@ export const OneGroup = () => {
         <Box sx={{ ...scrollableContentSx, mb: "56px", display: "block" }}>
           <GroupMembersSection members={data.members} adminId={data.group.admin_id} groupId={id!} />
           <GroupDependentsSection groupId={id!} dependents={data.dependents} />
-          <DocumentCard
+          <DocumentSection
             documents={sortedDocuments}
             isError={false}
             isPending={false}

@@ -10,7 +10,7 @@ import { scrollableContentSx } from "@/styles/commonStyle";
 import { Document } from "@/types/document";
 import { fetchAllDocuments } from "@/api/documentApi";
 import { fetchAllGroups } from "@/api/groupApi";
-import { BottomNav, DocumentCard, PageTransition } from "@/components";
+import { BottomNav, DocumentSection, PageTransition } from "@/components";
 import { HomeHeader } from "./components/HomeHeader";
 import { StatusBlocks } from "./components/StatusBlocks";
 import { GroupCard } from "../Group/components/GroupCard/GroupCard";
@@ -61,7 +61,7 @@ export const Home = () => {
         {/* Scrollable content */}
         <Box sx={{ ...scrollableContentSx, mb: "56px", display: "block" }}>
           <StatusBlocks urgent={urgent ?? 0} upcoming={upcoming ?? 0} ok={ok ?? 0} />{" "}
-          <DocumentCard
+          <DocumentSection
             documents={sortedDocuments}
             isError={documentsError}
             isPending={documentsPending}

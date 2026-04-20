@@ -11,7 +11,7 @@ import { Loading } from "../Loading/Loading";
 import { ErrorMessage } from "../ErrorMessage/ErrorMessage";
 import { GroupDocument } from "@/types/group";
 
-interface DocumentCardProps {
+interface DocumentSectionProps {
   documents: Document[] | GroupDocument[];
   isError: boolean;
   isPending: boolean;
@@ -21,7 +21,7 @@ interface DocumentCardProps {
 const daysUntil = (dateStr: string) =>
   Math.ceil((new Date(dateStr).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
 
-export const DocumentCard = ({ documents, isError, isPending }: DocumentCardProps) => {
+export const DocumentSection = ({ documents, isError, isPending }: DocumentSectionProps) => {
   const navigate = useNavigate();
   //Todo hay que cambiarle el nombre
 
