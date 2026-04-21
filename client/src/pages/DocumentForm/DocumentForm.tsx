@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import "dayjs/locale/es";
 
-import { Box, Button, CircularProgress, TextField, Typography } from "@mui/material";
+import { Box, Button, Chip, CircularProgress, TextField, Typography } from "@mui/material";
 
 import { axiosInstance } from "@/api/axiosInstance";
 import { DOC_URL } from "@/api/apiConfig";
@@ -15,6 +15,9 @@ import { DocumentHeader, ErrorMessage, Loading, PageTransition } from "@/compone
 import { DocumentTypeSelect } from "./components/DocumentTypeSelect";
 import { ExpiryDatePicker } from "./components/ExpiryDatePicker";
 import { ReminderDaysSelector } from "./components/ReminderDaysSelector";
+import { fetchGroupDependents } from "@/api/groupApi";
+import { GroupDependent } from "@/types/group";
+import { TitularSelect } from "./components/TitularSelect";
 
 export const DocumentForm = () => {
   const [form, setForm] = useState<DocumentFormValues>({
@@ -24,6 +27,7 @@ export const DocumentForm = () => {
     expiryDate: null,
     reminderDays: [60, 30],
     personalNote: "",
+    assignTo: "me",
   });
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Partial<Record<keyof DocumentFormValues, string>>>({});
@@ -47,6 +51,13 @@ export const DocumentForm = () => {
     enabled: isEdit,
   });
 
+  // Fetch group dependents
+  const { data: groupDependents } = useQuery<GroupDependent[]>({
+    queryKey: ["groupDependents", isFromGroup],
+    queryFn: () => fetchGroupDependents(isFromGroup!),
+    enabled: !!isFromGroup,
+  });
+
   // Precompile form when doc loads in edit mode
   useEffect(() => {
     if (doc) {
@@ -57,6 +68,7 @@ export const DocumentForm = () => {
         expiryDate: dayjs(doc.expiryDate),
         reminderDays: doc.reminderDays,
         personalNote: doc.personalNote || "",
+        assignTo: "me",
       });
     }
   }, [doc]);
@@ -92,6 +104,7 @@ export const DocumentForm = () => {
       expiry_date: form.expiryDate?.format("YYYY-MM-DD"),
       reminder_days: form.reminderDays,
       personal_note: form.personalNote,
+      dependent_id: form.assignTo !== "me" ? Number(form.assignTo) : null,
     };
 
     const request = isEdit
@@ -116,15 +129,19 @@ export const DocumentForm = () => {
 
         {/* Scrollable content */}
         <Box sx={{ ...scrollableContentSx, p: 3, gap: 3 }}>
-          {isFromGroup && <Typography>hi</Typography>}
-
+          {isFromGroup && (
+            <TitularSelect
+              value={form.assignTo ?? "me"}
+              onChange={(value) => handleChange("assignTo", value)}
+              dependents={groupDependents ?? []}
+            />
+          )}
           {/* Document type selector */}
           <DocumentTypeSelect
             value={form.type}
             onChange={(value) => handleChange("type", value)}
             error={errors.type}
           />
-
           {/* Name input */}
           <TextField
             type="text"
@@ -136,7 +153,6 @@ export const DocumentForm = () => {
             error={!!errors.name}
             helperText={errors.name}
           />
-
           {/* Document number input (optional) */}
           <TextField
             type="text"
@@ -146,7 +162,6 @@ export const DocumentForm = () => {
             variant="outlined"
             sx={textFieldSx}
           />
-
           {/* Expiry date picker */}
           <ExpiryDatePicker
             value={form.expiryDate}
@@ -156,13 +171,11 @@ export const DocumentForm = () => {
             onClose={() => setDateOpen(false)}
             error={errors.expiryDate}
           />
-
           {/* Reminder days */}
           <ReminderDaysSelector
             selected={form.reminderDays}
             onChange={(days) => handleChange("reminderDays", days)}
           />
-
           {/* Personal notes */}
           <TextField
             type="text"
@@ -172,7 +185,6 @@ export const DocumentForm = () => {
             variant="outlined"
             sx={textFieldSx}
           />
-
           {/* Actions buttons */}
           {isEdit ? (
             <Box sx={{ display: "flex", gap: 2 }}>

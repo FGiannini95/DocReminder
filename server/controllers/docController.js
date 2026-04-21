@@ -8,15 +8,20 @@ class docController {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
+    // determine owner: user or dependent
+    const dependentId = data.dependent_id || null;
+    const ownerId = dependentId ? null : req.user.userId;
+
     try {
       const insertDocument = `
         INSERT INTO document 
-            (user_id, type, name, document_number, expiry_date, reminder_days, personal_note) 
-        VALUES (?, ?, ?, ?, ?, ?, ?)
+          (user_id, dependent_id, type, name, document_number, expiry_date, reminder_days, personal_note) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
       `;
 
       const [result] = await db.query(insertDocument, [
-        req.user.userId,
+        ownerId,
+        dependentId,
         data.type,
         data.name,
         data.document_number || null,
