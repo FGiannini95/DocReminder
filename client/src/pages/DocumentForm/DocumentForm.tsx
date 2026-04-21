@@ -97,7 +97,7 @@ export const DocumentForm = () => {
 
     request
       .then((res) => {
-        navigate(`/document/${isEdit ? id : res.data.documentId}`);
+        navigate(`/document/${isEdit ? id : res.data.documentId}`, { replace: true });
       })
       .catch((err) => {
         console.log(err);

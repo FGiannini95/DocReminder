@@ -58,7 +58,7 @@ export const DocumentSection = ({ documents, isError, isPending }: DocumentSecti
                   <Box
                     sx={{
                       width: 6,
-                      height: 56,
+                      alignSelf: "stretch",
                       borderRadius: 4,
                       backgroundColor: config.barColor,
                       flexShrink: 0,
@@ -68,7 +68,7 @@ export const DocumentSection = ({ documents, isError, isPending }: DocumentSecti
                   {/* Content */}
                   <Box sx={{ flex: 1 }}>
                     {"ownerName" in doc && doc.ownerName && (
-                      <Chip label={doc.ownerName} size="small" sx={{ mt: 0.5 }} />
+                      <Chip label={doc.ownerName} size="small" sx={{ mt: 0.5, borderRadius: 2 }} />
                     )}
                     <Typography fontWeight="bold"> {doc.name || typeLabels[doc.type]}</Typography>
                     <Typography variant="caption" color="text.secondary">
