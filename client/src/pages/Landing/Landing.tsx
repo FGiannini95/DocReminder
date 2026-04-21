@@ -105,18 +105,6 @@ export const Landing = () => {
                 "Enviar código de acceso"
               )}
             </Button>
-            <Divider sx={{ width: "100%" }}>
-              <Typography color="text.secondary">o</Typography>
-            </Divider>
-            <Button
-              fullWidth
-              variant="outlined"
-              size="large"
-              sx={{ borderRadius: 8, py: 1.5, color: "text.primary", borderColor: "text.primary" }}
-            >
-              Continuar con Google
-            </Button>
-
             {savedEmail && <FastAccesButtons />}
           </Box>
         </Box>
