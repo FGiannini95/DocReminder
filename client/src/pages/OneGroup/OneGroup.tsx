@@ -56,6 +56,7 @@ export const OneGroup = () => {
             isError={false}
             isPending={false}
             title="Documentos del grupo"
+            groupId={id}
           />
         </Box>
         <Fab

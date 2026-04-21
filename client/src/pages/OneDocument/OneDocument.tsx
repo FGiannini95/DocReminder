@@ -1,9 +1,9 @@
 import React from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
 
-import { Alert, Box, Button, Typography } from "@mui/material";
+import { Alert, Box, Button, Chip, Typography } from "@mui/material";
 
 import { DocumentHeader, ErrorMessage, Loading, PageTransition } from "@/components";
 import { DocReminderRoutes } from "@/routes/routes";
@@ -41,7 +41,11 @@ const InfoRow = ({ label, value }: { label: string; value: string }) => {
 export const OneDocument = () => {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+
+  const isFromGroup = searchParams.get("groupId");
+  const ownerName = searchParams.get("ownerName");
 
   const daysUntil = (dateStr: string) =>
     Math.ceil((new Date(dateStr).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
@@ -58,9 +62,15 @@ export const OneDocument = () => {
   if (isPending) return <Loading />;
   if (isError) return <ErrorMessage message="Error al cargar el documento" />;
 
+  const days = daysUntil(doc.expiryDate);
+  const isExpired = days <= 0;
+  const canEdit = doc.user_id === user || doc.dependent_id !== null;
+  const isMyDocument = doc.user_id === user;
+
   const handleEdit = () => {
     vibrate();
-    navigate(`/edit-document/${doc.documentId}`);
+    const groupParam = isFromGroup ? `&groupId=${isFromGroup}` : "";
+    navigate(`/edit-document/${doc.documentId}?dependentId=${doc.dependent_id}${groupParam}`);
   };
 
   const handleDelete = () => {
@@ -75,11 +85,6 @@ export const OneDocument = () => {
       });
   };
 
-  const days = daysUntil(doc.expiryDate);
-  const isExpired = days <= 0;
-
-  const canEdit = doc.user_id === user || doc.dependent_id !== null;
-
   return (
     <PageTransition>
       <Box sx={{ minHeight: "100dvh", display: "flex", flexDirection: "column" }}>
@@ -88,6 +93,12 @@ export const OneDocument = () => {
 
         {/* Scrollable content */}
         <Box sx={{ ...scrollableContentSx, p: 3 }}>
+          {!isMyDocument && ownerName && (
+            <Typography>
+              Pertenece a: <Chip label={ownerName} size="small" sx={{ borderRadius: 2 }} />
+            </Typography>
+          )}
+
           {isExpired && <Alert severity="error">Caducado hace {Math.abs(days)} días</Alert>}
           {!isExpired && days <= 30 && (
             <Alert severity="error">Date prisa. Caduca en {days} días</Alert>

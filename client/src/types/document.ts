@@ -18,6 +18,7 @@ export interface Document {
   personalNote: string | null;
   user_id: number | null;
   dependent_id: number | null;
+  ownerName?: string;
 }
 
 export const typeLabels: Record<DocumentType, string> = {

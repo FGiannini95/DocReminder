@@ -20,6 +20,10 @@ import { GroupDependent } from "@/types/group";
 import { TitularSelect } from "./components/TitularSelect";
 
 export const DocumentForm = () => {
+  const [searchParams] = useSearchParams();
+  const isFromGroup = searchParams.get("groupId");
+  const dependentId = searchParams.get("dependentId");
+
   const [form, setForm] = useState<DocumentFormValues>({
     type: "",
     name: "",
@@ -27,16 +31,13 @@ export const DocumentForm = () => {
     expiryDate: null,
     reminderDays: [60, 30],
     personalNote: "",
-    assignTo: "me",
+    assignTo: dependentId ?? "me",
   });
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Partial<Record<keyof DocumentFormValues, string>>>({});
   const [dateOpen, setDateOpen] = useState<boolean>(false);
   const { id } = useParams<{ id: string }>();
-  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-
-  const isFromGroup = searchParams.get("groupId");
 
   const isEdit = !!id;
 
@@ -68,10 +69,10 @@ export const DocumentForm = () => {
         expiryDate: dayjs(doc.expiryDate),
         reminderDays: doc.reminderDays,
         personalNote: doc.personalNote || "",
-        assignTo: "me",
+        assignTo: dependentId !== null ? dependentId : "me",
       });
     }
-  }, [doc]);
+  }, [doc, dependentId]);
 
   if (isEdit && isPending) return <Loading />;
   if (isEdit && isError) return <ErrorMessage message="Error al cargar el formulario" />;
@@ -111,9 +112,17 @@ export const DocumentForm = () => {
       ? axiosInstance.put(`${DOC_URL}/edit-document/${id}`, body)
       : axiosInstance.post(`${DOC_URL}/add-document`, body);
 
+    const getOwnerParam = () => {
+      if (form.assignTo === "me") return "";
+      const dep = groupDependents?.find((d) => String(d.group_dependents_id) === form.assignTo);
+      return dep ? `?ownerName=${dep.name}` : "";
+    };
+
     request
       .then((res) => {
-        navigate(`/document/${isEdit ? id : res.data.documentId}`, { replace: true });
+        navigate(`/document/${isEdit ? id : res.data.documentId}${getOwnerParam()}`, {
+          replace: true,
+        });
       })
       .catch((err) => {
         console.log(err);
@@ -129,7 +138,8 @@ export const DocumentForm = () => {
 
         {/* Scrollable content */}
         <Box sx={{ ...scrollableContentSx, p: 3, gap: 3 }}>
-          {isFromGroup && (
+          {/* Assign document to owner */}
+          {isFromGroup && !isEdit && (
             <TitularSelect
               value={form.assignTo ?? "me"}
               onChange={(value) => handleChange("assignTo", value)}

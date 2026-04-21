@@ -16,14 +16,19 @@ interface DocumentSectionProps {
   isError: boolean;
   isPending: boolean;
   title?: string;
+  groupId?: string;
 }
 
 const daysUntil = (dateStr: string) =>
   Math.ceil((new Date(dateStr).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
 
-export const DocumentSection = ({ documents, isError, isPending }: DocumentSectionProps) => {
+export const DocumentSection = ({
+  documents,
+  isError,
+  isPending,
+  groupId,
+}: DocumentSectionProps) => {
   const navigate = useNavigate();
-  //Todo hay que cambiarle el nombre
 
   if (isPending) return <Loading />;
   if (isError) return <ErrorMessage message="Error al cargar el documento" />;
@@ -43,7 +48,11 @@ export const DocumentSection = ({ documents, isError, isPending }: DocumentSecti
             return (
               <Card
                 key={doc.documentId}
-                onClick={() => navigate(`/document/${doc.documentId}`)}
+                onClick={() =>
+                  navigate(
+                    `/document/${doc.documentId}?groupId=${groupId}&ownerName=${doc.ownerName ?? ""}`
+                  )
+                }
                 sx={{
                   borderRadius: 2,
                   boxShadow: "0px 0px 12px rgba(0,0,0,0.08)",
