@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { Alert, Box, Button, Chip, Typography } from "@mui/material";
 
@@ -47,6 +47,7 @@ export const OneDocument = () => {
   const isFromGroup = searchParams.get("groupId");
   const ownerName = searchParams.get("ownerName");
 
+  const queryClient = useQueryClient();
   const daysUntil = (dateStr: string) =>
     Math.ceil((new Date(dateStr).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
 
@@ -78,7 +79,12 @@ export const OneDocument = () => {
       .delete(`${DOC_URL}/delete-document/${id}`)
       .then(() => {
         vibrate();
-        navigate(DocReminderRoutes.home);
+        if (isFromGroup) {
+          queryClient.invalidateQueries({ queryKey: ["group", isFromGroup] });
+          navigate(`/group/${isFromGroup}`);
+        } else {
+          navigate(DocReminderRoutes.home);
+        }
       })
       .catch((err) => {
         console.log(err);

@@ -86,7 +86,6 @@ class docController {
 
   deleteDocument = async (req, res) => {
     const { id: documentId } = req.params;
-    const userId = req.user.userId;
 
     if (!documentId) {
       return res.status(404).json({ message: "Document not found" });
@@ -96,9 +95,9 @@ class docController {
       const deleteDocument = `
         UPDATE document
         SET is_deleted = 1
-        WHERE user_id = ? AND document_id = ?
+        WHERE document_id = ?
       `;
-      await db.query(deleteDocument, [userId, documentId]);
+      await db.query(deleteDocument, [documentId]);
 
       return res.status(200).json({ message: "Document deleted succesfully" });
     } catch (err) {
