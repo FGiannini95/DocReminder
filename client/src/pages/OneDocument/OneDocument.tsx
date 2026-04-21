@@ -70,7 +70,8 @@ export const OneDocument = () => {
   const handleEdit = () => {
     vibrate();
     const groupParam = isFromGroup ? `&groupId=${isFromGroup}` : "";
-    navigate(`/edit-document/${doc.documentId}?dependentId=${doc.dependent_id}${groupParam}`);
+    const dependentParam = doc.dependent_id ? `?dependentId=${doc.dependent_id}` : "?";
+    navigate(`/edit-document/${doc.documentId}${dependentParam}${groupParam}`);
   };
 
   const handleDelete = () => {

@@ -48,11 +48,13 @@ export const DocumentSection = ({
             return (
               <Card
                 key={doc.documentId}
-                onClick={() =>
-                  navigate(
-                    `/document/${doc.documentId}?groupId=${groupId}&ownerName=${doc.ownerName ?? ""}`
-                  )
-                }
+                onClick={() => {
+                  const groupParam = groupId ? `?groupId=${groupId}` : "";
+                  const ownerParam = doc.ownerName
+                    ? `${groupId ? "&" : "?"}ownerName=${doc.ownerName}`
+                    : "";
+                  navigate(`/document/${doc.documentId}${groupParam}${ownerParam}`);
+                }}
                 sx={{
                   borderRadius: 2,
                   boxShadow: "0px 0px 12px rgba(0,0,0,0.08)",
