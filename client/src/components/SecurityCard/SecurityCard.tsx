@@ -22,7 +22,7 @@ export const SecurityCard = ({
 }: SecurityCardProps) => {
   if (compact) {
     return (
-      <Card sx={{ width: "100%", border: "2px solid", borderRadius: 8 }}>
+      <Card sx={{ width: "100%", border: "1px solid", borderRadius: 2 }}>
         <CardContent
           sx={{
             display: "flex",

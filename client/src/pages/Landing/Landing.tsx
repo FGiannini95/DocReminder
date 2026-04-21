@@ -1,8 +1,8 @@
-import react, { useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-import { Box, Typography, TextField, Divider, Button, CircularProgress } from "@mui/material";
+import { Box, Typography, TextField, Button, CircularProgress } from "@mui/material";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 
 import { validateEmail } from "@/utils/validation";
@@ -105,18 +105,6 @@ export const Landing = () => {
                 "Enviar código de acceso"
               )}
             </Button>
-            <Divider sx={{ width: "100%" }}>
-              <Typography color="text.secondary">o</Typography>
-            </Divider>
-            <Button
-              fullWidth
-              variant="outlined"
-              size="large"
-              sx={{ borderRadius: 8, py: 1.5, color: "text.primary", borderColor: "text.primary" }}
-            >
-              Continuar con Google
-            </Button>
-
             {savedEmail && <FastAccesButtons />}
           </Box>
         </Box>

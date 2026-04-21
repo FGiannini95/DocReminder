@@ -17,5 +17,11 @@ router.delete(
   isGroupMember,
   groupDependentController.removeDependent,
 );
+router.get(
+  "/:groupId/dependents",
+  authenticateToken,
+  isGroupMember,
+  groupDependentController.getAllDependents,
+);
 
 module.exports = router;

@@ -10,11 +10,12 @@ import { scrollableContentSx } from "@/styles/commonStyle";
 import { Document } from "@/types/document";
 import { fetchAllDocuments } from "@/api/documentApi";
 import { fetchAllGroups } from "@/api/groupApi";
-import { BottomNav, DocumentCard, PageTransition } from "@/components";
+import { BottomNav, DocumentSection, PageTransition } from "@/components";
 import { HomeHeader } from "./components/HomeHeader";
 import { StatusBlocks } from "./components/StatusBlocks";
 import { GroupCard } from "../Group/components/GroupCard/GroupCard";
 import { Group } from "@/types/group";
+import { vibrate } from "@/utils/haptics";
 
 const daysUntil = (dateStr: string) =>
   Math.ceil((new Date(dateStr).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
@@ -61,7 +62,7 @@ export const Home = () => {
         {/* Scrollable content */}
         <Box sx={{ ...scrollableContentSx, mb: "56px", display: "block" }}>
           <StatusBlocks urgent={urgent ?? 0} upcoming={upcoming ?? 0} ok={ok ?? 0} />{" "}
-          <DocumentCard
+          <DocumentSection
             documents={sortedDocuments}
             isError={documentsError}
             isPending={documentsPending}
@@ -71,7 +72,10 @@ export const Home = () => {
         <Fab
           aria-label="add"
           sx={{ position: "fixed", bottom: 72, right: 16 }}
-          onClick={() => navigate(DocReminderRoutes.addDocument)}
+          onClick={() => {
+            vibrate();
+            navigate(DocReminderRoutes.addDocument);
+          }}
         >
           <AddIcon />
         </Fab>

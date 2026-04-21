@@ -11,19 +11,24 @@ import { Loading } from "../Loading/Loading";
 import { ErrorMessage } from "../ErrorMessage/ErrorMessage";
 import { GroupDocument } from "@/types/group";
 
-interface DocumentCardProps {
+interface DocumentSectionProps {
   documents: Document[] | GroupDocument[];
   isError: boolean;
   isPending: boolean;
   title?: string;
+  groupId?: string;
 }
 
 const daysUntil = (dateStr: string) =>
   Math.ceil((new Date(dateStr).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
 
-export const DocumentCard = ({ documents, isError, isPending }: DocumentCardProps) => {
+export const DocumentSection = ({
+  documents,
+  isError,
+  isPending,
+  groupId,
+}: DocumentSectionProps) => {
   const navigate = useNavigate();
-  //Todo hay que cambiarle el nombre
 
   if (isPending) return <Loading />;
   if (isError) return <ErrorMessage message="Error al cargar el documento" />;
@@ -43,7 +48,13 @@ export const DocumentCard = ({ documents, isError, isPending }: DocumentCardProp
             return (
               <Card
                 key={doc.documentId}
-                onClick={() => navigate(`/document/${doc.documentId}`)}
+                onClick={() => {
+                  const groupParam = groupId ? `?groupId=${groupId}` : "";
+                  const ownerParam = doc.ownerName
+                    ? `${groupId ? "&" : "?"}ownerName=${doc.ownerName}`
+                    : "";
+                  navigate(`/document/${doc.documentId}${groupParam}${ownerParam}`);
+                }}
                 sx={{
                   borderRadius: 2,
                   boxShadow: "0px 0px 12px rgba(0,0,0,0.08)",
@@ -58,7 +69,7 @@ export const DocumentCard = ({ documents, isError, isPending }: DocumentCardProp
                   <Box
                     sx={{
                       width: 6,
-                      height: 56,
+                      alignSelf: "stretch",
                       borderRadius: 4,
                       backgroundColor: config.barColor,
                       flexShrink: 0,
@@ -68,7 +79,7 @@ export const DocumentCard = ({ documents, isError, isPending }: DocumentCardProp
                   {/* Content */}
                   <Box sx={{ flex: 1 }}>
                     {"ownerName" in doc && doc.ownerName && (
-                      <Chip label={doc.ownerName} size="small" sx={{ mt: 0.5 }} />
+                      <Chip label={doc.ownerName} size="small" sx={{ mt: 0.5, borderRadius: 2 }} />
                     )}
                     <Typography fontWeight="bold"> {doc.name || typeLabels[doc.type]}</Typography>
                     <Typography variant="caption" color="text.secondary">

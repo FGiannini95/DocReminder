@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import "dayjs/locale/es";
 
-import { Box, Button, CircularProgress, TextField } from "@mui/material";
+import { Box, Button, Chip, CircularProgress, TextField, Typography } from "@mui/material";
 
 import { axiosInstance } from "@/api/axiosInstance";
 import { DOC_URL } from "@/api/apiConfig";
@@ -15,8 +15,15 @@ import { DocumentHeader, ErrorMessage, Loading, PageTransition } from "@/compone
 import { DocumentTypeSelect } from "./components/DocumentTypeSelect";
 import { ExpiryDatePicker } from "./components/ExpiryDatePicker";
 import { ReminderDaysSelector } from "./components/ReminderDaysSelector";
+import { fetchGroupDependents } from "@/api/groupApi";
+import { GroupDependent } from "@/types/group";
+import { TitularSelect } from "./components/TitularSelect";
 
 export const DocumentForm = () => {
+  const [searchParams] = useSearchParams();
+  const isFromGroup = searchParams.get("groupId");
+  const dependentId = searchParams.get("dependentId");
+
   const [form, setForm] = useState<DocumentFormValues>({
     type: "",
     name: "",
@@ -24,6 +31,7 @@ export const DocumentForm = () => {
     expiryDate: null,
     reminderDays: [60, 30],
     personalNote: "",
+    assignTo: dependentId ?? "me",
   });
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Partial<Record<keyof DocumentFormValues, string>>>({});
@@ -44,6 +52,13 @@ export const DocumentForm = () => {
     enabled: isEdit,
   });
 
+  // Fetch group dependents
+  const { data: groupDependents } = useQuery<GroupDependent[]>({
+    queryKey: ["groupDependents", isFromGroup],
+    queryFn: () => fetchGroupDependents(isFromGroup!),
+    enabled: !!isFromGroup,
+  });
+
   // Precompile form when doc loads in edit mode
   useEffect(() => {
     if (doc) {
@@ -54,9 +69,10 @@ export const DocumentForm = () => {
         expiryDate: dayjs(doc.expiryDate),
         reminderDays: doc.reminderDays,
         personalNote: doc.personalNote || "",
+        assignTo: dependentId !== null ? dependentId : "me",
       });
     }
-  }, [doc]);
+  }, [doc, dependentId]);
 
   if (isEdit && isPending) return <Loading />;
   if (isEdit && isError) return <ErrorMessage message="Error al cargar el formulario" />;
@@ -89,15 +105,24 @@ export const DocumentForm = () => {
       expiry_date: form.expiryDate?.format("YYYY-MM-DD"),
       reminder_days: form.reminderDays,
       personal_note: form.personalNote,
+      dependent_id: form.assignTo !== "me" ? Number(form.assignTo) : null,
     };
 
     const request = isEdit
       ? axiosInstance.put(`${DOC_URL}/edit-document/${id}`, body)
       : axiosInstance.post(`${DOC_URL}/add-document`, body);
 
+    const getOwnerParam = () => {
+      if (form.assignTo === "me") return "";
+      const dep = groupDependents?.find((d) => String(d.group_dependents_id) === form.assignTo);
+      return dep ? `?ownerName=${dep.name}` : "";
+    };
+
     request
       .then((res) => {
-        navigate(`/document/${isEdit ? id : res.data.documentId}`);
+        navigate(`/document/${isEdit ? id : res.data.documentId}${getOwnerParam()}`, {
+          replace: true,
+        });
       })
       .catch((err) => {
         console.log(err);
@@ -113,13 +138,20 @@ export const DocumentForm = () => {
 
         {/* Scrollable content */}
         <Box sx={{ ...scrollableContentSx, p: 3, gap: 3 }}>
+          {/* Assign document to owner */}
+          {isFromGroup && !isEdit && (
+            <TitularSelect
+              value={form.assignTo ?? "me"}
+              onChange={(value) => handleChange("assignTo", value)}
+              dependents={groupDependents ?? []}
+            />
+          )}
           {/* Document type selector */}
           <DocumentTypeSelect
             value={form.type}
             onChange={(value) => handleChange("type", value)}
             error={errors.type}
           />
-
           {/* Name input */}
           <TextField
             type="text"
@@ -131,7 +163,6 @@ export const DocumentForm = () => {
             error={!!errors.name}
             helperText={errors.name}
           />
-
           {/* Document number input (optional) */}
           <TextField
             type="text"
@@ -141,7 +172,6 @@ export const DocumentForm = () => {
             variant="outlined"
             sx={textFieldSx}
           />
-
           {/* Expiry date picker */}
           <ExpiryDatePicker
             value={form.expiryDate}
@@ -151,13 +181,11 @@ export const DocumentForm = () => {
             onClose={() => setDateOpen(false)}
             error={errors.expiryDate}
           />
-
           {/* Reminder days */}
           <ReminderDaysSelector
             selected={form.reminderDays}
             onChange={(days) => handleChange("reminderDays", days)}
           />
-
           {/* Personal notes */}
           <TextField
             type="text"
@@ -167,7 +195,6 @@ export const DocumentForm = () => {
             variant="outlined"
             sx={textFieldSx}
           />
-
           {/* Actions buttons */}
           {isEdit ? (
             <Box sx={{ display: "flex", gap: 2 }}>

@@ -1,9 +1,9 @@
 import React from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import dayjs from "dayjs";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { Alert, Box, Button, Typography } from "@mui/material";
+import { Alert, Box, Button, Chip, Typography } from "@mui/material";
 
 import { DocumentHeader, ErrorMessage, Loading, PageTransition } from "@/components";
 import { DocReminderRoutes } from "@/routes/routes";
@@ -13,6 +13,7 @@ import { DOC_URL } from "@/api/apiConfig";
 import { scrollableContentSx, containedButtonSx } from "@/styles/commonStyle";
 import { Document, typeLabels } from "@/types/document";
 import { fetchOneDocument } from "@/api/documentApi";
+import { useAuth } from "@/context";
 
 const InfoRow = ({ label, value }: { label: string; value: string }) => {
   const isLong = value.length > 15;
@@ -39,8 +40,14 @@ const InfoRow = ({ label, value }: { label: string; value: string }) => {
 
 export const OneDocument = () => {
   const { id } = useParams<{ id: string }>();
+  const { user } = useAuth();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
+  const isFromGroup = searchParams.get("groupId");
+  const ownerName = searchParams.get("ownerName");
+
+  const queryClient = useQueryClient();
   const daysUntil = (dateStr: string) =>
     Math.ceil((new Date(dateStr).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
 
@@ -56,9 +63,15 @@ export const OneDocument = () => {
   if (isPending) return <Loading />;
   if (isError) return <ErrorMessage message="Error al cargar el documento" />;
 
+  const days = daysUntil(doc.expiryDate);
+  const isExpired = days <= 0;
+  const canEdit = doc.user_id === user || doc.dependent_id !== null;
+  const isMyDocument = doc.user_id === user;
+
   const handleEdit = () => {
     vibrate();
-    navigate(`/edit-document/${doc.documentId}`);
+    const groupParam = isFromGroup ? `?groupId=${isFromGroup}` : "";
+    navigate(`/edit-document/${doc.documentId}${groupParam}`, { replace: true });
   };
 
   const handleDelete = () => {
@@ -66,24 +79,32 @@ export const OneDocument = () => {
       .delete(`${DOC_URL}/delete-document/${id}`)
       .then(() => {
         vibrate();
-        navigate(DocReminderRoutes.home);
+        if (isFromGroup) {
+          queryClient.invalidateQueries({ queryKey: ["group", isFromGroup] });
+          navigate(`/group/${isFromGroup}`);
+        } else {
+          navigate(DocReminderRoutes.home);
+        }
       })
       .catch((err) => {
         console.log(err);
       });
   };
 
-  const days = daysUntil(doc.expiryDate);
-  const isExpired = days <= 0;
-
   return (
     <PageTransition>
       <Box sx={{ minHeight: "100dvh", display: "flex", flexDirection: "column" }}>
         {/* Header */}
-        <DocumentHeader title="Detalle documento" onBack={() => navigate(DocReminderRoutes.home)} />
+        <DocumentHeader title="Detalle documento" onBack={() => navigate(-1)} />
 
         {/* Scrollable content */}
         <Box sx={{ ...scrollableContentSx, p: 3 }}>
+          {!isMyDocument && ownerName && (
+            <Typography>
+              Pertenece a: <Chip label={ownerName} size="small" sx={{ borderRadius: 2 }} />
+            </Typography>
+          )}
+
           {isExpired && <Alert severity="error">Caducado hace {Math.abs(days)} días</Alert>}
           {!isExpired && days <= 30 && (
             <Alert severity="error">Date prisa. Caduca en {days} días</Alert>
@@ -112,31 +133,33 @@ export const OneDocument = () => {
           <Box sx={{ flex: 1 }} />
 
           {/* Actions buttons */}
-          <Box sx={{ display: "flex", gap: 2 }}>
-            <Button
-              fullWidth
-              variant="contained"
-              size="large"
-              onClick={handleEdit}
-              sx={{ ...containedButtonSx, backgroundColor: "text.primary" }}
-            >
-              Editar
-            </Button>
-            <Button
-              fullWidth
-              variant="contained"
-              size="large"
-              onClick={handleDelete}
-              sx={{
-                ...containedButtonSx,
-                backgroundColor: "rgba(239, 83, 80, 0.4)",
-                color: "error.dark",
-                border: "1px solid",
-              }}
-            >
-              Eliminar
-            </Button>
-          </Box>
+          {canEdit && (
+            <Box sx={{ display: "flex", gap: 2 }}>
+              <Button
+                fullWidth
+                variant="contained"
+                size="large"
+                onClick={handleEdit}
+                sx={{ ...containedButtonSx, backgroundColor: "text.primary" }}
+              >
+                Editar
+              </Button>
+              <Button
+                fullWidth
+                variant="contained"
+                size="large"
+                onClick={handleDelete}
+                sx={{
+                  ...containedButtonSx,
+                  backgroundColor: "rgba(239, 83, 80, 0.4)",
+                  color: "error.dark",
+                  border: "1px solid",
+                }}
+              >
+                Eliminar
+              </Button>
+            </Box>
+          )}
         </Box>
       </Box>
     </PageTransition>

@@ -16,6 +16,9 @@ export interface Document {
   expiryDate: string;
   reminderDays: number[];
   personalNote: string | null;
+  user_id: number | null;
+  dependent_id: number | null;
+  ownerName?: string;
 }
 
 export const typeLabels: Record<DocumentType, string> = {
@@ -34,4 +37,5 @@ export interface DocumentFormValues {
   expiryDate: Dayjs | null;
   reminderDays: number[];
   personalNote: string | null;
+  assignTo: string;
 }

@@ -8,15 +8,20 @@ class docController {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
+    // determine owner: user or dependent
+    const dependentId = data.dependent_id || null;
+    const ownerId = dependentId ? null : req.user.userId;
+
     try {
       const insertDocument = `
         INSERT INTO document 
-            (user_id, type, name, document_number, expiry_date, reminder_days, personal_note) 
-        VALUES (?, ?, ?, ?, ?, ?, ?)
+          (user_id, dependent_id, type, name, document_number, expiry_date, reminder_days, personal_note) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
       `;
 
       const [result] = await db.query(insertDocument, [
-        req.user.userId,
+        ownerId,
+        dependentId,
         data.type,
         data.name,
         data.document_number || null,
@@ -81,7 +86,6 @@ class docController {
 
   deleteDocument = async (req, res) => {
     const { id: documentId } = req.params;
-    const userId = req.user.userId;
 
     if (!documentId) {
       return res.status(404).json({ message: "Document not found" });
@@ -91,9 +95,9 @@ class docController {
       const deleteDocument = `
         UPDATE document
         SET is_deleted = 1
-        WHERE user_id = ? AND document_id = ?
+        WHERE document_id = ?
       `;
-      await db.query(deleteDocument, [userId, documentId]);
+      await db.query(deleteDocument, [documentId]);
 
       return res.status(200).json({ message: "Document deleted succesfully" });
     } catch (err) {
@@ -113,7 +117,9 @@ class docController {
           document_number AS documentNumber,
           expiry_date AS expiryDate,
           reminder_days AS reminderDays,
-          personal_note AS personalNote
+          personal_note AS personalNote,
+          user_id,
+          dependent_id
         FROM document
         WHERE document_id = ?
       `;
