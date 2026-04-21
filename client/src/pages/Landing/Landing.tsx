@@ -1,8 +1,8 @@
-import react, { useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-import { Box, Typography, TextField, Divider, Button, CircularProgress } from "@mui/material";
+import { Box, Typography, TextField, Button, CircularProgress } from "@mui/material";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 
 import { validateEmail } from "@/utils/validation";
