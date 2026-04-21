@@ -13,6 +13,7 @@ import { DOC_URL } from "@/api/apiConfig";
 import { scrollableContentSx, containedButtonSx } from "@/styles/commonStyle";
 import { Document, typeLabels } from "@/types/document";
 import { fetchOneDocument } from "@/api/documentApi";
+import { useAuth } from "@/context";
 
 const InfoRow = ({ label, value }: { label: string; value: string }) => {
   const isLong = value.length > 15;
@@ -39,6 +40,7 @@ const InfoRow = ({ label, value }: { label: string; value: string }) => {
 
 export const OneDocument = () => {
   const { id } = useParams<{ id: string }>();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   const daysUntil = (dateStr: string) =>
@@ -76,11 +78,13 @@ export const OneDocument = () => {
   const days = daysUntil(doc.expiryDate);
   const isExpired = days <= 0;
 
+  const canEdit = doc.user_id === user || doc.dependent_id !== null;
+
   return (
     <PageTransition>
       <Box sx={{ minHeight: "100dvh", display: "flex", flexDirection: "column" }}>
         {/* Header */}
-        <DocumentHeader title="Detalle documento" onBack={() => navigate(DocReminderRoutes.home)} />
+        <DocumentHeader title="Detalle documento" onBack={() => navigate(-1)} />
 
         {/* Scrollable content */}
         <Box sx={{ ...scrollableContentSx, p: 3 }}>
@@ -112,31 +116,33 @@ export const OneDocument = () => {
           <Box sx={{ flex: 1 }} />
 
           {/* Actions buttons */}
-          <Box sx={{ display: "flex", gap: 2 }}>
-            <Button
-              fullWidth
-              variant="contained"
-              size="large"
-              onClick={handleEdit}
-              sx={{ ...containedButtonSx, backgroundColor: "text.primary" }}
-            >
-              Editar
-            </Button>
-            <Button
-              fullWidth
-              variant="contained"
-              size="large"
-              onClick={handleDelete}
-              sx={{
-                ...containedButtonSx,
-                backgroundColor: "rgba(239, 83, 80, 0.4)",
-                color: "error.dark",
-                border: "1px solid",
-              }}
-            >
-              Eliminar
-            </Button>
-          </Box>
+          {canEdit && (
+            <Box sx={{ display: "flex", gap: 2 }}>
+              <Button
+                fullWidth
+                variant="contained"
+                size="large"
+                onClick={handleEdit}
+                sx={{ ...containedButtonSx, backgroundColor: "text.primary" }}
+              >
+                Editar
+              </Button>
+              <Button
+                fullWidth
+                variant="contained"
+                size="large"
+                onClick={handleDelete}
+                sx={{
+                  ...containedButtonSx,
+                  backgroundColor: "rgba(239, 83, 80, 0.4)",
+                  color: "error.dark",
+                  border: "1px solid",
+                }}
+              >
+                Eliminar
+              </Button>
+            </Box>
+          )}
         </Box>
       </Box>
     </PageTransition>

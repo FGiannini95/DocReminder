@@ -113,7 +113,9 @@ class docController {
           document_number AS documentNumber,
           expiry_date AS expiryDate,
           reminder_days AS reminderDays,
-          personal_note AS personalNote
+          personal_note AS personalNote,
+          user_id,
+          dependent_id
         FROM document
         WHERE document_id = ?
       `;
