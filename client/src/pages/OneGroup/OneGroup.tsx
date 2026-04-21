@@ -2,7 +2,8 @@ import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 
-import { Box } from "@mui/material";
+import { Box, Fab } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
 
 import { DocumentSection, ErrorMessage, Loading, PageTransition } from "@/components";
 import { DocReminderRoutes } from "@/routes/routes";
@@ -12,6 +13,7 @@ import { GroupDetail } from "@/types/group";
 import { fetchOneGroup } from "@/api/groupApi";
 import { GroupMembersSection } from "./components/GroupMembersSection/GroupMembersSection";
 import { scrollableContentSx } from "@/styles/commonStyle";
+import { vibrate } from "@/utils/haptics";
 
 export const OneGroup = () => {
   const { id } = useParams<{ id: string }>();
@@ -56,6 +58,16 @@ export const OneGroup = () => {
             title="Documentos del grupo"
           />
         </Box>
+        <Fab
+          aria-label="add"
+          sx={{ position: "fixed", bottom: 10, right: 16 }}
+          onClick={() => {
+            vibrate();
+            navigate(`${DocReminderRoutes.addDocument}?groupId=${id}`);
+          }}
+        >
+          <AddIcon />
+        </Fab>
       </Box>
     </PageTransition>
   );

@@ -36,4 +36,5 @@ export interface DocumentFormValues {
   expiryDate: Dayjs | null;
   reminderDays: number[];
   personalNote: string | null;
+  assignTo: string;
 }

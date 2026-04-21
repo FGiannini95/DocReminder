@@ -10,3 +10,8 @@ export const fetchOneGroup = async (id: string) => {
   const res = await axiosInstance.get(`${GROUP_URL}/${id}`);
   return res.data;
 };
+
+export const fetchGroupDependents = async (groupId: string) => {
+  const res = await axiosInstance.get(`${GROUP_URL}/${groupId}/dependents`);
+  return res.data;
+};

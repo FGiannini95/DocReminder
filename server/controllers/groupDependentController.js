@@ -50,6 +50,22 @@ class groupDependentController {
       res.status(500).json({ message: "Internal server error" });
     }
   };
+
+  getAllDependents = async (req, res) => {
+    const { groupId } = req.params;
+
+    try {
+      const selectAllDependents = `
+        SELECT group_dependents_id, name, avatar
+        FROM group_dependents WHERE group_id = ?
+      `;
+
+      const [rows] = await db.query(selectAllDependents, [groupId]);
+      return res.status(200).json(rows);
+    } catch (err) {
+      res.status(500).json({ message: "Internal server error" });
+    }
+  };
 }
 
 module.exports = new groupDependentController();

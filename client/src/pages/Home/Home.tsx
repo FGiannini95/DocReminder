@@ -15,6 +15,7 @@ import { HomeHeader } from "./components/HomeHeader";
 import { StatusBlocks } from "./components/StatusBlocks";
 import { GroupCard } from "../Group/components/GroupCard/GroupCard";
 import { Group } from "@/types/group";
+import { vibrate } from "@/utils/haptics";
 
 const daysUntil = (dateStr: string) =>
   Math.ceil((new Date(dateStr).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
@@ -71,7 +72,10 @@ export const Home = () => {
         <Fab
           aria-label="add"
           sx={{ position: "fixed", bottom: 72, right: 16 }}
-          onClick={() => navigate(DocReminderRoutes.addDocument)}
+          onClick={() => {
+            vibrate();
+            navigate(DocReminderRoutes.addDocument);
+          }}
         >
           <AddIcon />
         </Fab>

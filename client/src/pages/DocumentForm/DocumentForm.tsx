@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import "dayjs/locale/es";
 
-import { Box, Button, CircularProgress, TextField } from "@mui/material";
+import { Box, Button, CircularProgress, TextField, Typography } from "@mui/material";
 
 import { axiosInstance } from "@/api/axiosInstance";
 import { DOC_URL } from "@/api/apiConfig";
@@ -29,7 +29,10 @@ export const DocumentForm = () => {
   const [errors, setErrors] = useState<Partial<Record<keyof DocumentFormValues, string>>>({});
   const [dateOpen, setDateOpen] = useState<boolean>(false);
   const { id } = useParams<{ id: string }>();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+
+  const isFromGroup = searchParams.get("groupId");
 
   const isEdit = !!id;
 
@@ -113,6 +116,8 @@ export const DocumentForm = () => {
 
         {/* Scrollable content */}
         <Box sx={{ ...scrollableContentSx, p: 3, gap: 3 }}>
+          {isFromGroup && <Typography>hi</Typography>}
+
           {/* Document type selector */}
           <DocumentTypeSelect
             value={form.type}
