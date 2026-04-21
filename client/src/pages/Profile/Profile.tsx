@@ -115,8 +115,8 @@ export const Profile = () => {
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
-              border: "2px solid",
-              borderRadius: 8,
+              border: "1px solid",
+              borderRadius: 2,
               p: 2,
             }}
             onClick={handleOpen}
