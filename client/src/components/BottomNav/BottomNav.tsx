@@ -26,8 +26,8 @@ export const BottomNav = () => {
           "& .MuiBottomNavigationAction-root": {
             color: "grey.400",
           },
-          "& .Mui-selected": {
-            color: "grey.900",
+          "& .MuiBottomNavigationAction-root.Mui-selected": {
+            color: "text.primary",
           },
         }}
       >
