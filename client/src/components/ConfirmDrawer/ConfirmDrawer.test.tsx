@@ -1,7 +1,8 @@
 import { MemoryRouter } from "react-router-dom";
 import { render, screen } from "@testing-library/react";
-import { ConfirmDrawer } from "./ConfirmDrawer";
 import userEvent from "@testing-library/user-event";
+
+import { ConfirmDrawer } from "./ConfirmDrawer";
 
 const defaultProps = {
   open: true,

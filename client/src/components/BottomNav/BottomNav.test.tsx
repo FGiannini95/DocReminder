@@ -1,9 +1,9 @@
 import { MemoryRouter } from "react-router-dom";
 import { render, screen } from "@testing-library/react";
-
-import { BottomNav } from "./BottomNav";
 import userEvent from "@testing-library/user-event";
 import { DocReminderRoutes } from "@/routes/routes";
+
+import { BottomNav } from "./BottomNav";
 
 vi.mock("react-router-dom", async () => {
   const actual = await vi.importActual("react-router-dom");

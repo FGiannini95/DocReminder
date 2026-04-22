@@ -1,9 +1,9 @@
 import { MemoryRouter } from "react-router-dom";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { Document, DocumentType } from "@/types/document";
 
 import { DocumentSection } from "./DocumentSection";
-import { Document, DocumentType } from "@/types/document";
 
 vi.mock("react-router-dom", async () => {
   const actual = await vi.importActual("react-router-dom");
