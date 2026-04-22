@@ -12,7 +12,6 @@ import {
   OneGroup,
   Otp,
   Profile,
-  SecuritySetup,
 } from "@/pages";
 import { DocReminderRoutes } from "./routes/routes";
 import { useAuth } from "./context";
@@ -47,7 +46,6 @@ const AppRoutes = () => {
           <Routes location={location} key={location.pathname}>
             <Route path={DocReminderRoutes.landing} element={<Landing />} />
             <Route path={DocReminderRoutes.otp} element={<Otp />} />
-            <Route path={DocReminderRoutes.security} element={<SecuritySetup />} />
             <Route path={DocReminderRoutes.pinLogin} element={<PinSetup mode="verify" />} />
             <Route path={DocReminderRoutes.invitation} element={<Invitation />} />
             <Route path="*" element={<Navigate to={DocReminderRoutes.landing} replace />} />
