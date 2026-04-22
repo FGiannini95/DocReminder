@@ -18,6 +18,6 @@ describe("EmptyState", () => {
 
   it("displays EmptyState message", async () => {
     renderEmptyState();
-    expect(await screen.findByText("Aún no has creado ningún documento.")).toBeInTheDocument();
+    expect(await screen.findByText("Aún no has añadido ningún documento.")).toBeInTheDocument();
   });
 });
