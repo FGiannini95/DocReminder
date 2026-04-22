@@ -3,18 +3,20 @@ import { render, screen } from "@testing-library/react";
 import { ConfirmDrawer } from "./ConfirmDrawer";
 import userEvent from "@testing-library/user-event";
 
-const renderConfirmDrawer = () => {
+const defaultProps = {
+  open: true,
+  onClose: vi.fn(),
+  onConfirm: vi.fn(),
+  isLoading: false,
+  title: "Test title",
+  message: "Test message",
+  confirmLabel: "Confirmar",
+};
+
+const renderConfirmDrawer = (props = {}) => {
   render(
     <MemoryRouter>
-      <ConfirmDrawer
-        open={true}
-        onClose={vi.fn()}
-        onConfirm={vi.fn()}
-        isLoading={false}
-        title="Test title"
-        message="Test message"
-        confirmLabel="Confirmar"
-      />
+      <ConfirmDrawer {...defaultProps} {...props} />
     </MemoryRouter>
   );
 };
@@ -38,19 +40,7 @@ describe("ConfirmDrawer", () => {
     const onClose = vi.fn();
     const user = userEvent.setup();
 
-    render(
-      <MemoryRouter>
-        <ConfirmDrawer
-          open={true}
-          onClose={onClose}
-          onConfirm={vi.fn()}
-          isLoading={false}
-          title="Test title"
-          message="Test message"
-          confirmLabel="Confirmar"
-        />
-      </MemoryRouter>
-    );
+    renderConfirmDrawer({ onClose });
 
     await user.click(screen.getByRole("button", { name: /cancelar/i }));
     expect(onClose).toHaveBeenCalled();
@@ -60,21 +50,14 @@ describe("ConfirmDrawer", () => {
     const onConfirm = vi.fn();
     const user = userEvent.setup();
 
-    render(
-      <MemoryRouter>
-        <ConfirmDrawer
-          open={true}
-          onClose={vi.fn()}
-          onConfirm={onConfirm}
-          isLoading={false}
-          title="Test title"
-          message="Test message"
-          confirmLabel="Confirmar"
-        />
-      </MemoryRouter>
-    );
+    renderConfirmDrawer({ onConfirm });
 
     await user.click(screen.getByRole("button", { name: /confirmar/i }));
     expect(onConfirm).toHaveBeenCalled();
+  });
+
+  it("shows spinner when loading", () => {
+    renderConfirmDrawer({ isLoading: true });
+    expect(screen.getByRole("progressbar")).toBeInTheDocument();
   });
 });
