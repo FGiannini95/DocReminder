@@ -43,7 +43,7 @@ export const OneGroup = () => {
             (data?.members.filter((m) => m.status === "active").length ?? 0) +
             (data?.dependents.length ?? 0)
           }
-          onBack={() => navigate(DocReminderRoutes.home)}
+          onBack={() => navigate(-1)}
           adminId={data.group.admin_id}
           groupId={id!}
         />
