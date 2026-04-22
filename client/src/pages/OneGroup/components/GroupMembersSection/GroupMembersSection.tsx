@@ -36,7 +36,7 @@ export const GroupMembersSection = ({ members, adminId, groupId }: GroupMembersS
     <>
       <Box sx={{ px: 3, pb: 3 }}>
         <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <Typography fontWeight="bold">Miembros</Typography>
+          <Typography fontWeight="bold">Miembros:</Typography>
           <Button variant="contained" size="small" color="inherit" onClick={handleOpenInviteDrawer}>
             + Invitar
           </Button>

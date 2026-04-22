@@ -4,7 +4,7 @@ import { AnimatePresence } from "framer-motion";
 
 import {
   DocumentForm,
-  Group,
+  Groups,
   Home,
   Invitation,
   Landing,
@@ -37,7 +37,7 @@ const AppRoutes = () => {
             <Route path={DocReminderRoutes.editDocument} element={<DocumentForm />} />
             <Route path={DocReminderRoutes.oneDocument} element={<OneDocument />} />
             <Route path={DocReminderRoutes.pinSetup} element={<PinSetup mode="create" />} />
-            <Route path={DocReminderRoutes.group} element={<Group />} />
+            <Route path={DocReminderRoutes.group} element={<Groups />} />
             <Route path={DocReminderRoutes.oneGroup} element={<OneGroup />} />
             <Route path={DocReminderRoutes.invitation} element={<Invitation />} />
             <Route path="*" element={<Navigate to={DocReminderRoutes.home} replace />} />

@@ -18,6 +18,8 @@ import { ProfileHeader } from "./components/ProfileHeader";
 import { StatsProfile } from "./components/StatsProfile";
 import { EditProfileDialog } from "./components/EditProfileDialog";
 import { useWebAuthn } from "@/hooks";
+import { fetchAllGroups } from "@/api/groupApi";
+import { Group } from "@/types/group";
 
 export const Profile = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -32,7 +34,13 @@ export const Profile = () => {
     queryFn: fetchAllDocuments,
   });
 
+  const { data: groups } = useQuery<Group[]>({
+    queryKey: ["groups"],
+    queryFn: fetchAllGroups,
+  });
+
   const totalDocuments = documents?.length;
+  const totalGroups = groups?.length;
 
   const handleLogout = () => {
     setIsLoading(true);
@@ -108,7 +116,7 @@ export const Profile = () => {
         <ProfileHeader />
         {/* Scrollable content */}
         <Box sx={{ ...scrollableContentSx, mb: "66px", gap: 1, px: 3 }}>
-          <StatsProfile totalDocuments={totalDocuments ?? 0} totalGroups={0} />
+          <StatsProfile totalDocuments={totalDocuments ?? 0} totalGroups={totalGroups ?? 0} />
 
           <Box
             sx={{

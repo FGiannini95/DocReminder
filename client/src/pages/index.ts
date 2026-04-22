@@ -5,6 +5,6 @@ export { SecuritySetup } from "./SecuritySetup/SecuritySetup";
 export { Profile } from "./Profile/Profile";
 export { DocumentForm } from "./DocumentForm/DocumentForm";
 export { OneDocument } from "./OneDocument/OneDocument";
-export { Group } from "./Group/Group";
 export { OneGroup } from "./OneGroup/OneGroup";
 export { Invitation } from "./Invitation/Invitation";
+export { Groups } from "./Group/Groups";
