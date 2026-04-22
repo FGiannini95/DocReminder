@@ -61,7 +61,7 @@ export const OneGroup = () => {
         </Box>
         <Fab
           aria-label="add"
-          sx={{ position: "fixed", bottom: 10, right: 16 }}
+          sx={{ position: "fixed", bottom: 20, right: 16 }}
           onClick={() => {
             vibrate();
             navigate(`${DocReminderRoutes.addDocument}?groupId=${id}`);
