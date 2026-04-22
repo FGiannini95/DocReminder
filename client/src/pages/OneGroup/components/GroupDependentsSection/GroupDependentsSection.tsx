@@ -7,6 +7,7 @@ import { useAddDependent, useRemoveDependent } from "@/hooks";
 import { AddDependentDrawer } from "../AddDependentDrawer/AddDependentDrawer";
 import { GroupDependent } from "@/types/group";
 import { RemoveDependentDrawer } from "../RemoveDependentDrawer/RemoveDependentDrawer";
+import { EmptyState } from "@/components";
 
 interface GroupDependentsSectionProps {
   groupId: string;
@@ -31,43 +32,51 @@ export const GroupDependentsSection = ({ groupId, dependents }: GroupDependentsS
       <Box sx={{ px: 3, pb: 3 }}>
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
           <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-            <Typography fontWeight="bold">Personas a cargo</Typography>
+            <Typography fontWeight="bold">Personas a cargo:</Typography>
             <Button variant="contained" size="small" color="inherit" onClick={handleOpen}>
               + Añadir
             </Button>
           </Box>
           <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-            {dependents.map((dependent) => (
-              <Card
-                key={dependent.group_dependents_id}
-                sx={{
-                  borderRadius: 2,
-                  boxShadow: "0px 0px 12px rgba(0,0,0,0.08)",
-                  border: "1px solid",
-                }}
-              >
-                <CardContent
-                  sx={{ display: "flex", alignItems: "center", gap: 2, py: "6px !important" }}
+            {dependents.length === 0 ? (
+              <EmptyState message="No hay personas a cargo en este grupo." />
+            ) : (
+              dependents.map((dependent) => (
+                <Card
+                  key={dependent.group_dependents_id}
+                  sx={{
+                    borderRadius: 2,
+                    boxShadow: "0px 0px 12px rgba(0,0,0,0.08)",
+                    border: "1px solid",
+                  }}
                 >
-                  <Typography fontSize={36}>{dependent.avatar}</Typography>
-
-                  <Box sx={{ flex: 1 }}>
-                    <Typography fontWeight="bold">{dependent.name}</Typography>
-                    <Typography variant="caption" color="text.secondary" sx={{ display: "block" }}>
-                      {dependent.relationship}
-                    </Typography>
-                  </Box>
-
-                  <IconButton
-                    size="small"
-                    color="inherit"
-                    onClick={() => openRemoveDrawer(dependent)}
+                  <CardContent
+                    sx={{ display: "flex", alignItems: "center", gap: 2, py: "6px !important" }}
                   >
-                    <DeleteIcon fontSize="small" />
-                  </IconButton>
-                </CardContent>
-              </Card>
-            ))}
+                    <Typography fontSize={36}>{dependent.avatar}</Typography>
+
+                    <Box sx={{ flex: 1 }}>
+                      <Typography fontWeight="bold">{dependent.name}</Typography>
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        sx={{ display: "block" }}
+                      >
+                        {dependent.relationship}
+                      </Typography>
+                    </Box>
+
+                    <IconButton
+                      size="small"
+                      color="inherit"
+                      onClick={() => openRemoveDrawer(dependent)}
+                    >
+                      <DeleteIcon fontSize="small" />
+                    </IconButton>
+                  </CardContent>
+                </Card>
+              ))
+            )}
           </Box>
         </Box>
       </Box>

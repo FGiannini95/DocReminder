@@ -13,7 +13,7 @@ export const StatusBlocks = ({ urgent, upcoming, ok }: StatusBlocksProps) => {
   const counts = { urgent, upcoming, ok };
 
   return (
-    <Box sx={{ display: "flex", width: "100%", p: 3, gap: 1 }}>
+    <Box sx={{ display: "flex", width: "100%", px: 3, py: 2, gap: 1 }}>
       {(Object.keys(statusConfig) as StatusType[]).map((status) => {
         const { label, borderColor, textColor, shadow } = statusConfig[status];
         return (

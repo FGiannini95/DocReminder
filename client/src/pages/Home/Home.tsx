@@ -61,7 +61,7 @@ export const Home = () => {
         <HomeHeader urgent={urgent ?? 0} hasDocuments={hasDocuments} />
         {/* Scrollable content */}
         <Box sx={{ ...scrollableContentSx, mb: "56px", display: "block" }}>
-          <StatusBlocks urgent={urgent ?? 0} upcoming={upcoming ?? 0} ok={ok ?? 0} />{" "}
+          <StatusBlocks urgent={urgent ?? 0} upcoming={upcoming ?? 0} ok={ok ?? 0} />
           <DocumentSection
             documents={sortedDocuments}
             isError={documentsError}
