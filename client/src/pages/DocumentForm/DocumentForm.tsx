@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import "dayjs/locale/es";
 
-import { Box, Button, Chip, CircularProgress, TextField, Typography } from "@mui/material";
+import { Box, Button, CircularProgress, TextField } from "@mui/material";
 
 import { axiosInstance } from "@/api/axiosInstance";
 import { DOC_URL } from "@/api/apiConfig";
