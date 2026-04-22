@@ -83,7 +83,22 @@ class groupController {
       const dependentIds = dependents.map((d) => d.group_dependents_id);
 
       if (dependentIds.length === 0) {
-        const oneGroup = { group, members, dependents, documents: [] };
+        const selectDocumentsOnly = `
+          SELECT 
+            document.document_id AS documentId, 
+            document.type, 
+            document.name, 
+            document.expiry_date AS expiryDate, 
+            document.user_id,
+            NULL AS dependent_id,
+            COALESCE(user.displayName, SUBSTRING_INDEX(user.email, '@', 1)) AS ownerName
+          FROM document
+          JOIN user ON user.user_id = document.user_id
+          WHERE document.user_id IN (?) AND document.is_deleted = 0
+        `;
+
+        const [documents] = await db.query(selectDocumentsOnly, [allUserIds]);
+        const oneGroup = { group, members, dependents, documents };
         return res.status(200).json(oneGroup);
       }
 
