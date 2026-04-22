@@ -27,7 +27,8 @@ export const Groups = () => {
       <Box sx={{ height: "100dvh", display: "flex", flexDirection: "column" }}>
         <ProfileHeader />
         {/* Scrollable content */}
-        <Box sx={{ ...scrollableContentSx, mb: "66px", gap: 1, px: 3 }}>
+        <Box sx={{ ...scrollableContentSx, mb: "66px" }}>
+          <Box sx={{ py: 1 }} />
           <GroupCard groups={sortedGroups} isError={groupsError} isPending={groupsPending} />
         </Box>
         <BottomNav />
