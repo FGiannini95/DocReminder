@@ -17,7 +17,7 @@ export const StatsProfile = ({ totalDocuments, totalGroups }: StatsProfileProps)
     textAlign: "center",
     borderRadius: 2,
     p: 1,
-    border: "2px solid",
+    border: "1px solid",
   };
 
   return (
