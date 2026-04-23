@@ -1,10 +1,10 @@
 import { renderHook, waitFor } from "@testing-library/react";
 import { axiosInstance } from "@/api/axiosInstance";
 import { act } from "react";
-
-import { useRemoveDependent } from "./useRemoveDependent";
 import { GroupDependent } from "@/types/group";
 import { GROUP_URL } from "@/api/apiConfig";
+
+import { useRemoveDependent } from "./useRemoveDependent";
 
 vi.mock("@tanstack/react-query", async () => {
   const actual = await vi.importActual("@tanstack/react-query");
