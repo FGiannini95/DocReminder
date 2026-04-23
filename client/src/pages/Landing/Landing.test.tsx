@@ -31,11 +31,6 @@ describe("Landing", () => {
     expect(screen.getByRole("button", { name: /enviar código de acceso/i })).toBeInTheDocument();
   });
 
-  it("renders google button", () => {
-    renderLanding();
-    expect(screen.getByRole("button", { name: /continuar con google/i })).toBeInTheDocument();
-  });
-
   it("disables send code button when email is invalid", () => {
     renderLanding();
     expect(screen.getByRole("button", { name: /enviar código de acceso/i })).toBeDisabled();

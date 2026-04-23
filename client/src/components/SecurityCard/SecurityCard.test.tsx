@@ -8,6 +8,8 @@ const defaultProps = {
   description: "Test description",
   buttonLabel: "Test button",
   onActivate: vi.fn(),
+  onClick: vi.fn(),
+  checked: false,
 };
 
 describe("SecurityCard", () => {
