@@ -19,6 +19,7 @@ const mockInvalidateQueries = vi.fn();
 describe("useAddDependent", () => {
   beforeEach(() => {
     vi.mocked(axiosInstance.post).mockClear();
+    mockInvalidateQueries.mockClear();
   });
 
   it("sets open to true when handleOpen is called", () => {
