@@ -1,5 +1,3 @@
-import React from "react";
-
 import { Avatar, Box, Button, IconButton, Typography } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 

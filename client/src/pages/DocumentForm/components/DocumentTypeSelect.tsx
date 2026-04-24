@@ -1,5 +1,3 @@
-import React from "react";
-
 import { FormControl, FormHelperText, InputLabel, MenuItem, Select } from "@mui/material";
 import { textFieldSx } from "@/styles/commonStyle";
 import { DocumentType } from "@/types/document";

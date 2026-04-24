@@ -3,7 +3,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { axiosInstance } from "@/api/axiosInstance";
 
-import { EditProfileDialog } from "./EditProfileDIalog";
+import { EditProfileDialog } from "./EditProfileDialog";
 
 const onClose = vi.fn();
 

@@ -1,0 +1,46 @@
+name: Deploy Backend
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "server/**"
+      - ".github/workflows/deploy-backend.yml"
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      SSH_HOST: ${{ secrets.SSH_HOST }}
+      SSH_USER: ${{ secrets.SSH_USER }}
+      SSH_PORT: ${{ secrets.SSH_PORT }}
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Prepare SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${SSH_PRIVATE_KEY}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -t rsa,ecdsa,ed25519 "${SSH_HOST}" > ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+
+      - name: Deploy backend
+        run: |
+          rsync -az --delete -e "ssh -p ${SSH_PORT}" \
+            --exclude 'node_modules' \
+            --exclude '.env' \
+            server/ \
+            "${SSH_USER}@${SSH_HOST}:/var/www/docreminder/server/"
+
+      - name: Install deps and restart
+        run: |
+          ssh -p "${SSH_PORT}" "${SSH_USER}@${SSH_HOST}" \
+            "cd /var/www/docreminder/server && \
+             npm ci --omit=dev && \
+             pm2 restart docreminder-backend"

@@ -1,4 +1,3 @@
-import React from "react";
 import { Box, Chip, Typography } from "@mui/material";
 
 const REMINDER_OPTIONS = [7, 14, 30, 60, 90, 180];
