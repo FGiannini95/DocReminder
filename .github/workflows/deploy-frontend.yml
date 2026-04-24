@@ -50,5 +50,4 @@ jobs:
           chmod 644 ~/.ssh/known_hosts
 
       - name: Deploy frontend
-        run: |
-          rsync -
+        run: rsync -az --delete -e "ssh -p ${SSH_PORT}" client/dist/ "${SSH_USER}@${SSH_HOST}:/var/www/docreminder/client/dist/"
