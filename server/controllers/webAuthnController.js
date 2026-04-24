@@ -82,8 +82,8 @@ class webAuthnController {
       const verification = await verifyRegistrationResponse({
         response: registration,
         expectedChallenge: user.webauthn_challenge,
-        expectedOrigin: process.env.ORIGIN || "http://localhost:5173",
-        expectedRPID: process.env.RP_ID || "localhost",
+        expectedOrigin: "http://localhost:5173",
+        expectedRPID: "localhost",
         requireUserVerification: true,
       });
 

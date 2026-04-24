@@ -20,10 +20,13 @@ import { EditProfileDialog } from "./components/EditProfileDialog";
 import { useWebAuthn } from "@/hooks";
 import { fetchAllGroups } from "@/api/groupApi";
 import { Group } from "@/types/group";
+import { PWADialog } from "./components/PWADialog";
 
 export const Profile = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [open, setOpen] = useState<boolean>(false);
+  const [editProfileOpen, setEditProfileOpen] = useState<boolean>(false);
+  const [pwaOpen, setPwaOpen] = useState<boolean>(false);
+
   const { logout, pinEnabled, togglePin, fingerprintEnabled, toggleFingerprint, login } = useAuth();
   const { registerFingerprint } = useWebAuthn();
   const navigate = useNavigate();
@@ -57,13 +60,10 @@ export const Profile = () => {
       });
   };
 
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  const handleOpen = () => {
-    setOpen(true);
-  };
+  const handleEditProfileClose = () => setEditProfileOpen(false);
+  const handleEditProfileOpen = () => setEditProfileOpen(true);
+  const handlePwaOpen = () => setPwaOpen(true);
+  const handlePwaClose = () => setPwaOpen(false);
 
   const handlePin = () => {
     if (!pinEnabled && !localStorage.getItem("pinEnabled")) {
@@ -127,7 +127,7 @@ export const Profile = () => {
               borderRadius: 2,
               p: 2,
             }}
-            onClick={handleOpen}
+            onClick={handleEditProfileOpen}
           >
             <Typography fontWeight="bold">Cambiar nombre</Typography>
             <IconButton>
@@ -151,6 +151,23 @@ export const Profile = () => {
             onClick={() => navigate(DocReminderRoutes.pinSetup)}
           />
 
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              border: "1px solid",
+              borderRadius: 2,
+              p: 2,
+            }}
+            onClick={handlePwaOpen}
+          >
+            <Typography fontWeight="bold">Crear acceso directo</Typography>
+            <IconButton>
+              <ArrowForwardIosIcon />
+            </IconButton>
+          </Box>
+
           {/* Spacer — pushes buttons to bottom */}
           <Box sx={{ flex: 1 }} />
 
@@ -165,7 +182,8 @@ export const Profile = () => {
         </Box>
         <BottomNav />
       </Box>
-      <EditProfileDialog open={open} onClose={handleClose} />
+      <EditProfileDialog open={editProfileOpen} onClose={handleEditProfileClose} />
+      <PWADialog open={pwaOpen} onClose={handlePwaClose} />
     </PageTransition>
   );
 };

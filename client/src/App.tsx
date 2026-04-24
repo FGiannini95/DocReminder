@@ -25,8 +25,6 @@ const AppRoutes = () => {
 
   return (
     <>
-      {/* <GoogleOAuthProvider clientId={CLIENT_ID}>
-      <PwaProvider> */}
       <AnimatePresence mode="wait">
         {isLogged && (
           <Routes location={location} key={location.pathname}>
@@ -52,8 +50,6 @@ const AppRoutes = () => {
           </Routes>
         )}
       </AnimatePresence>
-      {/* </PwaProvider>
-      </GoogleOAuthProvider> */}
     </>
   );
 };
