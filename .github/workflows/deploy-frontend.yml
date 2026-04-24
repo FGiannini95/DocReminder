@@ -33,6 +33,10 @@ jobs:
         working-directory: client
         run: npm ci
 
+      - name: Upgrade TypeScript
+        working-directory: client
+        run: npm install typescript@6.0.3 --legacy-peer-deps
+
       - name: Build
         working-directory: client
         run: npm run build
