@@ -1,5 +1,3 @@
-import React from "react";
-
 import { ConfirmDrawer } from "@/components/ConfirmDrawer/ConfirmDrawer";
 import { GroupDependent } from "@/types/group";
 
