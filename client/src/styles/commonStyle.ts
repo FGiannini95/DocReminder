@@ -1,4 +1,7 @@
 export const textFieldSx = {
+  "& input": {
+    caretColor: "black",
+  },
   // Border color when input is focused
   "& .MuiOutlinedInput-root.Mui-focused fieldset": {
     borderColor: "text.primary",
