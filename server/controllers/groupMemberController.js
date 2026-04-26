@@ -1,6 +1,7 @@
 const db = require("../config/db");
 const sgMail = require("@sendgrid/mail");
 const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
@@ -114,13 +115,8 @@ class groupMemberController {
         const [result] = await db.query(insertUser, [email]);
         userId = result.insertId;
       }
-      // Generate invite token JWT 48h
-      const inviteToken = jwt.sign(
-        { groupId, email, purpose: "invite" },
-        process.env.JWT_ACCESS_SECRET,
-        { expiresIn: "48h" },
-      );
 
+      const inviteToken = crypto.randomBytes(16).toString("hex");
       const inviteExpires = new Date(Date.now() + 48 * 60 * 60 * 1000);
 
       const insertInvitation = `
@@ -154,28 +150,33 @@ class groupMemberController {
     const { token } = req.params;
 
     try {
-      const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
+      // Find the pending invitation by token
+      const selectInvitation = `
+        SELECT group_members_id, group_id, invite_expires_at 
+        FROM group_members 
+        WHERE invite_token = ? AND status = 'pending'
+      `;
 
-      if (decoded.purpose !== "invite") {
-        return res.status(400).json({ message: "Invalid token" });
+      const [rows] = await db.query(selectInvitation, [token]);
+      const invitation = rows[0];
+
+      if (!invitation) {
+        return res.status(404).json({ message: "Invitation not found" });
+      }
+
+      // Check if token is expired
+      if (new Date() > new Date(invitation.invite_expires_at)) {
+        return res.status(400).json({ message: "Invitation token expired" });
       }
 
       const acceptInvitation = `
         UPDATE group_members SET status = ?, joined_at = ?
-        WHERE invite_token = ? AND status = "pending"
+        WHERE invite_token = ? AND status = 'pending'
       `;
 
-      const [result] = await db.query(acceptInvitation, [
-        "active",
-        new Date(),
-        token,
-      ]);
+      await db.query(acceptInvitation, ["active", new Date(), token]);
 
-      if (result.affectedRows === 0) {
-        return res.status(404).json({ message: "Group member not found" });
-      }
-
-      return res.status(200).json({ groupId: decoded.groupId });
+      return res.status(200).json({ groupId: invitation.group_id });
     } catch (err) {
       res.status(500).json({ message: "Internal server error" });
     }
