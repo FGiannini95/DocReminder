@@ -85,6 +85,13 @@ export const Otp = () => {
     return () => clearInterval(timer);
   }, [countdown]);
 
+  // Autofocus in iOS
+  useEffect(() => {
+    setTimeout(() => {
+      refs.current[0]?.focus();
+    }, 100);
+  }, [refs]);
+
   const formattedCountdown = `0:${countdown < 10 ? `0${countdown}` : countdown}`;
 
   const handleResend = () => {
