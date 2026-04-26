@@ -6,7 +6,7 @@ describe("vibrate", () => {
     // Mock navigator.vibrate
     navigator.vibrate = vi.fn();
     vibrate();
-    expect(navigator.vibrate).toHaveBeenCalledWith(10);
+    expect(navigator.vibrate).toHaveBeenCalledWith(200);
   });
 
   it("does nothing when navigator.vibrate is not available", () => {
