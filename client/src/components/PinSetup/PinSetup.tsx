@@ -58,7 +58,10 @@ export const PinSetup = ({ mode }: PinSetupProps) => {
             sessionStorage.removeItem("inviteToken");
             axiosInstance
               .get(`${GROUP_URL}/accept-invite/${pendingInvite}`)
-              .then((res) => navigate(`/group/${res.data.groupId}`))
+              .then((res) => {
+                navigate(DocReminderRoutes.home, { replace: true });
+                navigate(`/group/${res.data.groupId}`);
+              })
               .catch(() => navigate(DocReminderRoutes.home));
             return;
           }

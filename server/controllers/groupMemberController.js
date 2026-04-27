@@ -136,6 +136,13 @@ class groupMemberController {
         from: process.env.SENDGRID_FROM,
         subject: "DocReminder - Invitación pendiente a un grupo",
         text: `Has sido invitado al grupo "${group.name}". Haz clic aquí para unirte: ${process.env.FRONTEND_URL}/invite/${inviteToken}`,
+        // Disable click tracking
+        trackingSettings: {
+          clickTracking: {
+            enable: false,
+            enableText: false,
+          },
+        },
       };
 
       await sgMail.send(msg);
