@@ -10,6 +10,7 @@ export const Loading = () => {
         justifyContent: "center",
         alignItems: "center",
         minHeight: "50vh",
+        color: "inherit",
       }}
     >
       <CircularProgress sx={{ color: "inherit" }} size={20} />
