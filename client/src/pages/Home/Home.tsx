@@ -9,7 +9,7 @@ import { scrollableContentSx } from "@/styles/commonStyle";
 import { Document } from "@/types/document";
 import { fetchAllDocuments } from "@/api/documentApi";
 import { fetchAllGroups } from "@/api/groupApi";
-import { BottomNav, DocumentSection, PageTransition } from "@/components";
+import { BottomNav, DocumentSection, Loading, PageTransition } from "@/components";
 import { HomeHeader } from "./components/HomeHeader";
 import { StatusBlocks } from "./components/StatusBlocks";
 import { GroupCard } from "../Group/components/GroupCard/GroupCard";
@@ -53,6 +53,8 @@ export const Home = () => {
 
   const sortedGroups = [...(groups ?? [])].sort((a, b) => a.name.localeCompare(b.name));
   const hasDocuments = (documents?.length ?? 0) > 0;
+
+  if (documentsPending || groupsPending) return <Loading />;
 
   return (
     <PageTransition>
