@@ -19,6 +19,7 @@ export const GroupMembersSection = ({ members, adminId, groupId }: GroupMembersS
 
   const {
     inviteEmail,
+    isEmailValid,
     inviteError,
     isInviteLoading,
     inviteOpen,
@@ -96,6 +97,7 @@ export const GroupMembersSection = ({ members, adminId, groupId }: GroupMembersS
         onConfirm={handleInvite}
         error={inviteError}
         isLoading={isInviteLoading}
+        isEmailValid={isEmailValid}
       />
     </>
   );
