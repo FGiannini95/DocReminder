@@ -86,18 +86,29 @@ class groupMemberController {
         return res.status(404).json({ message: "Group not found" });
       }
 
+      const selectAdmin = `SELECT email FROM user WHERE user_id = ?`;
+      const [adminRows] = await db.query(selectAdmin, [req.user.userId]);
+      if (adminRows[0].email === email) {
+        return res.status(400).json({ message: "Cannot invite yourself" });
+      }
+
       const checkExisting = `
-        SELECT group_members.group_members_id 
+        SELECT group_members.group_members_id, group_members.status
         FROM group_members 
         JOIN user ON user.user_id = group_members.user_id
         WHERE group_members.group_id = ? AND user.email = ?
+        AND group_members.status IN ('active', 'pending')
       `;
 
       const [existing] = await db.query(checkExisting, [groupId, email]);
       if (existing.length > 0) {
-        return res
-          .status(400)
-          .json({ message: "This user already belong to the group" });
+        // Check if it's pending or active
+        const isPending = existing[0].status === "pending";
+        return res.status(400).json({
+          message: isPending
+            ? "Pending invite already sent"
+            : "This user already belong to the group",
+        });
       }
 
       const selectUser = `

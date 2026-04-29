@@ -70,9 +70,9 @@ export const Otp = () => {
 
         navigate(DocReminderRoutes.security, { state: { email } });
       })
-      .catch((err) => {
-        console.log(err);
+      .catch(() => {
         setError("Código incorecto o expirado");
+        setOtp(Array(6).fill(""));
         setIsLoading(false);
       });
   };
@@ -181,7 +181,7 @@ export const Otp = () => {
             }}
             sx={{ borderRadius: 8, py: 1.5, backgroundColor: "text.primary" }}
           >
-            {isLoading ? <CircularProgress size={24} color="inherit" /> : "Verificar código"}{" "}
+            {isLoading ? <CircularProgress size={24} color="inherit" /> : "Verificar código"}
           </Button>
 
           {/* Error */}

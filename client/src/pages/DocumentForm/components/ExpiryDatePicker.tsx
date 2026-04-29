@@ -39,7 +39,20 @@ export const ExpiryDatePicker = ({
               onOpen();
             },
             inputProps: { tabIndex: -1 }, // Remove focus from input
-            sx: textFieldSx,
+            sx: {
+              ...textFieldSx,
+              "& .MuiPickersOutlinedInput-root .MuiPickersOutlinedInput-notchedOutline": {
+                borderColor: "rgba(0,0,0,0.23) !important",
+              },
+              "& .MuiPickersOutlinedInput-root.Mui-focused .MuiPickersOutlinedInput-notchedOutline":
+                {
+                  borderColor: "rgba(0,0,0,0.87) !important",
+                },
+              "& .MuiPickersSectionList-sectionContent:focus": {
+                color: "rgba(0,0,0,0.87)",
+                backgroundColor: "rgba(0,0,0,0.12) !important",
+              },
+            },
             required: true,
             error: !!error,
             helperText: error,
@@ -56,9 +69,16 @@ export const ExpiryDatePicker = ({
           day: {
             sx: {
               "&&.Mui-selected": {
-                backgroundColor: "text.primary",
-                "&:hover": { backgroundColor: "text.primary" },
-                "&:focus": { backgroundColor: "text.primary" },
+                backgroundColor: "rgba(0,0,0,0.87) !important",
+                "&:hover": { backgroundColor: "text.primary !important" },
+                "&:focus": { backgroundColor: "text.primary !important" },
+              },
+              "&&.MuiPickersDay-today:not(.Mui-selected)": {
+                borderColor: "text.primary !important",
+                backgroundColor: "transparent !important",
+              },
+              "&&.MuiPickersDay-today.Mui-selected": {
+                backgroundColor: "text.primary !important",
               },
             },
           },

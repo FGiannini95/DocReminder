@@ -12,6 +12,7 @@ interface InviteMemberDrawerProps {
   onConfirm: () => void;
   error: string;
   isLoading: boolean;
+  isEmailValid: boolean;
 }
 
 export const InviteMemberDrawer = ({
@@ -22,6 +23,7 @@ export const InviteMemberDrawer = ({
   onConfirm,
   isLoading,
   error,
+  isEmailValid,
 }: InviteMemberDrawerProps) => {
   return (
     <BaseDrawer open={open} onClose={onClose}>
@@ -42,7 +44,7 @@ export const InviteMemberDrawer = ({
         variant="contained"
         sx={{ ...containedButtonSx, backgroundColor: "text.primary" }}
         onClick={onConfirm}
-        disabled={!email}
+        disabled={!email || !!error || !isEmailValid}
       >
         {isLoading ? <CircularProgress size={20} /> : "Invitar"}
       </Button>

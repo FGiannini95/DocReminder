@@ -16,12 +16,22 @@ import {
 import { DocReminderRoutes } from "./routes/routes";
 import { useAuth } from "./context";
 import { PinSetup } from "./components";
+import { Typography, useMediaQuery } from "@mui/material";
 
 const AppRoutes = () => {
   const { isLogged, isLoading } = useAuth();
   const location = useLocation();
+  const isMobile = useMediaQuery("(max-width:600px)");
 
   if (isLoading) return null;
+
+  if (!isMobile) {
+    return (
+      <Typography align="center">
+        Esta aplicación sólo está disponible en dispositivos móviles
+      </Typography>
+    );
+  }
 
   return (
     <>

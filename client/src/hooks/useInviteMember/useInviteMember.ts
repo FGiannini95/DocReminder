@@ -11,6 +11,7 @@ export const useInviteMember = (groupId: string) => {
   const queryClient = useQueryClient();
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+  const isEmailValid = emailRegex.test(inviteEmail);
 
   const handleChangeEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInviteEmail(e.target.value);
@@ -29,7 +30,7 @@ export const useInviteMember = (groupId: string) => {
   const handleInvite = () => {
     setIsInviteLoading(true);
 
-    if (!inviteEmail || !emailRegex.test(inviteEmail)) {
+    if (!inviteEmail || !isEmailValid) {
       setInviteError("Email requerida");
       setIsInviteLoading(false);
       return;
@@ -42,11 +43,24 @@ export const useInviteMember = (groupId: string) => {
         setIsInviteLoading(false);
         handleCloseInviteDrawer();
       })
-      .catch(() => setIsInviteLoading(false));
+      .catch((err) => {
+        const msg = err.response?.data?.message;
+        if (msg === "Cannot invite yourself") {
+          setInviteError("Admin ya presente");
+        } else if (msg === "This user already belong to the group") {
+          setInviteError("Este usuario ya es miembro del grupo");
+        } else if (msg === "Pending invite already sent") {
+          setInviteError("Ya existe una invitación pendiente para este email");
+        } else {
+          setInviteError("Error al enviar la invitación");
+        }
+        setIsInviteLoading(false);
+      });
   };
 
   return {
     inviteEmail,
+    isEmailValid,
     inviteError,
     isInviteLoading,
     inviteOpen,
