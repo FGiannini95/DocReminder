@@ -1,7 +1,7 @@
 const db = require("../config/db");
-const sgMail = require("@sendgrid/mail");
+const { Resend } = require("resend");
 
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 class groupController {
   addGroup = async (req, res) => {
@@ -256,7 +256,7 @@ class groupController {
           subject: "DocReminder - Grupo eliminado",
           text: `El administrador ha eliminado el grupo "${rows[0].groupName}".`,
         };
-        await sgMail.send(msg);
+        await resend.emails.send(msg);
       }
 
       return res.status(200).json({ message: "Group deleted succesfully" });

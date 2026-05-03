@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
-const sgMail = require("@sendgrid/mail");
+const { Resend } = require("resend");
 
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 // Mirror of frontend typeLabels
 const typeLabels = {
@@ -37,7 +37,7 @@ async function sendReminderEmail(
 
   const msg = {
     to: email,
-    from: process.env.SENDGRID_FROM,
+    from: process.env.RESEND_FROM,
     subject: `DOCREMINDER · TU DOCUMENTO CADUCA EN ${daysLeft} DÍAS`,
     html: `
       <div style="font-family: sans-serif; max-width: 480px; margin: auto; padding: 24px;">
@@ -66,7 +66,7 @@ async function sendReminderEmail(
     `,
   };
 
-  await sgMail.send(msg);
+  await resend.emails.send(msg);
 }
 
 module.exports = sendReminderEmail;

@@ -191,7 +191,89 @@ class webAuthnController {
   };
 
   finishAuthWebAuthn = async (req, res) => {
-    console.log("Hi from finish Auth");
+    const { authentication, email } = req.body;
+
+    try {
+      const selectUser = `
+        SELECT user_id, email, displayName, pin_enabled, fingerprint_enabled,
+          webauthn_credentials, webauthn_challenge
+        FROM user 
+        WHERE email = ? AND is_deleted = 0
+      `;
+
+      const [rows] = await db.query(selectUser, [email]);
+      const user = rows[0];
+
+      if (!user || !user.webauthn_challenge || !user.webauthn_credentials) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+
+      const existingCredentials = JSON.parse(user.webauthn_credentials);
+
+      // Find the credential that matches the one used by the device
+      const matchedCredential = existingCredentials.find(
+        (cred) => cred.id === authentication.id,
+      );
+
+      if (!matchedCredential) {
+        return res.status(401).json({ message: "Credential not found" });
+      }
+
+      // Verify the authentication response
+      const verification = await verifyAuthenticationResponse({
+        response: authentication,
+        expectedChallenge: user.webauthn_challenge,
+        expectedOrigin: process.env.EXPECTED_ORIGIN || "http://localhost:5173",
+        expectedRPID: process.env.RP_ID || "localhost",
+        credential: {
+          id: matchedCredential.id,
+          publicKey: Buffer.from(matchedCredential.publicKey, "base64"),
+          counter: matchedCredential.counter,
+        },
+        requireUserVerification: true,
+      });
+
+      if (!verification.verified) {
+        return res.status(401).json({ message: "Verification failed" });
+      }
+
+      // Update counter to prevent replay attacks
+      const updatedCredentials = existingCredentials.map((cred) =>
+        cred.id === matchedCredential.id
+          ? { ...cred, counter: verification.authenticationInfo.newCounter }
+          : cred,
+      );
+
+      const updateUser = `
+        UPDATE user SET 
+          webauthn_credentials = ?, webauthn_challenge = NULL
+        WHERE user_id = ?
+      `;
+
+      await db.query(updateUser, [
+        JSON.stringify(updatedCredentials),
+        user.user_id,
+      ]);
+
+      // Generate accessToken
+      const newAccessToken = jwt.sign(
+        {
+          userId: user.user_id,
+          email: user.email,
+          displayName: user.displayName,
+          pin_enabled: user.pin_enabled ?? false,
+          fingerprint_enabled: user.fingerprint_enabled ?? true,
+        },
+        process.env.JWT_ACCESS_SECRET,
+        { expiresIn: "10m" },
+      );
+
+      return res
+        .status(200)
+        .json({ newAccessToken, message: "Logged successfully" });
+    } catch (err) {
+      return res.status(500).json({ message: "Internal server error" });
+    }
   };
 
   toggleFingerprint = async (req, res) => {
