@@ -35,7 +35,7 @@ class groupMemberController {
 
       const msg = {
         to: data.email,
-        from: process.env.SENDGRID_FROM,
+        from: process.env.RESEND_FROM,
         subject: "DocReminder - Has sido eliminado del grupo",
         text: `Ya no tienes acceso al grupo "${data.groupName}".`,
       };
@@ -144,7 +144,7 @@ class groupMemberController {
 
       const msg = {
         to: email,
-        from: process.env.SENDGRID_FROM,
+        from: process.env.RESEND_FROM,
         subject: "DocReminder - Invitación pendiente a un grupo",
         text: `Has sido invitado al grupo "${group.name}". Haz clic aquí para unirte: ${process.env.FRONTEND_URL}/invite/${inviteToken}`,
         // Disable click tracking

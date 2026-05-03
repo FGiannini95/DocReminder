@@ -1,10 +1,5 @@
 const mysql2 = require("mysql2");
 
-// Load environment variables. In development: load from .env using dotenv. In production: rely ONLY on systemd EnvironmentFile
-if (process.env.NODE_ENV !== "production") {
-  require("dotenv").config();
-}
-
 // Create a MySQL connection pool, mandatory in production to avoid random disconnects
 const pool = mysql2.createPool({
   host: process.env.DB_HOST,

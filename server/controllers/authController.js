@@ -42,7 +42,7 @@ class authController {
       // Send email
       const msg = {
         to: email,
-        from: process.env.SENDGRID_FROM,
+        from: process.env.RESEND_FROM,
         subject: "DocReminder - Código de acceso",
         text: `Tu código de acceso es: ${otpCode}. Válido durante 10 minutos.`,
       };

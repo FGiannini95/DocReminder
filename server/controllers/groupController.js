@@ -252,7 +252,7 @@ class groupController {
       if (emails.length > 0) {
         const msg = {
           to: emails,
-          from: process.env.SENDGRID_FROM,
+          from: process.env.RESEND_FROM,
           subject: "DocReminder - Grupo eliminado",
           text: `El administrador ha eliminado el grupo "${rows[0].groupName}".`,
         };
