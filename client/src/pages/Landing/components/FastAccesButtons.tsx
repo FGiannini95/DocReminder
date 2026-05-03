@@ -7,10 +7,12 @@ import FingerprintIcon from "@mui/icons-material/Fingerprint";
 import { DocReminderRoutes } from "@/routes/routes";
 import { vibrate } from "@/utils/haptics";
 import { useWebAuthn } from "@/hooks";
+import { useAuth } from "@/context";
 
 export const FastAccesButtons = () => {
   const navigate = useNavigate();
   const { verifyFingerprint } = useWebAuthn();
+  const { login } = useAuth();
 
   const savedPin = localStorage.getItem("pinEnabled") === "true";
   const savedFingerprint = localStorage.getItem("fingerprintEnabled") === "true";
@@ -41,9 +43,15 @@ export const FastAccesButtons = () => {
         {savedFingerprint && (
           <IconButton
             sx={{ border: "1px solid", borderRadius: 3, p: 1.5 }}
-            onClick={() => {
+            onClick={async () => {
               vibrate();
-              verifyFingerprint(savedEmail!);
+              try {
+                const data = await verifyFingerprint(savedEmail!);
+                login(data.newAccessToken); // ← stesso pattern del PIN
+                navigate(DocReminderRoutes.home);
+              } catch (err) {
+                console.log(err);
+              }
             }}
           >
             <FingerprintIcon sx={{ fontSize: 32 }} />

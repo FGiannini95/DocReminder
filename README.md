@@ -27,7 +27,7 @@ A family-friendly PWA to manage document expiration dates, share them across a f
 |-------------|------------------------------------------|
 | Frontend    | React • Material-UI (MUI) • Vite         |
 | Backend     | Node.js • Express • MySQL                |
-| Email       | SendGrid                                 |
+| Email       | Resend                                   |
 | Auth        | JWT (access + refresh tokens)            |
 | Other       | dotenv, bcrypt                           |
 
@@ -66,8 +66,8 @@ DB_PORT=
 SECRET=
 PORT=
 CLIENT_URL=
-SENDGRID_API_KEY=
-SENDGRID_FROM=
+RESEND_API_KEY=
+RESEND_FROM=
 JWT_ACCESS_SECRET=
 JWT_REFRESH_SECRET=
 FRONTEND_URL=

@@ -1,8 +1,9 @@
 const jwt = require("jsonwebtoken");
-const sgMail = require("@sendgrid/mail");
+const { Resend } = require("resend");
 const db = require("../config/db");
 
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+const resend = new Resend(process.env.RESEND_API_KEY);
+
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const isDev = process.env.NODE_ENV === "development";
 
@@ -41,16 +42,17 @@ class authController {
       // Send email
       const msg = {
         to: email,
-        from: process.env.SENDGRID_FROM,
+        from: process.env.RESEND_FROM,
         subject: "DocReminder - Código de acceso",
         text: `Tu código de acceso es: ${otpCode}. Válido durante 10 minutos.`,
       };
 
-      await sgMail.send(msg);
+      await resend.emails.send(msg);
 
       // Respond
       return res.status(200).json({ message: "Access code sent" });
     } catch (err) {
+      console.log(err);
       return res.status(500).json({ message: "Internal server error" });
     }
   };

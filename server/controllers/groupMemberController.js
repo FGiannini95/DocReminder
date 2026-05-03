@@ -1,9 +1,9 @@
 const db = require("../config/db");
-const sgMail = require("@sendgrid/mail");
+const { Resend } = require("resend");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 class groupMemberController {
   removeMember = async (req, res) => {
@@ -35,12 +35,12 @@ class groupMemberController {
 
       const msg = {
         to: data.email,
-        from: process.env.SENDGRID_FROM,
+        from: process.env.RESEND_FROM,
         subject: "DocReminder - Has sido eliminado del grupo",
         text: `Ya no tienes acceso al grupo "${data.groupName}".`,
       };
 
-      await sgMail.send(msg);
+      await resend.emails.send(msg);
 
       return res.status(200).json({ message: "User removed succesfully" });
     } catch (err) {
@@ -144,7 +144,7 @@ class groupMemberController {
 
       const msg = {
         to: email,
-        from: process.env.SENDGRID_FROM,
+        from: process.env.RESEND_FROM,
         subject: "DocReminder - Invitación pendiente a un grupo",
         text: `Has sido invitado al grupo "${group.name}". Haz clic aquí para unirte: ${process.env.FRONTEND_URL}/invite/${inviteToken}`,
         // Disable click tracking
@@ -156,7 +156,7 @@ class groupMemberController {
         },
       };
 
-      await sgMail.send(msg);
+      await resend.emails.send(msg);
 
       return res.status(200).json({ message: "Invite sent succesfully" });
     } catch (err) {

@@ -36,6 +36,7 @@ export const Landing = () => {
       })
       .catch((err) => {
         console.log(err);
+        setEmail("");
         setIsLoading(false);
       });
   };
