@@ -192,7 +192,6 @@ class webAuthnController {
 
       return res.status(200).json(options);
     } catch (err) {
-      console.log("startAuthWebAuthn error:", err); // ← aggiungi
       return res.status(500).json({ message: "Unauthorized" });
     }
   };
@@ -283,6 +282,7 @@ class webAuthnController {
         .status(200)
         .json({ newAccessToken, message: "Logged successfully" });
     } catch (err) {
+      console.log("finishAuthWebAuthn error:", err); // ← aggiungi
       return res.status(500).json({ message: "Internal server error" });
     }
   };
