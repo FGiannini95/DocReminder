@@ -27,7 +27,9 @@ class webAuthnController {
 
       // Parse existing credentials to prevent duplicare registration
       const existingCredentials = user.webauthn_credentials
-        ? JSON.parse(user.webauthn_credentials)
+        ? typeof user.webauthn_credentials === "string"
+          ? JSON.parse(user.webauthn_credentials)
+          : user.webauthn_credentials
         : [];
 
       // Generate registration options for the device
@@ -95,7 +97,9 @@ class webAuthnController {
 
       // Parse existing credentials to prevent duplicare registration
       const existingCredentials = user.webauthn_credentials
-        ? JSON.parse(user.webauthn_credentials)
+        ? typeof user.webauthn_credentials === "string"
+          ? JSON.parse(user.webauthn_credentials)
+          : user.webauthn_credentials
         : [];
 
       // Add new credential to existing ones
@@ -165,7 +169,9 @@ class webAuthnController {
 
       // Parse existing credentials to prevent duplicare registration
       const existingCredentials = user.webauthn_credentials
-        ? JSON.parse(user.webauthn_credentials)
+        ? typeof user.webauthn_credentials === "string"
+          ? JSON.parse(user.webauthn_credentials)
+          : user.webauthn_credentials
         : [];
 
       // Generate authentication options for the device
@@ -209,7 +215,11 @@ class webAuthnController {
         return res.status(401).json({ message: "Unauthorized" });
       }
 
-      const existingCredentials = JSON.parse(user.webauthn_credentials);
+      const existingCredentials = user.webauthn_credentials
+        ? typeof user.webauthn_credentials === "string"
+          ? JSON.parse(user.webauthn_credentials)
+          : user.webauthn_credentials
+        : [];
 
       // Find the credential that matches the one used by the device
       const matchedCredential = existingCredentials.find(
