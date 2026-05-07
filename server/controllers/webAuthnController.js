@@ -4,6 +4,7 @@ const {
   generateRegistrationOptions,
   verifyRegistrationResponse,
   generateAuthenticationOptions,
+  verifyAuthenticationResponse,
 } = require("@simplewebauthn/server");
 
 class webAuthnController {
