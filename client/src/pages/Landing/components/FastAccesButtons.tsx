@@ -49,8 +49,7 @@ export const FastAccesButtons = () => {
                 const data = await verifyFingerprint(savedEmail!);
                 login(data.newAccessToken); // ← stesso pattern del PIN
                 navigate(DocReminderRoutes.home);
-              } catch (err: any) {
-                alert(err?.message || JSON.stringify(err)); // ← temporaneo per debug
+              } catch (err) {
                 console.log(err);
               }
             }}
